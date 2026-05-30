@@ -34,6 +34,20 @@ body.dark {
   --bg3: #2a121d;
   --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
+body.dark .donate-hero {
+  background: linear-gradient(145deg, #2d1f0a 0%, #3a2508 50%, #2d1f0a 100%);
+  border-color: #92400e;
+  box-shadow: 0 6px 28px rgba(0,0,0,.5);
+}
+body.dark .dh-title { color: #fbbf24; }
+body.dark .dh-sub { color: #d97706; }
+body.dark .dh-divider { color: #fbbf24; }
+body.dark .dh-divider::before, body.dark .dh-divider::after { background: #92400e; }
+body.dark .td-item { background: rgba(0,0,0,.3); border-color: #78350f; }
+body.dark .td-name { color: #fde68a; }
+body.dark .td-amount { color: #fca5a5; }
+body.dark .donation-ticker { background: #1c1000; border-color: #92400e; color: #fbbf24; }
+body.dark .td-empty { color: #d97706; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
