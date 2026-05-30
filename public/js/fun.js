@@ -474,9 +474,19 @@
   let wheelRotation = 0, wheelTimer = null;
   function getOptions() { return el("wheelOptions").value.split("\n").map((s) => s.trim()).filter(Boolean); }
   function drawWheel(opts) {
-    const cv = el("wheelCanvas"), x = cv.getContext("2d"), R = cv.width / 2;
+    const cv = el("wheelCanvas");
+    // DPI scaling agar tidak blur di layar Retina / mobile
+    const dpr = window.devicePixelRatio || 1;
+    const size = 280;
+    cv.width  = size * dpr;
+    cv.height = size * dpr;
+    cv.style.width  = size + "px";
+    cv.style.height = size + "px";
+    const x = cv.getContext("2d");
+    x.scale(dpr, dpr);
+    const R = size / 2;
     const n = opts.length, slice = (2 * Math.PI) / n;
-    x.clearRect(0, 0, cv.width, cv.height);
+    x.clearRect(0, 0, size, size);
     for (let i = 0; i < n; i++) {
       const a0 = -Math.PI / 2 + i * slice, a1 = a0 + slice;
       x.beginPath(); x.moveTo(R, R); x.arc(R, R, R - 4, a0, a1); x.closePath();
