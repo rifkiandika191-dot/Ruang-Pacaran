@@ -298,7 +298,7 @@ app.post("/api/dinding", (req, res) => {
   const { name, to, message, image } = req.body || {};
   if (!name || !message) return res.status(400).json({ error: "Nama dan pesan wajib diisi" });
   if (String(message).length > 300) return res.status(400).json({ error: "Pesan terlalu panjang" });
-  if (image && String(image).length > 600000) return res.status(400).json({ error: "Gambar terlalu besar (max 400KB)" });
+  if (image && String(image).length > 140000000) return res.status(400).json({ error: "Gambar terlalu besar (max 100MB)" });
   const post = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
     name: String(name).slice(0,30).trim(),
