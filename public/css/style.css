@@ -1043,6 +1043,18 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   .home-nav { flex-direction: column; }
   .home-nav .navlink { text-align: center; }
 
+  /* ── Donasi & top donors (mobile) ── */
+  .btn-donate { width: 100%; justify-content: center; }
+  .td-item { padding: 8px 12px; }
+  .td-rank { font-size: 16px; }
+  .saran-promo-card { padding: 14px 14px; gap: 10px; }
+
+  /* ── Halaman saran (mobile) ── */
+  .saran-card { padding: 20px 16px 24px; }
+  .sf-tabs { gap: 4px; }
+  .sf-tab { font-size: 12px; padding: 8px 4px; }
+  .sl-header { flex-direction: column; align-items: flex-start; }
+
   /* ── Fitur baru: Room History (mobile) ── */
   .rh-card { flex-direction: column; align-items: stretch; gap: 8px; }
   .rh-btn  { width: 100%; text-align: center; padding: 10px; }
