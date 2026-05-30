@@ -240,20 +240,58 @@
     setTimeout(() => { if (box) box.innerHTML = ""; }, 2200);
   }
 
-  // ── Suara — ting! singkat (Web Audio, 3 not saja) ──
-  function playTing() {
+  // ── Audio — satu AudioContext global, unlock saat interaksi pertama ──
+  let _actx = null;
+
+  function getCtx() {
+    if (!_actx) {
+      try { _actx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(_) { return null; }
+    }
+    return _actx;
+  }
+
+  // iOS & Android memerlukan gesture sebelum audio bisa diputar.
+  // Kita "unlock" dengan memainkan buffer kosong saat pertama kali user tap/klik.
+  function unlockAudio() {
+    const ctx = getCtx();
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+    // Buffer senyap — cukup untuk membuka kunci audio iOS
     try {
-      const A = new (window.AudioContext || window.webkitAudioContext)();
-      [[880,.14],[1047,.13],[1319,.22]].forEach(([f,d],i)=>{
-        const o=A.createOscillator(), g=A.createGain();
-        o.connect(g); g.connect(A.destination);
-        o.type="triangle"; o.frequency.value=f;
-        const t=A.currentTime+i*.12;
-        g.gain.setValueAtTime(.18,t);
-        g.gain.exponentialRampToValueAtTime(.001,t+d);
-        o.start(t); o.stop(t+d);
-      });
-    } catch(_){}
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf; src.connect(ctx.destination); src.start(0);
+    } catch(_) {}
+  }
+
+  ["touchstart","touchend","pointerdown","click"].forEach((ev) =>
+    document.addEventListener(ev, unlockAudio, { once: false, passive: true })
+  );
+
+  function playTing() {
+    const A = getCtx();
+    if (!A) return;
+    const doPlay = () => {
+      try {
+        const now = A.currentTime;
+        [[880,.14],[1047,.13],[1319,.22]].forEach(([f,d],i)=>{
+          const o=A.createOscillator(), g=A.createGain();
+          o.connect(g); g.connect(A.destination);
+          o.type="triangle"; o.frequency.value=f;
+          const t=now+i*.13;
+          g.gain.setValueAtTime(.18,t);
+          g.gain.exponentialRampToValueAtTime(.001,t+d);
+          o.start(t); o.stop(t+d);
+        });
+      } catch(_) {}
+    };
+    // Jika context masih terkunci (belum ada interaksi), coba resume dulu
+    if (A.state === "suspended") {
+      A.resume().then(doPlay).catch(()=>{});
+    } else {
+      doPlay();
+    }
   }
 
   // ── Format Rupiah ──
