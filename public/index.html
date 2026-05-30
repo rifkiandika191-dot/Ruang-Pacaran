@@ -673,7 +673,7 @@
   document.getElementById("storyImgBtn").addEventListener("click", () => document.getElementById("storyImgInput").click());
   document.getElementById("storyImgInput").addEventListener("change", e => {
     const file = e.target.files[0]; if(!file) return;
-    if(file.size > 2*1024*1024) { alert("Foto max 2MB"); return; }
+    if(file.size > 100*1024*1024) { alert("Foto max 100MB"); return; }
     const reader = new FileReader();
     reader.onload = r => {
       storyImgData = r.result;
