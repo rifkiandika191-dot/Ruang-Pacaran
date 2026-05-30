@@ -126,11 +126,18 @@ function makeDeleteBtn(msgId) {
   btn.className = "msg-delete-btn";
   btn.title = "Hapus pesan";
   btn.textContent = "🗑️";
-  btn.addEventListener("click", () => {
-    if (!confirm("Hapus pesan ini?")) return;
-    socket.emit("chat-delete", { msgId });
-    deleteLocalMsg(msgId);
-  });
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    btn.textContent = "✓?";
+    btn.style.color = "#e23e6f";
+    const cancel = setTimeout(() => { btn.textContent = "🗑️"; btn.style.color = ""; }, 2500);
+    btn.addEventListener("click", (e2) => {
+      e2.stopPropagation();
+      clearTimeout(cancel);
+      socket.emit("chat-delete", { msgId });
+      deleteLocalMsg(msgId);
+    }, { once: true });
+  }, { once: true });
   return btn;
 }
 
