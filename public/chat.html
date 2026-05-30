@@ -218,6 +218,65 @@
     .gc-emoji-row button:hover { background: #fce7f3; transform: scale(1.15); }
     .gc-emoji-row button:active { transform: scale(.92); }
 
+    /* Tombol tebak lagu — beda dari emoji biasa */
+    .gc-tebak-btn {
+      background: linear-gradient(135deg, #ec4899, #a855f7) !important;
+      border-color: transparent !important;
+      color: #fff; border-radius: 12px !important;
+      padding: 5px 12px !important; font-size: 14px !important;
+      display: flex; align-items: center; gap: 5px;
+      box-shadow: 0 2px 8px rgba(236,72,153,.35);
+    }
+    .gc-tebak-btn:hover { filter: brightness(1.1); transform: scale(1.05) !important; }
+    .gc-tebak-label { font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+    /* Alert modal tebak lagu */
+    #tebakAlert {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,5,15,.7); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    #tebakAlert.show { display: flex; }
+    .tebak-alert-card {
+      background: linear-gradient(135deg, #fff0f8, #f3e8ff);
+      border: 2px solid #ec4899; border-radius: 24px;
+      padding: 28px 24px; width: 100%; max-width: 360px;
+      text-align: center; box-shadow: 0 8px 40px rgba(236,72,153,.3);
+      animation: alertPop .25s cubic-bezier(.18,1.25,.4,1);
+    }
+    @keyframes alertPop {
+      from { transform: scale(.85); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .tebak-alert-icon { font-size: 52px; margin-bottom: 10px; }
+    .tebak-alert-title {
+      font-size: 20px; font-weight: 800; color: #be185d;
+      margin-bottom: 8px;
+    }
+    .tebak-alert-desc {
+      font-size: 13px; color: #7c3aed; line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .tebak-alert-desc strong { color: #be185d; }
+    .tebak-alert-btns { display: flex; gap: 10px; }
+    .tebak-alert-cancel {
+      flex: 1; padding: 12px; border-radius: 14px;
+      border: 2px solid #fbcfe8; background: #fff;
+      color: #be185d; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: background .12s;
+    }
+    .tebak-alert-cancel:hover { background: #fce7f3; }
+    .tebak-alert-ok {
+      flex: 1; padding: 12px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 12px rgba(236,72,153,.35);
+      transition: filter .12s;
+    }
+    .tebak-alert-ok:hover { filter: brightness(1.08); }
+
     /* ── Input bar ── */
     .gc-input-bar {
       display: flex; align-items: center; gap: 8px;
