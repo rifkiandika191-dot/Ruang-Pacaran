@@ -56,14 +56,70 @@ document.getElementById("joinBtn").addEventListener("click", () => {
 roomInput.addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("joinBtn").click(); });
 nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") roomInput.focus(); });
 
-// Jumlah orang sedang mencari pacar (real-time)
+// ============================================================
+//  SOCKET — online count + donasi live
+// ============================================================
 try {
   const socket = io();
   socket.on("match-online-count", (count) => {
     const el = document.getElementById("onlineCount");
     if (el) el.textContent = count > 0 ? count + " orang sedang mencari sekarang" : "Jadilah yang pertama mencari 💝";
   });
+
+  // Live notifikasi donasi baru
+  socket.on("new-donation", (d) => {
+    showDonationTicker(d);
+    loadTopDonors(); // refresh leaderboard
+  });
 } catch (e) {}
+
+// ============================================================
+//  TOP DONORS
+// ============================================================
+function formatRupiah(n) {
+  if (n >= 1000000) return "Rp " + (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + "jt";
+  if (n >= 1000)    return "Rp " + Math.floor(n / 1000) + "rb";
+  return "Rp " + n;
+}
+
+async function loadTopDonors() {
+  try {
+    const res  = await fetch("/api/top-donors");
+    const data = await res.json();
+    const list = document.getElementById("tdList");
+    if (!list) return;
+    if (!data.length) {
+      list.innerHTML = `<div class="td-empty">Jadilah yang pertama berdonasi! ✨</div>`;
+      return;
+    }
+    const medals = ["🥇", "🥈", "🥉"];
+    list.innerHTML = data.map((d, i) => `
+      <div class="td-item">
+        <span class="td-rank">${medals[i] || `#${i + 1}`}</span>
+        <span class="td-name">${escapeHtmlMain(d.name)}</span>
+        <span class="td-amount">${formatRupiah(d.total)}</span>
+      </div>
+    `).join("");
+  } catch (e) { /* offline / error — diam saja */ }
+}
+
+function escapeHtmlMain(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+let tickerTimer;
+function showDonationTicker(d) {
+  const ticker = document.getElementById("donationTicker");
+  const text   = document.getElementById("tickerText");
+  if (!ticker || !text) return;
+  text.textContent = `${d.name} baru saja donasi ${formatRupiah(d.amount)}${d.message ? ` — "${d.message}"` : ""} 🎉`;
+  ticker.classList.remove("hidden");
+  clearTimeout(tickerTimer);
+  tickerTimer = setTimeout(() => ticker.classList.add("hidden"), 8000);
+}
+
+loadTopDonors();
 
 // ============================================================
 //  RIWAYAT ROOM — tampilkan room yang sudah 30+ menit dipakai
