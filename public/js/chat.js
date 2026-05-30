@@ -134,8 +134,14 @@ g("gcText").addEventListener("keydown", (e) => { if (e.key === "Enter") sendMsg(
 // Emoji cepat
 document.querySelectorAll(".gc-emoji-row button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    g("gcText").value += btn.textContent;
-    g("gcText").focus();
+    const val = btn.dataset.val || btn.textContent;
+    if (btn.dataset.val === "!tebak") {
+      g("gcText").value = "!tebak";
+      sendMsg();
+    } else {
+      g("gcText").value += val;
+      g("gcText").focus();
+    }
   });
 });
 
