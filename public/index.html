@@ -111,6 +111,322 @@
     <footer class="foot">Dibuat dengan 💖 untuk kalian berdua</footer>
   </main>
 
+  <!-- Tombol floating changelog -->
+  <button class="cl-fab" id="clFab" title="Fitur & Panduan">📋</button>
+
+  <!-- Modal Changelog -->
+  <div class="cl-backdrop" id="clBackdrop"></div>
+  <div class="cl-modal" id="clModal" role="dialog" aria-modal="true" aria-label="Fitur dan Panduan">
+    <div class="cl-header">
+      <div class="cl-header-left">
+        <div class="cl-header-icon">📋</div>
+        <div>
+          <div class="cl-header-title">Fitur & Panduan</div>
+          <div class="cl-header-sub">Ruang Pacaran — semua yang bisa kamu lakukan</div>
+        </div>
+      </div>
+      <button class="cl-close" id="clClose">✕</button>
+    </div>
+
+    <div class="cl-body">
+
+      <!-- Changelog -->
+      <div class="cl-section-title">🆕 Update Terbaru</div>
+
+      <div class="cl-changelog">
+        <div class="cl-version">
+          <div class="cl-version-badge">v3.0 <span>Mei 2026</span></div>
+          <ul class="cl-list">
+            <li>🎵 <strong>Tebak Lagu</strong> — 100 lagu Indonesia, putar penggalan lagu di chat global</li>
+            <li>💬 <strong>Badge & Level Chat</strong> — Pendatang Baru → Reguler → Warga Tetap → Legend</li>
+            <li>🌸 <strong>Quote Romantis Harian</strong> — muncul otomatis setiap hari di chat global</li>
+            <li>💌 <strong>Pesan Donasi</strong> — pesan dari donatur tampil di notifikasi overlay</li>
+            <li>🔔 <strong>Notifikasi Donasi</strong> — efek kembang api mulai dari Rp 3.000</li>
+            <li>🎨 <strong>UI Chat Global baru</strong> — avatar, bubble modern, typing indicator</li>
+            <li>🌐 <strong>Domain</strong> — ruangpacaranrilly.com aktif</li>
+          </ul>
+        </div>
+        <div class="cl-version">
+          <div class="cl-version-badge">v2.0 <span>Awal 2026</span></div>
+          <ul class="cl-list">
+            <li>📷 <strong>Kirim Gambar</strong> — share foto di chat room</li>
+            <li>⌨️ <strong>Typing Indicator</strong> — tahu saat pasangan sedang mengetik</li>
+            <li>💝 <strong>Cari Pacar Online</strong> — matchmaking random dengan orang baru</li>
+            <li>🏆 <strong>Scoreboard</strong> — skor game tersimpan permanen per room</li>
+          </ul>
+        </div>
+        <div class="cl-version">
+          <div class="cl-version-badge">v1.0 <span>Peluncuran</span></div>
+          <ul class="cl-list">
+            <li>📺 Nonton bareng YouTube & video HTML5</li>
+            <li>🖥️ Share screen real-time</li>
+            <li>📹 Video call WebRTC</li>
+            <li>💬 Chat real-time + riwayat pesan</li>
+            <li>🎮 Game bareng: XOX, Sambung 4, Suit, Tap Battle, Roda Keputusan</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Panduan -->
+      <div class="cl-section-title" style="margin-top:20px">📖 Cara Penggunaan</div>
+
+      <div class="cl-guide-grid">
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">🏠</div>
+          <div class="cl-guide-title">Masuk Ruangan</div>
+          <ol class="cl-steps">
+            <li>Isi <strong>nama panggilan</strong> kamu</li>
+            <li>Klik <strong>"Buat Ruang Baru"</strong> → bagikan kode ke pasangan</li>
+            <li>Atau isi kode dari pasangan → <strong>"Gabung"</strong></li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">📺</div>
+          <div class="cl-guide-title">Nonton Bareng</div>
+          <ol class="cl-steps">
+            <li>Di dalam room, paste <strong>link YouTube</strong> atau video</li>
+            <li>Tekan play — otomatis tersinkron dengan pasangan</li>
+            <li>Pause, skip, volume — semua tersinkron real-time</li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">🖥️</div>
+          <div class="cl-guide-title">Share Screen</div>
+          <ol class="cl-steps">
+            <li>Klik tombol <strong>Share Screen</strong> di room</li>
+            <li>Pilih tab, window, atau seluruh layar</li>
+            <li>Pasangan bisa langsung melihat layarmu</li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">🎮</div>
+          <div class="cl-guide-title">Game Bareng</div>
+          <ol class="cl-steps">
+            <li>Klik tab <strong>Game</strong> di dalam room</li>
+            <li>Pilih game: XOX, Sambung 4, Suit, dll</li>
+            <li>Skor tersimpan otomatis — lihat di scoreboard</li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">💬</div>
+          <div class="cl-guide-title">Chat Global</div>
+          <ol class="cl-steps">
+            <li>Klik menu <strong>Chat Global</strong> di halaman utama</li>
+            <li>Ngobrol dengan semua pengunjung Ruang Pacaran</li>
+            <li>Klik <strong>🎵 Tebak Lagu</strong> untuk mulai game tebak lagu</li>
+            <li>Makin sering chat, badge level naik otomatis</li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">🎵</div>
+          <div class="cl-guide-title">Tebak Lagu</div>
+          <ol class="cl-steps">
+            <li>Di chat global, klik tombol <strong>🎵 Tebak Lagu</strong></li>
+            <li>Penggalan lagu akan diputar selama <strong>30 detik</strong></li>
+            <li>Ketik judul lagu di kolom chat secepat mungkin</li>
+            <li>Yang pertama benar = <strong>menang! 🏆</strong></li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">☕</div>
+          <div class="cl-guide-title">Donasi</div>
+          <ol class="cl-steps">
+            <li>Klik <strong>"Donasi via Saweria"</strong> di halaman utama</li>
+            <li>Donasi min. <strong>Rp 3.000</strong> = efek kembang api untuk semua</li>
+            <li>Tulis pesan — akan tampil di notifikasi overlay</li>
+            <li>Namamu masuk ke <strong>Top Donatur</strong> 🏆</li>
+          </ol>
+        </div>
+
+        <div class="cl-guide-card">
+          <div class="cl-guide-icon">💝</div>
+          <div class="cl-guide-title">Cari Pacar Online</div>
+          <ol class="cl-steps">
+            <li>Dari halaman utama, klik <strong>"Cari Pacar Online"</strong></li>
+            <li>Sistem akan mencocokkan kamu dengan orang lain secara random</li>
+            <li>Chat, nonton, dan bermain bersama orang baru</li>
+          </ol>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ── Tombol floating ── */
+    .cl-fab {
+      position: fixed; bottom: 24px; left: 24px; z-index: 490;
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: #fff; font-size: 20px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(236,72,153,.4);
+      transition: transform .15s, box-shadow .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cl-fab:hover { transform: scale(1.1); box-shadow: 0 6px 22px rgba(236,72,153,.55); }
+    .cl-fab:active { transform: scale(.93); }
+
+    /* ── Backdrop ── */
+    .cl-backdrop {
+      position: fixed; inset: 0; z-index: 800;
+      background: rgba(10,5,15,.5); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .cl-backdrop.show { opacity: 1; pointer-events: all; }
+
+    /* ── Modal ── */
+    .cl-modal {
+      position: fixed; z-index: 801;
+      background: #fff;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: transform .3s cubic-bezier(.18,1.25,.4,1), opacity .25s;
+      opacity: 0; pointer-events: none;
+    }
+    .cl-modal.show { opacity: 1; pointer-events: all; }
+
+    /* Desktop — modal tengah */
+    @media (min-width: 640px) {
+      .cl-modal {
+        top: 50%; left: 50%;
+        transform: translate(-50%, -46%) scale(.95);
+        width: min(90vw, 720px);
+        max-height: 85vh;
+        border-radius: 24px;
+        box-shadow: 0 24px 80px rgba(0,0,0,.2);
+      }
+      .cl-modal.show { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Mobile — full screen dari bawah */
+    @media (max-width: 639px) {
+      .cl-modal {
+        bottom: 0; left: 0; right: 0;
+        transform: translateY(100%);
+        max-height: 92dvh;
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+      }
+      .cl-modal.show { transform: translateY(0); }
+      .cl-fab { bottom: 80px; left: 16px; width: 44px; height: 44px; font-size: 18px; }
+    }
+
+    /* ── Header modal ── */
+    .cl-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 16px;
+      background: linear-gradient(135deg, #ffe4ef, #f3e8ff);
+      border-bottom: 1.5px solid rgba(236,72,153,.15);
+      flex-shrink: 0;
+    }
+    .cl-header-left { display: flex; align-items: center; gap: 12px; }
+    .cl-header-icon { font-size: 28px; }
+    .cl-header-title { font-size: 17px; font-weight: 800; color: #be185d; }
+    .cl-header-sub { font-size: 11px; color: #9d4b78; margin-top: 2px; }
+    .cl-close {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(236,72,153,.12); color: #be185d;
+      font-size: 14px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .12s;
+    }
+    .cl-close:hover { background: rgba(236,72,153,.22); }
+
+    /* ── Body modal ── */
+    .cl-body {
+      overflow-y: auto; padding: 20px;
+      flex: 1;
+      scroll-behavior: smooth;
+    }
+    .cl-body::-webkit-scrollbar { width: 4px; }
+    .cl-body::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 4px; }
+
+    /* ── Section title ── */
+    .cl-section-title {
+      font-size: 13px; font-weight: 800; color: #7c3aed;
+      text-transform: uppercase; letter-spacing: .8px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Changelog ── */
+    .cl-changelog { display: flex; flex-direction: column; gap: 12px; }
+    .cl-version {
+      background: linear-gradient(135deg, #fff0f8, #f5f3ff);
+      border: 1.5px solid #fbcfe8; border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .cl-version-badge {
+      font-size: 13px; font-weight: 800; color: #be185d;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+    }
+    .cl-version-badge span {
+      font-size: 11px; font-weight: 600; color: #c084a8;
+      background: rgba(236,72,153,.1); border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .cl-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; }
+    .cl-list li { font-size: 13px; color: #4a1942; line-height: 1.5; }
+    .cl-list li strong { color: #be185d; }
+
+    /* ── Guide grid ── */
+    .cl-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 639px) {
+      .cl-guide-grid { grid-template-columns: 1fr; }
+    }
+    .cl-guide-card {
+      background: #fff8fb; border: 1.5px solid #fbcfe8;
+      border-radius: 16px; padding: 14px 16px;
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .cl-guide-card:hover { border-color: #ec4899; box-shadow: 0 4px 16px rgba(236,72,153,.12); }
+    .cl-guide-icon { font-size: 26px; margin-bottom: 6px; }
+    .cl-guide-title { font-size: 14px; font-weight: 800; color: #be185d; margin-bottom: 8px; }
+    .cl-steps {
+      padding-left: 18px; margin: 0;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .cl-steps li { font-size: 12.5px; color: #4a1942; line-height: 1.5; }
+    .cl-steps li strong { color: #7c3aed; }
+
+    /* Dark mode */
+    body.dark .cl-modal { background: #1a0d12; }
+    body.dark .cl-header { background: linear-gradient(135deg, #2d0e1f, #1e1028); }
+    body.dark .cl-version { background: rgba(40,20,30,.8); border-color: #78350f; }
+    body.dark .cl-guide-card { background: rgba(40,20,30,.6); border-color: #78350f; }
+    body.dark .cl-list li, body.dark .cl-steps li { color: #f5e2ea; }
+    body.dark .cl-section-title { color: #c084fc; }
+    body.dark .cl-header-title { color: #f9a8d4; }
+    body.dark .cl-close { background: rgba(236,72,153,.2); color: #f9a8d4; }
+  </style>
+
+  <script>
+    // Toggle modal changelog
+    const clFab      = document.getElementById("clFab");
+    const clModal    = document.getElementById("clModal");
+    const clBackdrop = document.getElementById("clBackdrop");
+    const clClose    = document.getElementById("clClose");
+
+    function openCl()  { clModal.classList.add("show"); clBackdrop.classList.add("show"); document.body.style.overflow = "hidden"; }
+    function closeCl() { clModal.classList.remove("show"); clBackdrop.classList.remove("show"); document.body.style.overflow = ""; }
+
+    clFab.addEventListener("click", openCl);
+    clClose.addEventListener("click", closeCl);
+    clBackdrop.addEventListener("click", closeCl);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCl(); });
+  </script>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/donation-effect.js"></script>
