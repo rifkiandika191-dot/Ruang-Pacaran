@@ -729,12 +729,20 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
 .msg-delete-btn {
   display: none;
   background: none; border: none; cursor: pointer;
-  font-size: 13px; padding: 2px 4px; margin-left: 6px;
-  opacity: 0.5; vertical-align: middle;
-  border-radius: 6px; transition: opacity .12s, background .12s;
+  font-size: 12px; padding: 2px 5px; margin-left: 4px;
+  opacity: 0.45; vertical-align: middle;
+  border-radius: 6px; transition: opacity .12s, background .12s, color .15s;
+  line-height: 1;
 }
-.msg:hover .msg-delete-btn { display: inline-block; }
-.msg-delete-btn:hover { opacity: 1; background: rgba(255,92,138,.12); }
+/* Desktop: tampil saat hover pesan */
+@media (hover: hover) {
+  .msg:hover .msg-delete-btn { display: inline-block; }
+}
+/* Touch device: selalu tampil tapi sangat samar */
+@media (hover: none) {
+  .msg.me .msg-delete-btn { display: inline-block; opacity: 0.25; font-size: 11px; }
+}
+.msg-delete-btn:hover, .msg-delete-btn:focus { opacity: 1; background: rgba(255,92,138,.12); }
 
 /* Pesan yang sudah dihapus */
 .msg.msg-deleted { opacity: 0.55; }
