@@ -113,6 +113,61 @@ function updateStreak(roomId) {
 }
 
 // ------------------------------------------------------------
+//  QUOTES HARIAN
+// ------------------------------------------------------------
+const DAILY_QUOTES = [
+  "Jarak bukan penghalang, selama hati kita saling mendekat 💕",
+  "Rindu itu tanda cinta yang sedang berjuang melawan jarak 🌙",
+  "Cinta sejati tidak butuh jarak dekat, hanya hati yang setia 🌹",
+  "Setiap pesan yang kamu kirim adalah pelukan yang melewati ribuan kilometer 🤗",
+  "LDR bukan Long Distance Relationship, tapi Love Doesn't Run 💪",
+  "Waktu terasa lambat saat jauh darimu, tapi setiap detiknya berharga ⏰",
+  "Yang terbaik dari LDR adalah momen reuni yang selalu terasa seperti pertama 🥰",
+  "Bintang yang sama menerangi kita berdua meski kita berjauhan 🌟",
+  "Percayalah, semua jarak akan terbayar oleh pelukan pertama kalian 🤍",
+  "Tidak ada yang lebih kuat dari cinta yang mampu bertahan jarak dan waktu ✨",
+  "Selamat pagi! Semoga harimu seindah perasaanmu saat lihat nama dia muncul di HP 📱",
+  "Cinta yang tulus tidak kenal jarak, hanya kenal kesetiaan 💖",
+  "Kamu jauh di mata, tapi selalu dekat di hati dan di pikiran 🫶",
+  "Menunggumu bukan siksaan, karena aku tahu kamu selalu setia 🕊️",
+  "Setiap hari tanpa kamu adalah latihan untuk menghargai waktu bersamamu nanti 🌺",
+];
+let lastQuoteDate = "";
+
+// ------------------------------------------------------------
+//  TEBAK LAGU
+// ------------------------------------------------------------
+const SONGS = [
+  { title: "Perfect",                       artist: "Ed Sheeran",                    ytId: "2Vv-BfVoq4g", start: 55  },
+  { title: "A Thousand Years",              artist: "Christina Perri",               ytId: "rtOvBOTyX00", start: 65  },
+  { title: "All of Me",                     artist: "John Legend",                   ytId: "450p7goxZqg", start: 50  },
+  { title: "Thinking Out Loud",             artist: "Ed Sheeran",                    ytId: "lp-EO5I60KA", start: 78  },
+  { title: "Just the Way You Are",          artist: "Bruno Mars",                    ytId: "LjhCEhWiKXk", start: 20  },
+  { title: "Shape of You",                  artist: "Ed Sheeran",                    ytId: "JGwWNGJdvx8", start: 25  },
+  { title: "Can't Help Falling in Love",    artist: "Elvis Presley",                 ytId: "vGJTaP6anOU", start: 15  },
+  { title: "Senorita",                      artist: "Shawn Mendes & Camila Cabello", ytId: "Pkh8UtuejGw", start: 30  },
+  { title: "Havana",                        artist: "Camila Cabello",                ytId: "HCjNJDNzw8Y", start: 18  },
+  { title: "Marry You",                     artist: "Bruno Mars",                    ytId: "kYtGl1dX5qI", start: 20  },
+  { title: "Lover",                         artist: "Taylor Swift",                  ytId: "ApXoWvfEYVU", start: 40  },
+  { title: "Golden Hour",                   artist: "JVKE",                          ytId: "PEM0Vs8jf1w", start: 30  },
+];
+let guessGame = { active: false, song: null, timer: null };
+
+// ------------------------------------------------------------
+//  BADGE / LEVEL CHAT
+// ------------------------------------------------------------
+const BADGES_FILE = path.join(DATA_DIR, "badges.json");
+let userBadges = {};
+try { userBadges = JSON.parse(fs.readFileSync(BADGES_FILE, "utf8")) || {}; } catch { userBadges = {}; }
+function saveBadges() { try { fs.writeFileSync(BADGES_FILE, JSON.stringify(userBadges)); } catch(e) {} }
+function getBadge(count) {
+  if (count >= 200) return { emoji: "👑", label: "Legend"        };
+  if (count >= 50)  return { emoji: "🌟", label: "Warga Tetap"   };
+  if (count >= 10)  return { emoji: "💬", label: "Reguler"       };
+  return               { emoji: "🌱", label: "Pendatang Baru" };
+}
+
+// ------------------------------------------------------------
 //  DONASI (dari Saweria webhook)
 // ------------------------------------------------------------
 const DONATIONS_FILE = path.join(DATA_DIR, "donations.json");
