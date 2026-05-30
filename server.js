@@ -56,6 +56,27 @@ try { roomScores = JSON.parse(fs.readFileSync(SCORES_FILE, "utf8")) || {}; } cat
 function saveScores() { try { fs.writeFileSync(SCORES_FILE, JSON.stringify(roomScores)); } catch (e) {} }
 
 // ------------------------------------------------------------
+//  STREAK HARIAN — { roomId: { lastDate, streak, longest } }
+// ------------------------------------------------------------
+const STREAKS_FILE = path.join(DATA_DIR, "streaks.json");
+let roomStreaks = {};
+try { roomStreaks = JSON.parse(fs.readFileSync(STREAKS_FILE, "utf8")) || {}; } catch { roomStreaks = {}; }
+function saveStreaks() { try { fs.writeFileSync(STREAKS_FILE, JSON.stringify(roomStreaks)); } catch (e) {} }
+
+function updateStreak(roomId) {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
+  const s = roomStreaks[roomId] || { lastDate: null, streak: 0, longest: 0 };
+  if (s.lastDate === today) return s; // sudah dihitung hari ini
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  s.streak = (s.lastDate === yesterday) ? s.streak + 1 : 1;
+  s.lastDate = today;
+  s.longest = Math.max(s.streak, s.longest);
+  roomStreaks[roomId] = s;
+  saveStreaks();
+  return s;
+}
+
+// ------------------------------------------------------------
 //  RESET VOTES — harus di module scope agar votes antar user terkumpul
 // ------------------------------------------------------------
 const resetVotes = {}; // roomId -> Set<socketId>
