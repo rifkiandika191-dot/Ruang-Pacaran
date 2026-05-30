@@ -427,6 +427,143 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
 .sp-arrow { font-size: 20px; color: var(--pink-dark); flex-shrink: 0; }
 
 /* ============================================================
+   CHAT GLOBAL (/chat)
+   ============================================================ */
+.gc-page {
+  display: flex; flex-direction: column; height: 100dvh;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+  overflow: hidden;
+}
+
+/* Header */
+.gc-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--card); border-bottom: 1px solid var(--peach);
+  box-shadow: 0 2px 10px rgba(226,62,111,.08);
+  flex-shrink: 0; z-index: 10;
+}
+.gc-back {
+  font-size: 20px; color: var(--pink-dark); text-decoration: none;
+  font-weight: 700; padding: 4px 8px; border-radius: 8px;
+  transition: background .12s; flex-shrink: 0;
+}
+.gc-back:hover { background: var(--peach); }
+.gc-header-info { flex: 1; min-width: 0; }
+.gc-title    { font-size: 17px; font-weight: 700; color: var(--pink-dark); }
+.gc-subtitle { font-size: 12px; color: var(--muted); }
+.gc-online-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--cream); border: 1.5px solid var(--peach);
+  border-radius: 999px; padding: 5px 12px;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  flex-shrink: 0; white-space: nowrap;
+}
+.gc-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  animation: gcDotPulse 1.5s ease-in-out infinite;
+}
+@keyframes gcDotPulse {
+  0%,100% { opacity: 1; } 50% { opacity: .4; }
+}
+
+/* Join screen */
+.gc-join-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px;
+}
+.gc-join-card {
+  background: var(--card); border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1px solid var(--peach);
+  padding: 32px 28px; width: 100%; max-width: 400px; text-align: center;
+}
+.gc-join-card h2 { font-size: 22px; color: var(--pink-dark); margin-bottom: 8px; }
+.gc-join-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+/* Chat area */
+.gc-chat-wrap {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+.gc-list {
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  scroll-behavior: smooth;
+}
+
+/* Pesan */
+.gc-msg { display: flex; flex-direction: column; max-width: 78%; }
+.gc-me   { align-self: flex-end; align-items: flex-end; }
+.gc-them { align-self: flex-start; align-items: flex-start; }
+.gc-system {
+  align-self: center; max-width: 100%;
+  font-size: 11px; color: var(--muted);
+  background: var(--cream); border-radius: 999px;
+  padding: 4px 14px; text-align: center;
+}
+.gc-who  { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 2px; padding: 0 4px; }
+.gc-bubble {
+  padding: 10px 14px; border-radius: 18px; font-size: 14px;
+  line-height: 1.45; word-break: break-word; max-width: 100%;
+}
+.gc-me   .gc-bubble { background: var(--grad); color: #fff; border-bottom-right-radius: 5px; }
+.gc-them .gc-bubble {
+  background: var(--card); color: var(--ink);
+  border: 1.5px solid var(--peach); border-bottom-left-radius: 5px;
+}
+.gc-time { font-size: 10px; color: var(--muted); margin-top: 2px; padding: 0 4px; }
+
+/* Emoji quick */
+.gc-emoji-row {
+  display: flex; gap: 6px; padding: 6px 14px;
+  overflow-x: auto; flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
+  border-top: 1px solid var(--peach);
+  background: var(--card);
+}
+.gc-emoji-row button {
+  background: var(--cream); border: 1.5px solid var(--peach);
+  border-radius: 10px; padding: 6px 10px; font-size: 18px;
+  cursor: pointer; flex-shrink: 0; transition: background .12s;
+}
+.gc-emoji-row button:hover { background: var(--peach); }
+
+/* Input bar */
+.gc-input-bar {
+  display: flex; gap: 8px; padding: 10px 14px 14px;
+  background: var(--card); border-top: 1px solid var(--peach);
+  flex-shrink: 0;
+}
+.gc-input-bar input {
+  flex: 1; padding: 11px 14px; border: 2px solid var(--peach);
+  border-radius: 14px; font-size: 15px; color: var(--ink);
+  background: var(--cream); outline: none;
+  font-family: inherit; transition: border-color .15s;
+}
+.gc-input-bar input:focus { border-color: var(--pink); }
+.gc-send { padding: 11px 20px; font-size: 14px; flex-shrink: 0; }
+
+/* Promo card global chat di landing */
+.gc-promo-card { border-color: #a5f3fc !important; }
+.gc-promo-card:hover { border-color: #0ea5e9 !important; }
+.gc-promo-card .sp-title { color: #0369a1; }
+
+/* Dark mode */
+body.dark .gc-them .gc-bubble { background: var(--card); border-color: var(--peach); }
+body.dark .gc-input-bar input { background: var(--card); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .gc-header { padding: 10px 12px; gap: 8px; }
+  .gc-title  { font-size: 15px; }
+  .gc-subtitle { display: none; }
+  .gc-online-pill { font-size: 12px; padding: 4px 10px; }
+  .gc-bubble { font-size: 13px; padding: 9px 12px; }
+  .gc-input-bar input { font-size: 16px; } /* cegah zoom iOS */
+  .gc-send { padding: 11px 14px; font-size: 13px; }
+}
+
+/* ============================================================
    HALAMAN SARAN (/saran)
    ============================================================ */
 .saran-page {
