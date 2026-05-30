@@ -183,7 +183,12 @@ app.post("/api/donation-webhook", (req, res) => {
   donations.unshift(donation);
   if (donations.length > 500) donations = donations.slice(0, 500);
   saveDonations();
-  io.emit("new-donation", donation);   // kirim live ke semua halaman
+  // Efek kembang api hanya untuk donasi >= Rp 10.000
+  if (donation.amount >= 10000) {
+    io.emit("new-donation", donation);
+  } else {
+    io.emit("new-donation-small", donation); // masuk leaderboard tapi tanpa efek besar
+  }
   res.json({ ok: true });
 });
 
