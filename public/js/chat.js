@@ -195,6 +195,33 @@ socket.on("gc-online", (n) => {
   g("gcOnlineCount").textContent = n;
 });
 
+// ── Leaderboard ──
+const RANKS = ["🥇","🥈","🥉"];
+function renderLeaderboard(top) {
+  const el = g("lbItems");
+  if (!el) return;
+  if (!top || !top.length) { el.innerHTML = '<div class="lb-empty">Belum ada data</div>'; return; }
+  el.innerHTML = top.map((u,i) => `
+    <div class="lb-item">
+      <span class="lb-rank">${RANKS[i]||"#"+(i+1)}</span>
+      <span class="lb-name">${u.name}</span>
+      <span class="lb-count">${u.count} pesan</span>
+    </div>
+  `).join("");
+}
+
+// Load leaderboard saat join
+async function loadLeaderboard() {
+  try {
+    const res = await fetch("/api/leaderboard");
+    const top = await res.json();
+    renderLeaderboard(top.slice(0,3));
+  } catch(e) {}
+}
+loadLeaderboard();
+
+socket.on("gc-leaderboard", (top) => renderLeaderboard(top));
+
 // Typing indicator dari orang lain
 socket.on("gc-typing", ({ name }) => {
   if (name === myName) return;
