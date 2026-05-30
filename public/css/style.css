@@ -719,6 +719,21 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
 .rh-time { font-size: 11px; color: var(--pink-dark); font-weight: 600; }
 .rh-btn  { padding: 8px 16px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
 
+/* Tombol hapus pesan */
+.msg-delete-btn {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; padding: 2px 4px; margin-left: 6px;
+  opacity: 0.5; vertical-align: middle;
+  border-radius: 6px; transition: opacity .12s, background .12s;
+}
+.msg:hover .msg-delete-btn { display: inline-block; }
+.msg-delete-btn:hover { opacity: 1; background: rgba(255,92,138,.12); }
+
+/* Pesan yang sudah dihapus */
+.msg.msg-deleted { opacity: 0.55; }
+.deleted-text { font-style: italic; color: var(--muted); font-size: 13px; }
+
 /* Pemisah riwayat chat */
 .chat-history-sep {
   font-size: 11px !important;
