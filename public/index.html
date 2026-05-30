@@ -266,18 +266,46 @@
   </div>
 
   <style>
-    /* ── Tombol floating ── */
-    .cl-fab {
+    /* ── Tombol floating wrapper ── */
+    .cl-fab-wrap {
       position: fixed; bottom: 24px; left: 24px; z-index: 490;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .cl-fab {
       width: 48px; height: 48px; border-radius: 50%; border: none;
       background: linear-gradient(135deg, #ec4899, #a855f7);
       color: #fff; font-size: 20px; cursor: pointer;
       box-shadow: 0 4px 16px rgba(236,72,153,.4);
       transition: transform .15s, box-shadow .15s;
       display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
     .cl-fab:hover { transform: scale(1.1); box-shadow: 0 6px 22px rgba(236,72,153,.55); }
     .cl-fab:active { transform: scale(.93); }
+
+    /* Hint label */
+    .cl-fab-hint {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: #fff; border-radius: 999px;
+      padding: 8px 14px; font-size: 13px; font-weight: 700;
+      box-shadow: 0 4px 16px rgba(236,72,153,.4);
+      white-space: nowrap; cursor: pointer;
+      animation: hintPulse 2s ease-in-out infinite;
+      transition: opacity .4s, transform .4s;
+    }
+    .cl-fab-hint.hide {
+      opacity: 0; pointer-events: none; transform: translateX(-10px);
+    }
+    .cl-hint-arrow { font-size: 16px; animation: arrowBounce .7s ease-in-out infinite alternate; }
+    @keyframes hintPulse {
+      0%,100% { box-shadow: 0 4px 16px rgba(236,72,153,.4); }
+      50%      { box-shadow: 0 4px 24px rgba(168,85,247,.6); }
+    }
+    @keyframes arrowBounce {
+      from { transform: translateX(0); }
+      to   { transform: translateX(4px); }
+    }
 
     /* ── Backdrop ── */
     .cl-backdrop {
