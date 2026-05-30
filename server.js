@@ -554,6 +554,45 @@ io.on("connection", (socket) => {
     socket.emit("match-cancelled");
   });
 
+  // ── GLOBAL CHAT ──
+  let gcName = null;
+
+  socket.on("gc-join", ({ name }) => {
+    gcName = (name || "Anonim").trim().slice(0, 24) || "Anonim";
+    socket.join(GLOBAL_ROOM);
+    globalOnline++;
+    // Kirim riwayat pesan ke yang baru masuk
+    socket.emit("gc-history", globalMessages);
+    // Beritahu jumlah online
+    io.to(GLOBAL_ROOM).emit("gc-online", globalOnline);
+    // Pesan sistem
+    const msg = { system: true, text: `${gcName} bergabung 👋`, ts: Date.now() };
+    io.to(GLOBAL_ROOM).emit("gc-msg", msg);
+    globalMessages.push(msg);
+    if (globalMessages.length > 100) globalMessages.shift();
+  });
+
+  socket.on("gc-chat", ({ text }) => {
+    if (!gcName || !text) return;
+    const clean = String(text).trim().slice(0, 300);
+    if (!clean) return;
+    const msg = { id: socket.id, name: gcName, text: clean, ts: Date.now() };
+    io.to(GLOBAL_ROOM).emit("gc-msg", msg);
+    globalMessages.push(msg);
+    if (globalMessages.length > 100) globalMessages.shift();
+  });
+
+  socket.on("disconnecting", () => {
+    if (socket.rooms.has(GLOBAL_ROOM) && gcName) {
+      globalOnline = Math.max(0, globalOnline - 1);
+      const msg = { system: true, text: `${gcName} meninggalkan chat 🌸`, ts: Date.now() };
+      io.to(GLOBAL_ROOM).emit("gc-msg", msg);
+      io.to(GLOBAL_ROOM).emit("gc-online", globalOnline);
+      globalMessages.push(msg);
+      if (globalMessages.length > 100) globalMessages.shift();
+    }
+  });
+
   // Skip: beri tahu pasangan di room bahwa kita pergi mencari yang lain
   socket.on("match-skip", () => {
     if (currentRoom) socket.to(currentRoom).emit("partner-skipped", { name: myName });
