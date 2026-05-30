@@ -224,7 +224,7 @@ io.on("connection", (socket) => {
     if (img && typeof img === "string" && img.length < 2_200_000) msg.img = img;
     // audio = base64 data URL, batasi ~600KB (~30 detik opus/webm)
     if (audio && typeof audio === "string" && audio.length < 650_000) msg.audio = audio;
-    io.to(currentRoom).emit("chat", msg);
+    emitRoomChat(currentRoom, msg);
   });
 
   // --- Typing indicator ---
