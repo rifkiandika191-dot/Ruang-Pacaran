@@ -154,14 +154,86 @@ function removeFromQueue(socketId) {
 }
 
 // Route eksplisit (biar refresh di /room tetap jalan)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/room", (req, res) => res.sendFile(path.join(__dirname, "public", "room.html")));
+app.get("/find", (req, res) => res.sendFile(path.join(__dirname, "public", "find.html")));
+app.get("/saran", (req, res) => res.sendFile(path.join(__dirname, "public", "saran.html")));
+
+// ─────────────────────────────────────────────────────────────
+//  API: SAWERIA WEBHOOK (terima notifikasi donasi)
+//  Isi webhook URL di Saweria: https://domain-kamu/api/donation-webhook
+// ─────────────────────────────────────────────────────────────
+app.post("/api/donation-webhook", (req, res) => {
+  // Verifikasi secret opsional (set env SAWERIA_SECRET di Railway)
+  const secret = process.env.SAWERIA_SECRET;
+  if (secret) {
+    const incoming = req.headers["x-saweria-key"] || req.query.key || "";
+    if (incoming !== secret) return res.status(401).json({ error: "Unauthorized" });
+  }
+  const body = req.body || {};
+  const data = body.data || body;
+  if (!data.donator_name) return res.status(400).json({ error: "Invalid payload" });
+
+  const donation = {
+    name:    String(data.donator_name || "Anonim").slice(0, 50).trim(),
+    amount:  Math.max(0, Number(data.amount) || 0),
+    message: String(data.message || "").slice(0, 300).trim(),
+    ts:      Date.now(),
+  };
+  donations.unshift(donation);
+  if (donations.length > 500) donations = donations.slice(0, 500);
+  saveDonations();
+  io.emit("new-donation", donation);   // kirim live ke semua halaman
+  res.json({ ok: true });
 });
-app.get("/room", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "room.html"));
+
+// API: top donatur (aggregate per nama)
+app.get("/api/top-donors", (req, res) => {
+  const map = {};
+  donations.forEach((d) => {
+    const key = d.name.toLowerCase();
+    if (!map[key]) map[key] = { name: d.name, total: 0, count: 0 };
+    map[key].total += d.amount;
+    map[key].count++;
+  });
+  const top = Object.values(map).sort((a, b) => b.total - a.total).slice(0, 10);
+  res.json(top);
 });
-app.get("/find", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "find.html"));
+
+// API: donasi terbaru
+app.get("/api/recent-donations", (req, res) => res.json(donations.slice(0, 10)));
+
+// ─────────────────────────────────────────────────────────────
+//  API: SARAN / FITUR / BUG
+// ─────────────────────────────────────────────────────────────
+app.post("/api/feedback", (req, res) => {
+  const { name, type, message } = req.body || {};
+  if (!message || !String(message).trim()) return res.status(400).json({ error: "Pesan kosong" });
+  const types = ["saran", "fitur", "bug"];
+  const fb = {
+    id:      Date.now(),
+    name:    String(name || "Anonim").slice(0, 40).trim() || "Anonim",
+    type:    types.includes(type) ? type : "saran",
+    message: String(message).slice(0, 800).trim(),
+    ts:      Date.now(),
+    likes:   0,
+  };
+  feedbacks.unshift(fb);
+  if (feedbacks.length > 300) feedbacks = feedbacks.slice(0, 300);
+  saveFeedback();
+  io.emit("new-feedback", fb);
+  res.json({ ok: true, id: fb.id });
+});
+
+app.get("/api/feedback", (req, res) => res.json(feedbacks.slice(0, 100)));
+
+// Like feedback
+app.post("/api/feedback/:id/like", (req, res) => {
+  const fb = feedbacks.find((f) => f.id === Number(req.params.id));
+  if (!fb) return res.status(404).json({ error: "Not found" });
+  fb.likes = (fb.likes || 0) + 1;
+  saveFeedback();
+  res.json({ ok: true, likes: fb.likes });
 });
 
 // ------------------------------------------------------------
