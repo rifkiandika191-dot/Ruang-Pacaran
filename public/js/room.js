@@ -156,7 +156,7 @@ function escapeHtml(s) {
 
 socket.on("chat", (m) => {
   if (m.system) return addMsg({ system: true, text: m.text });
-  addMsg({ name: m.name, text: m.text, img: m.img, audio: m.audio, mine: m.id === myId });
+  addMsg({ name: m.name, text: m.text, img: m.img, mine: m.id === myId, msgId: m.msgId });
 });
 
 function sendChat() {
