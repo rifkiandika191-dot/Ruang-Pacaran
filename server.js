@@ -923,6 +923,17 @@ io.on("connection", (socket) => {
     saveBadges();
     const badge = getBadge(userBadges[bKey]);
 
+    // ── Weekly leaderboard tracking ──
+    ensureWeek();
+    weeklyData.data[bKey] = (weeklyData.data[bKey] || 0) + 1;
+    saveWeekly();
+    // Broadcast leaderboard update setiap 10 pesan
+    if (weeklyData.data[bKey] % 10 === 0) {
+      const top3 = Object.entries(weeklyData.data).sort((a,b)=>b[1]-a[1]).slice(0,3)
+        .map(([name,count],i) => ({ rank:i+1, name, count }));
+      io.to(GLOBAL_ROOM).emit("gc-leaderboard", top3);
+    }
+
     const msg = { id: socket.id, name: gcName, text: clean, ts: Date.now(), badge };
     io.to(GLOBAL_ROOM).emit("gc-msg", msg);
     globalMessages.push(msg);
