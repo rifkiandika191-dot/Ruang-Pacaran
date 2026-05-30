@@ -212,11 +212,7 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("scoreboard", roomScores[roomId]);
 
     // Pesan sistem
-    io.to(roomId).emit("chat", {
-      system: true,
-      text: `${myName} masuk ke ruangan 💕`,
-      ts: Date.now(),
-    });
+    emitRoomChat(roomId, { system: true, text: `${myName} masuk ke ruangan 💕`, ts: Date.now() });
   });
 
   // --- Chat ---
