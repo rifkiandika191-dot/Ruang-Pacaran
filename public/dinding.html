@@ -218,25 +218,8 @@
   });
 
   // Submit post
-  let imgData = null;
   g("dwMsg").addEventListener("input", () => {
     g("dwChar").textContent = 300 - g("dwMsg").value.length;
-  });
-  g("dwImgBtn").addEventListener("click", () => g("dwImgInput").click());
-  g("dwImgInput").addEventListener("change", e => {
-    const file = e.target.files[0]; if(!file) return;
-    if(file.size > 100*1024*1024) { toast("Gambar max 100MB"); return; }
-    const reader = new FileReader();
-    reader.onload = r => {
-      imgData = r.result;
-      g("dwPreviewImg").src = imgData;
-      g("dwPreview").style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  });
-  g("dwPreviewDel").addEventListener("click", () => {
-    imgData = null; g("dwPreview").style.display = "none";
-    g("dwImgInput").value = "";
   });
 
   g("dwSubmit").addEventListener("click", async () => {
@@ -246,18 +229,16 @@
     if(!name) { toast("Isi namamu dulu!"); g("dwName").focus(); return; }
     if(!msg)  { toast("Tulis pesannya dulu!"); g("dwMsg").focus(); return; }
 
-    // Simpan nama untuk next time
     if(name) localStorage.setItem("pacaran_name", name);
 
     g("dwSubmit").disabled = true; g("dwSubmit").textContent = "Mengirim...";
     try {
       await fetch("/api/dinding", {
         method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ name, to, message: msg, image: imgData }),
+        body: JSON.stringify({ name, to, message: msg }),
       });
       g("dwMsg").value = ""; g("dwTo").value = "";
       g("dwChar").textContent = "300";
-      imgData = null; g("dwPreview").style.display = "none"; g("dwImgInput").value = "";
       toast("Pesan terkirim! 💌");
     } catch(e) { toast("Gagal mengirim 😢"); }
     g("dwSubmit").disabled = false; g("dwSubmit").textContent = "Kirim 💌";
