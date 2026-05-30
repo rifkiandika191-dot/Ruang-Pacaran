@@ -713,11 +713,17 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
 }
 .rh-card:hover { border-color: var(--pink); box-shadow: 0 4px 14px rgba(255,92,138,.12); }
 
-.rh-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.rh-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
 .rh-code { font-weight: 700; font-size: 15px; color: var(--ink); }
 .rh-meta { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rh-time { font-size: 11px; color: var(--pink-dark); font-weight: 600; }
 .rh-btn  { padding: 8px 16px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+.rh-empty {
+  text-align: center; font-size: 13px; color: var(--muted);
+  padding: 14px 12px; background: var(--cream);
+  border: 1.5px dashed var(--peach); border-radius: 14px;
+  line-height: 1.5;
+}
 
 /* Tombol hapus pesan */
 .msg-delete-btn {
