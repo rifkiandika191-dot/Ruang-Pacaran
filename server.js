@@ -112,6 +112,22 @@ function updateStreak(roomId) {
 }
 
 // ------------------------------------------------------------
+//  DONASI (dari Saweria webhook)
+// ------------------------------------------------------------
+const DONATIONS_FILE = path.join(DATA_DIR, "donations.json");
+let donations = [];
+try { donations = JSON.parse(fs.readFileSync(DONATIONS_FILE, "utf8")) || []; } catch { donations = []; }
+function saveDonations() { try { fs.writeFileSync(DONATIONS_FILE, JSON.stringify(donations)); } catch (e) {} }
+
+// ------------------------------------------------------------
+//  SARAN / FITUR / BUG dari user
+// ------------------------------------------------------------
+const FEEDBACK_FILE = path.join(DATA_DIR, "feedback.json");
+let feedbacks = [];
+try { feedbacks = JSON.parse(fs.readFileSync(FEEDBACK_FILE, "utf8")) || []; } catch { feedbacks = []; }
+function saveFeedback() { try { fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(feedbacks)); } catch (e) {} }
+
+// ------------------------------------------------------------
 //  RESET VOTES — harus di module scope agar votes antar user terkumpul
 // ------------------------------------------------------------
 const resetVotes = {}; // roomId -> Set<socketId>
