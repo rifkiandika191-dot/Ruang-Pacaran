@@ -302,6 +302,16 @@
       emojis[Math.floor(Math.random() * emojis.length)];
     document.getElementById("dtWho").textContent = `🎉 ${donation.name} baru saja donasi!`;
     document.getElementById("dtAmt").textContent  = fmtRp(donation.amount || 0);
+    const msgEl = document.getElementById("dtMsg");
+    const hintEl = document.getElementById("dtHint");
+    if (donation.message && donation.message.trim()) {
+      msgEl.textContent = donation.message.trim();
+      msgEl.style.display = "block";
+      if (hintEl) hintEl.style.display = "none";
+    } else {
+      msgEl.style.display = "none";
+      if (hintEl) hintEl.style.display = "block";
+    }
 
     const toast = document.getElementById("donToast");
     const bd    = document.getElementById("donBackdrop");
