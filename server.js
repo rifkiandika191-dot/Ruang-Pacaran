@@ -278,6 +278,119 @@ function getBadge(count) {
 // ------------------------------------------------------------
 //  DONASI (dari Saweria webhook)
 // ------------------------------------------------------------
+//  DINDING CINTA
+// ------------------------------------------------------------
+const DINDING_FILE = path.join(DATA_DIR, "dinding.json");
+let dindingPosts = [];
+try { dindingPosts = JSON.parse(fs.readFileSync(DINDING_FILE, "utf8")) || []; } catch { dindingPosts = []; }
+function saveDinding() { try { fs.writeFileSync(DINDING_FILE, JSON.stringify(dindingPosts)); } catch(e) {} }
+function cleanDinding() {
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const before = dindingPosts.length;
+  dindingPosts = dindingPosts.filter(p => p.ts > cutoff);
+  if (dindingPosts.length !== before) saveDinding();
+}
+cleanDinding();
+setInterval(cleanDinding, 60 * 60 * 1000);
+
+app.get("/api/dinding", (req, res) => res.json(dindingPosts.slice(0, 60).map(p => ({ ...p, likedBy: undefined }))));
+app.post("/api/dinding", (req, res) => {
+  const { name, to, message, image } = req.body || {};
+  if (!name || !message) return res.status(400).json({ error: "Nama dan pesan wajib diisi" });
+  if (String(message).length > 300) return res.status(400).json({ error: "Pesan terlalu panjang" });
+  if (image && String(image).length > 600000) return res.status(400).json({ error: "Gambar terlalu besar (max 400KB)" });
+  const post = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    name: String(name).slice(0,30).trim(),
+    to:   to ? String(to).slice(0,30).trim() : null,
+    message: String(message).slice(0,300).trim(),
+    image: image || null,
+    likes: 0, likedBy: [],
+    ts: Date.now(),
+  };
+  dindingPosts.unshift(post);
+  if (dindingPosts.length > 300) dindingPosts = dindingPosts.slice(0, 300);
+  saveDinding();
+  io.emit("dinding-new", { ...post, likedBy: undefined });
+  res.json({ ...post, likedBy: undefined });
+});
+app.post("/api/dinding/:id/like", (req, res) => {
+  const post = dindingPosts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ error: "Post tidak ditemukan" });
+  const ip = String(req.ip || req.headers["x-forwarded-for"] || "anon").slice(0,40);
+  if (!post.likedBy.includes(ip)) { post.likes++; post.likedBy.push(ip); saveDinding(); }
+  io.emit("dinding-like", { id: post.id, likes: post.likes });
+  res.json({ likes: post.likes });
+});
+
+// ------------------------------------------------------------
+//  CERITA HARI INI (expire 24 jam)
+// ------------------------------------------------------------
+const STORIES_FILE = path.join(DATA_DIR, "stories.json");
+let stories = [];
+try { stories = JSON.parse(fs.readFileSync(STORIES_FILE, "utf8")) || []; } catch { stories = []; }
+function saveStories() { try { fs.writeFileSync(STORIES_FILE, JSON.stringify(stories)); } catch(e) {} }
+function cleanStories() {
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  const before = stories.length;
+  stories = stories.filter(s => s.ts > cutoff);
+  if (stories.length !== before) saveStories();
+}
+cleanStories();
+setInterval(cleanStories, 15 * 60 * 1000);
+
+app.get("/api/stories", (req, res) => { cleanStories(); res.json(stories.slice(0,30).map(s => ({ ...s, image: s.image ? true : false }))); });
+app.get("/api/stories/:id", (req, res) => {
+  const s = stories.find(s => s.id === req.params.id);
+  if (!s) return res.status(404).json({ error: "Story tidak ditemukan atau sudah expire" });
+  res.json(s);
+});
+app.post("/api/stories", (req, res) => {
+  const { name, text, image, emoji } = req.body || {};
+  if (!name || !text) return res.status(400).json({ error: "Wajib diisi" });
+  if (String(text).length > 200) return res.status(400).json({ error: "Terlalu panjang" });
+  if (image && String(image).length > 1500000) return res.status(400).json({ error: "Gambar terlalu besar" });
+  stories = stories.filter(s => s.name.toLowerCase() !== String(name).toLowerCase().trim());
+  const story = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    name: String(name).slice(0,24).trim(),
+    text: String(text).slice(0,200).trim(),
+    image: image || null,
+    emoji: emoji || "😊",
+    ts: Date.now(),
+  };
+  stories.unshift(story);
+  if (stories.length > 50) stories = stories.slice(0,50);
+  saveStories();
+  io.emit("story-new", { ...story, image: !!story.image });
+  res.json({ ...story, image: !!story.image });
+});
+
+// ------------------------------------------------------------
+//  LEADERBOARD MINGGUAN CHAT GLOBAL
+// ------------------------------------------------------------
+function getWeekKey() {
+  const d = new Date(); const y = d.getFullYear();
+  const start = new Date(y, 0, 1);
+  const w = Math.ceil(((d - start) / 86400000 + start.getDay() + 1) / 7);
+  return `${y}-W${w}`;
+}
+const WEEKLY_FILE = path.join(DATA_DIR, "weekly.json");
+let weeklyData = { key: "", data: {} };
+try { weeklyData = JSON.parse(fs.readFileSync(WEEKLY_FILE, "utf8")) || { key:"", data:{} }; } catch { weeklyData = { key:"", data:{} }; }
+function saveWeekly() { try { fs.writeFileSync(WEEKLY_FILE, JSON.stringify(weeklyData)); } catch(e) {} }
+function ensureWeek() { const k = getWeekKey(); if (weeklyData.key !== k) { weeklyData = { key: k, data: {} }; saveWeekly(); } }
+ensureWeek();
+
+app.get("/api/leaderboard", (req, res) => {
+  ensureWeek();
+  const top = Object.entries(weeklyData.data)
+    .sort((a,b) => b[1]-a[1]).slice(0,10)
+    .map(([name,count],i) => ({ rank:i+1, name, count }));
+  res.json(top);
+});
+
+// ------------------------------------------------------------
 const DONATIONS_FILE = path.join(DATA_DIR, "donations.json");
 let donations = [];
 try { donations = JSON.parse(fs.readFileSync(DONATIONS_FILE, "utf8")) || []; } catch { donations = []; }
