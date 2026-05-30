@@ -879,4 +879,38 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   .join-row .btn { width: 100%; }
   .home-nav { flex-direction: column; }
   .home-nav .navlink { text-align: center; }
+
+  /* ── Fitur baru: Room History (mobile) ── */
+  .rh-card { flex-direction: column; align-items: stretch; gap: 8px; }
+  .rh-btn  { width: 100%; text-align: center; padding: 10px; }
+  .rh-meta { white-space: normal; }
+
+  /* ── Fitur baru: Streak Badge (mobile) ── */
+  .streak-badge { font-size: 11px; padding: 4px 8px; }
+
+  /* ── Fitur baru: Fun bar (mobile) ── */
+  .fun-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .fun-btn { font-size: 12px; padding: 8px 4px; border-radius: 12px; text-align: center; }
+
+  /* ── Fitur baru: Location modal (mobile) ── */
+  .location-display { flex-direction: column; gap: 0; padding: 12px; }
+  .loc-card { flex-direction: row; justify-content: space-between; align-items: center; width: 100%;
+    padding: 10px 0; border-bottom: 1px solid var(--peach); }
+  .loc-card:last-child { border-bottom: none; }
+  .loc-middle { flex-direction: row; justify-content: space-around; width: 100%;
+    padding: 10px 0; border-bottom: 1px solid var(--peach); order: -1; }
+  .loc-distance-km { font-size: 20px; }
+  .loc-time { font-size: 18px; }
+
+  /* ── Fitur baru: Game tabs (mobile: scroll horizontal) ── */
+  .game-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  .gtab { flex: 0 0 auto; font-size: 12px; padding: 7px 10px; }
+
+  /* ── Hapus pesan: tombol tampil tanpa hover di touch ── */
+  .msg-delete-btn { display: inline-block; }
+
+  /* ── Topbar sangat padat: sembunyikan elemen sekunder ── */
+  .session-timer { display: none; }
+  .countdown { font-size: 10px; padding: 4px 8px; max-width: 160px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
