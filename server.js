@@ -22,8 +22,8 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" })); // Saweria kirim form-encoded
+app.use(express.json({ limit: "150mb" }));
+app.use(express.urlencoded({ extended: true, limit: "150mb" })); // Saweria kirim form-encoded
 
 // Sajikan file statis dari folder /public
 app.use(express.static(path.join(__dirname, "public")));
