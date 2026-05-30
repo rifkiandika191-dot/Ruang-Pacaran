@@ -269,17 +269,36 @@
   function playTing() {
     try {
       const ctx = _getCtx();
-      [[880,0,.18],[1047,.15,.2],[1319,.32,.3]].forEach(([freq,delay,dur]) => {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
+      const now = ctx.currentTime;
+
+      function n(freq, t, dur, type, vol, freqEnd) {
+        const o = ctx.createOscillator(), g = ctx.createGain();
         o.connect(g); g.connect(ctx.destination);
-        o.type = "triangle";
-        o.frequency.value = freq;
-        const t = ctx.currentTime + delay;
-        g.gain.setValueAtTime(0.35, t);
+        o.type = type;
+        o.frequency.setValueAtTime(freq, t);
+        if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, t + dur * 0.4);
+        g.gain.setValueAtTime(vol, t);
         g.gain.exponentialRampToValueAtTime(0.001, t + dur);
         o.start(t); o.stop(t + dur + 0.05);
-      });
+      }
+
+      // Bass punch — terasa "berat" dan impactful
+      n(90,  now,       0.22, "sawtooth", 0.55, 45);
+      n(180, now,       0.18, "sawtooth", 0.35, 90);
+
+      // Arpeggio naik cepat — efek slot machine / jackpot
+      n(523,  now + 0.04, 0.10, "square", 0.28);   // C5
+      n(659,  now + 0.12, 0.10, "square", 0.28);   // E5
+      n(784,  now + 0.19, 0.10, "square", 0.30);   // G5
+      n(1047, now + 0.26, 0.10, "square", 0.30);   // C6
+      n(1319, now + 0.32, 0.10, "square", 0.28);   // E6
+
+      // Chord triumfan — ditahan lebih lama supaya berasa "besar"
+      n(1047, now + 0.40, 0.70, "square", 0.30);   // C6
+      n(1319, now + 0.40, 0.65, "sine",   0.20);   // E6
+      n(1568, now + 0.42, 0.60, "sine",   0.15);   // G6
+      n(2093, now + 0.44, 0.55, "sine",   0.09);   // C7 — kilau paling atas
+
     } catch(_) {}
   }
 
