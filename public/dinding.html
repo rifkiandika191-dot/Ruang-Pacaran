@@ -170,7 +170,6 @@
           <div class="dw-post-time">${timeAgo(p.ts)}</div>
         </div>
       </div>
-      ${p.image?`<img class="dw-post-img" src="${p.image}" alt="foto" onclick="openLightbox(this.src)"/>`:""}
       <div class="dw-post-msg">${esc(p.message)}</div>
       <div class="dw-post-footer">
         <button class="dw-like-btn${liked?" liked":""}" data-id="${p.id}">
