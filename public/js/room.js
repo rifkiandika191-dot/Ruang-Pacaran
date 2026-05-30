@@ -76,7 +76,7 @@ function updateUsers(users) {
 // ------------------------------------------------------------
 //  CHAT
 // ------------------------------------------------------------
-function addMsg({ name, text, img, mine, system }) {
+function addMsg({ name, text, img, audio, mine, system }) {
   const d = document.createElement("div");
   if (system) {
     d.className = "msg system";
@@ -94,6 +94,18 @@ function addMsg({ name, text, img, mine, system }) {
       d.className += " msg-img";
       d.innerHTML = inner;
       d.appendChild(imgEl);
+      chatList.appendChild(d);
+      chatList.scrollTop = chatList.scrollHeight;
+      return;
+    }
+    if (audio) {
+      const audioEl = document.createElement("audio");
+      audioEl.controls = true;
+      audioEl.src = audio;
+      audioEl.className = "chat-audio";
+      d.className += " msg-audio";
+      d.innerHTML = inner;
+      d.appendChild(audioEl);
       chatList.appendChild(d);
       chatList.scrollTop = chatList.scrollHeight;
       return;
