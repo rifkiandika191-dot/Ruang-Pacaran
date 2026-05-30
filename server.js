@@ -165,6 +165,10 @@ app.get("/saran", (req, res) => res.sendFile(path.join(__dirname, "public", "sar
 //  Isi webhook URL di Saweria: https://domain-kamu/api/donation-webhook
 // ─────────────────────────────────────────────────────────────
 app.post("/api/donation-webhook", (req, res) => {
+  // Log raw payload untuk debug
+  console.log("[WEBHOOK] headers:", JSON.stringify(req.headers["content-type"]));
+  console.log("[WEBHOOK] body:", JSON.stringify(req.body));
+
   // Verifikasi secret opsional (set env SAWERIA_SECRET di Railway)
   const secret = process.env.SAWERIA_SECRET;
   if (secret) {
@@ -173,22 +177,30 @@ app.post("/api/donation-webhook", (req, res) => {
   }
   const body = req.body || {};
   const data = body.data || body;
-  if (!data.donator_name) return res.status(400).json({ error: "Invalid payload" });
+  if (!data.donator_name) {
+    console.log("[WEBHOOK] DITOLAK — donator_name tidak ada. data:", JSON.stringify(data));
+    return res.status(400).json({ error: "Invalid payload" });
+  }
 
+  // Saweria kadang kirim amount sebagai string "10.000" (titik = ribuan)
+  const rawAmount = String(data.amount || "0").replace(/\./g, "").replace(/,/g, ".");
   const donation = {
-    name:    String(data.donator_name || "Anonim").slice(0, 50).trim(),
-    amount:  Math.max(0, Number(data.amount) || 0),
+    name:    String(data.donator_name).slice(0, 50).trim(),
+    amount:  Math.max(0, parseFloat(rawAmount) || 0),
     message: String(data.message || "").slice(0, 300).trim(),
     ts:      Date.now(),
   };
+  console.log("[WEBHOOK] donasi tersimpan:", JSON.stringify(donation));
+
   donations.unshift(donation);
   if (donations.length > 500) donations = donations.slice(0, 500);
   saveDonations();
-  // Efek kembang api hanya untuk donasi >= Rp 10.000
+
+  // Semua donasi → notif (besar = kembang api, kecil = toast saja)
   if (donation.amount >= 10000) {
     io.emit("new-donation", donation);
   } else {
-    io.emit("new-donation-small", donation); // masuk leaderboard tapi tanpa efek besar
+    io.emit("new-donation-small", donation);
   }
   res.json({ ok: true });
 });
