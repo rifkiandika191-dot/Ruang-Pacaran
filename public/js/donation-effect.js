@@ -109,6 +109,15 @@
         font-size:11px;color:#b45309;margin-top:1px;
         font-family:Quicksand,system-ui,sans-serif;
       }
+      .dt-msg {
+        font-size:12px;color:#555;margin-top:5px;
+        font-style:italic;line-height:1.4;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        font-family:Quicksand,system-ui,sans-serif;
+      }
+      .dt-msg::before { content:'"'; }
+      .dt-msg::after  { content:'"'; }
+      body.dark .dt-msg { color:#c4a7b5; }
 
       /* Tombol donasi */
       .dt-btn {
