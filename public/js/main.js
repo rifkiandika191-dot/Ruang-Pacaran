@@ -102,10 +102,25 @@ function renderRoomHistory() {
   const rooms = loadRoomHistory();
   const historyEl = document.getElementById("roomHistory");
   const listEl    = document.getElementById("rhList");
-  if (!rooms.length) { historyEl.classList.add("hidden"); return; }
 
+  // Selalu tampilkan section agar user tahu fitur ini ada
   historyEl.classList.remove("hidden");
   listEl.innerHTML = "";
+
+  if (!rooms.length) {
+    // Cek apakah ada room yang belum mencapai 30 menit (untuk info lebih spesifik)
+    const allRooms = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const inProgress = allRooms.filter(r => (Date.now() - r.lastVisited) < MAX_AGE_MS && r.durationSeconds < MIN_DURATION);
+    if (inProgress.length > 0) {
+      const r = inProgress[0];
+      const menit = Math.floor(r.durationSeconds / 60);
+      const sisaMenit = 30 - menit;
+      listEl.innerHTML = `<div class="rh-empty">🕐 Room <strong>${r.roomId}</strong> sudah ${menit} menit — butuh ${sisaMenit} menit lagi untuk muncul di sini 💕</div>`;
+    } else {
+      listEl.innerHTML = `<div class="rh-empty">Habiskan 30+ menit di room bersama pasanganmu agar muncul di sini 💕</div>`;
+    }
+    return;
+  }
 
   rooms.forEach((r) => {
     const partnerText = r.partnerNames && r.partnerNames.length
