@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💬 Chat Global — Ruang Pacaran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="gc-page">
+
+  <!-- Header -->
+  <header class="gc-header">
+    <a href="/" class="gc-back">←</a>
+    <div class="gc-header-info">
+      <div class="gc-title">💬 Chat Global</div>
+      <div class="gc-subtitle">Semua pengunjung bisa ikut ngobrol!</div>
+    </div>
+    <div class="gc-online-pill" id="gcOnline">
+      <span class="gc-dot"></span>
+      <span id="gcOnlineCount">0</span> online
+    </div>
+  </header>
+
+  <!-- Nama sebelum masuk -->
+  <div class="gc-join-wrap" id="gcJoinWrap">
+    <div class="gc-join-card">
+      <div style="font-size:48px;margin-bottom:8px">💬</div>
+      <h2>Chat Bareng Semua Orang</h2>
+      <p class="gc-join-sub">Ngobrol dengan semua pengunjung Ruang Pacaran secara real-time 💕</p>
+      <input type="text" id="gcNameInput" placeholder="Nama panggilanmu..." maxlength="24" />
+      <button class="btn btn-primary" id="gcJoinBtn" style="width:100%;margin-top:10px">
+        Masuk Chat 💬
+      </button>
+    </div>
+  </div>
+
+  <!-- Area chat (tersembunyi sampai join) -->
+  <div class="gc-chat-wrap hidden" id="gcChatWrap">
+    <!-- Daftar pesan -->
+    <div class="gc-list" id="gcList"></div>
+
+    <!-- Emoji cepat -->
+    <div class="gc-emoji-row" id="gcEmojiRow">
+      <button>❤️</button><button>😘</button><button>🥰</button>
+      <button>😂</button><button>👋</button><button>🔥</button>
+      <button>💕</button><button>✨</button>
+    </div>
+
+    <!-- Input -->
+    <div class="gc-input-bar">
+      <input type="text" id="gcText" placeholder="Tulis pesan..." maxlength="300" />
+      <button class="btn btn-primary gc-send" id="gcSend">Kirim</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>
