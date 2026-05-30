@@ -15,132 +15,173 @@
 
     const style = document.createElement("style");
     style.textContent = `
-      /* Toast — muncul dari atas, geser masuk */
-      #donToast {
-        position: fixed;
-        top: -140px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 99999;
-        width: 92%;
-        max-width: 360px;
-        background: #fff;
-        border-radius: 20px;
-        padding: 14px 14px 14px 16px;
-        box-shadow: 0 10px 40px rgba(0,0,0,.18), 0 0 0 2px #fbbf24;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: top .5s cubic-bezier(.18,1.25,.4,1);
+      /* Backdrop tipis — sedikit redup di belakang */
+      #donBackdrop {
+        position:fixed;inset:0;z-index:99990;
+        background:rgba(0,0,0,.12);
+        opacity:0;pointer-events:none;
+        transition:opacity .4s;
       }
-      #donToast.show { top: 14px; }
+      #donBackdrop.show{opacity:1;}
 
-      /* Strip warna di kiri */
+      /* Toast */
+      #donToast {
+        position:fixed;
+        top:-160px;
+        left:50%;
+        transform:translateX(-50%);
+        z-index:99999;
+        width:94%;
+        max-width:400px;
+        background:#fff;
+        border-radius:22px;
+        padding:16px 14px 14px 18px;
+        display:flex;align-items:center;gap:12px;
+        transition:top .52s cubic-bezier(.18,1.25,.4,1);
+        /* Glow berwarna */
+        box-shadow:
+          0 0 0 2.5px #fbbf24,
+          0 12px 40px rgba(245,158,11,.25),
+          0 4px 16px rgba(0,0,0,.14);
+        animation:toastGlow 2s ease-in-out infinite;
+        overflow:hidden;
+      }
+      #donToast.show{top:14px;}
+      @keyframes toastGlow {
+        0%,100%{box-shadow:0 0 0 2.5px #fbbf24,0 12px 40px rgba(245,158,11,.25),0 4px 16px rgba(0,0,0,.14);}
+        50%    {box-shadow:0 0 0 2.5px #ef4444,0 12px 50px rgba(239,68,68,.35),0 4px 20px rgba(0,0,0,.18);}
+      }
+
+      /* Garis pelangi di atas */
       #donToast::before {
         content:"";
-        position:absolute;left:0;top:0;bottom:0;width:5px;
-        background:linear-gradient(180deg,#f59e0b,#ef4444);
-        border-radius:20px 0 0 20px;
+        position:absolute;top:0;left:0;right:0;height:4px;
+        background:linear-gradient(90deg,#f59e0b,#ef4444,#a855f7,#3b82f6,#10b981,#f59e0b);
+        background-size:300% 100%;
+        animation:rainbowSlide 2s linear infinite;
       }
+      @keyframes rainbowSlide{to{background-position:300% 0;}}
 
-      /* Konfeti CSS — tetes warna jatuh */
+      /* Konfeti */
       #donConfetti {
         position:fixed;top:0;left:50%;
         transform:translateX(-50%);
-        width:360px;height:90px;
+        width:420px;height:110px;
         pointer-events:none;z-index:99998;
         overflow:hidden;
       }
       .don-dot {
-        position:absolute;
-        border-radius:3px;
-        opacity:0;
+        position:absolute;border-radius:3px;opacity:0;
         animation:donFall linear forwards;
       }
       @keyframes donFall {
-        0%   { opacity:1; transform:translateY(0)   rotate(0deg);   }
-        80%  { opacity:1; }
-        100% { opacity:0; transform:translateY(90px) rotate(420deg); }
+        0%  {opacity:1;transform:translateY(0) rotate(0deg);}
+        85% {opacity:.9;}
+        100%{opacity:0;transform:translateY(110px) rotate(480deg);}
       }
 
-      /* Isi toast */
+      /* Emoji */
       .dt-emoji {
-        font-size:34px;flex-shrink:0;line-height:1;
-        animation:dtPop .5s ease-in-out infinite alternate;
+        font-size:40px;flex-shrink:0;line-height:1;
+        animation:dtBounce .55s ease-in-out infinite alternate;
       }
-      @keyframes dtPop {
-        from{transform:scale(1);}
-        to  {transform:scale(1.2);}
+      @keyframes dtBounce{
+        from{transform:scale(1) rotate(-5deg);}
+        to  {transform:scale(1.18) rotate(5deg);}
       }
-      .dt-body { flex:1;min-width:0; }
-      .dt-who  {
-        font-size:13px;font-weight:700;color:#333;
+
+      /* Body */
+      .dt-body{flex:1;min-width:0;}
+      .dt-who {
+        font-size:14px;font-weight:700;color:#222;
         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
         font-family:Quicksand,system-ui,sans-serif;
       }
-      .dt-amt  {
-        font-size:22px;font-weight:800;line-height:1.2;
-        background:linear-gradient(135deg,#f59e0b,#ef4444);
+      .dt-amt {
+        font-size:26px;font-weight:800;line-height:1.15;
+        background:linear-gradient(135deg,#f59e0b 20%,#ef4444 80%);
         -webkit-background-clip:text;-webkit-text-fill-color:transparent;
         background-clip:text;
         font-family:Quicksand,system-ui,sans-serif;
+        filter:drop-shadow(0 1px 4px rgba(239,68,68,.2));
       }
-      .dt-hint {
+      .dt-hint{
         font-size:11px;color:#b45309;margin-top:1px;
         font-family:Quicksand,system-ui,sans-serif;
       }
-      .dt-btn  {
+
+      /* Tombol donasi */
+      .dt-btn {
         flex-shrink:0;
         background:linear-gradient(135deg,#f59e0b,#ef4444);
-        color:#fff;border-radius:12px;padding:9px 13px;
+        color:#fff;border-radius:14px;padding:10px 14px;
         font-size:12px;font-weight:700;text-decoration:none;
         white-space:nowrap;
         font-family:Quicksand,system-ui,sans-serif;
-        box-shadow:0 3px 10px rgba(239,68,68,.3);
+        box-shadow:0 4px 14px rgba(239,68,68,.35);
         transition:filter .12s,transform .12s;
+        position:relative;overflow:hidden;
       }
-      .dt-btn:hover{filter:brightness(1.1);transform:scale(1.04);}
+      /* Shimmer di tombol */
+      .dt-btn::after{
+        content:"";
+        position:absolute;top:0;left:-70%;width:50%;height:100%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+        animation:btnShimmer 2s ease-in-out infinite;
+      }
+      @keyframes btnShimmer{to{left:130%;}}
+      .dt-btn:hover{filter:brightness(1.1);transform:scale(1.05);}
+
       .dt-close{
-        flex-shrink:0;background:none;border:none;
-        cursor:pointer;color:#bbb;font-size:16px;
-        padding:2px 4px;border-radius:6px;
+        flex-shrink:0;background:none;border:none;cursor:pointer;
+        color:#bbb;font-size:15px;padding:3px 5px;border-radius:6px;
         transition:color .12s,background .12s;
-        font-family:Quicksand,system-ui,sans-serif;
       }
-      .dt-close:hover{color:#666;background:#f5f5f5;}
+      .dt-close:hover{color:#555;background:#f0f0f0;}
+
+      /* Progress bar countdown */
+      #donProgress {
+        position:absolute;bottom:0;left:0;
+        height:3px;border-radius:0 0 22px 22px;
+        background:linear-gradient(90deg,#f59e0b,#ef4444);
+        transition:width 1s linear;
+        width:100%;
+      }
 
       /* Dark mode */
-      body.dark #donToast {
+      body.dark #donToast{
         background:#1e0d15;
-        box-shadow:0 10px 40px rgba(0,0,0,.5),0 0 0 2px #92400e;
+        box-shadow:0 0 0 2.5px #92400e,0 12px 40px rgba(0,0,0,.5);
       }
-      body.dark .dt-who  { color:#f5e2ea; }
-      body.dark .dt-hint { color:#d97706; }
+      body.dark .dt-who {color:#f5e2ea;}
+      body.dark .dt-hint{color:#d97706;}
+      body.dark .dt-close:hover{background:#2a1018;color:#f5e2ea;}
 
-      /* Tombol mengambang di room */
+      /* Float button */
       .float-donate {
         position:fixed;bottom:20px;right:18px;z-index:500;
-        width:48px;height:48px;border-radius:50%;
+        width:50px;height:50px;border-radius:50%;
         background:linear-gradient(135deg,#f59e0b,#ef4444);
-        color:#fff;font-size:22px;
+        color:#fff;font-size:24px;
         display:flex;align-items:center;justify-content:center;
         text-decoration:none;
-        box-shadow:0 4px 16px rgba(239,68,68,.45);
+        box-shadow:0 4px 16px rgba(239,68,68,.5);
         transition:transform .15s;
         animation:floatPulse 2.5s ease-in-out infinite;
       }
-      .float-donate:hover{transform:scale(1.12);animation:none;}
+      .float-donate:hover{transform:scale(1.13);animation:none;}
       @keyframes floatPulse{
-        0%,100%{box-shadow:0 4px 16px rgba(239,68,68,.45);}
-        50%    {box-shadow:0 4px 26px rgba(239,68,68,.75);}
+        0%,100%{box-shadow:0 4px 16px rgba(239,68,68,.5);}
+        50%    {box-shadow:0 4px 28px rgba(239,68,68,.8);}
       }
 
       @media(max-width:600px){
-        #donToast{max-width:96%;padding:12px 10px 12px 14px;gap:8px;}
-        .dt-emoji{font-size:28px;}
-        .dt-amt  {font-size:19px;}
-        .dt-btn  {padding:8px 10px;font-size:11px;}
-        .float-donate{width:42px;height:42px;font-size:19px;bottom:14px;right:12px;}
+        #donToast{max-width:96%;padding:13px 10px 12px 14px;gap:9px;}
+        .dt-emoji{font-size:32px;}
+        .dt-amt  {font-size:22px;}
+        .dt-btn  {padding:9px 11px;font-size:11px;}
+        #donConfetti{width:96vw;}
+        .float-donate{width:44px;height:44px;font-size:21px;bottom:14px;right:12px;}
       }
     `;
     document.head.appendChild(style);
