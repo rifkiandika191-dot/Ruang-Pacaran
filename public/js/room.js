@@ -80,7 +80,7 @@ socket.on("joined", ({ you, users, videoState, durationSeconds, streak, chatHist
   }
 });
 
-socket.on("users", updateUsers);
+socket.on("users", (users) => { updateUsers(users); saveRoomHistory(); });
 function updateUsers(users) {
   otherUsers = users.filter((u) => u.id !== myId);
   usersPill.textContent = "👥 " + users.length;
