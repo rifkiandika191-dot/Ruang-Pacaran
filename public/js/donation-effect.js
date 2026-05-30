@@ -17,20 +17,20 @@
     style.textContent = `
       /* Backdrop tipis — sedikit redup di belakang */
       #donBackdrop {
-        position:fixed;inset:0;z-index:99990;
+        position:fixed;inset:0;z-index:2147483640;
         background:rgba(0,0,0,.12);
         opacity:0;pointer-events:none;
         transition:opacity .4s;
       }
       #donBackdrop.show{opacity:1;}
 
-      /* Toast */
+      /* Toast — z-index tertinggi yang mungkin di browser */
       #donToast {
         position:fixed;
         top:-160px;
         left:50%;
         transform:translateX(-50%);
-        z-index:99999;
+        z-index:2147483647;
         width:94%;
         max-width:400px;
         background:#fff;
