@@ -1157,29 +1157,50 @@ el("voiceBtn").addEventListener("click", () => {
 });
 
 async function startVoiceRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-    const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
-    mediaRecorderVoice = new MediaRecorder(stream, { mimeType });
-    mediaRecorderVoice.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorderVoice.onstop = () => {
-      stream.getTracks().forEach((t) => t.stop());
-      const blob = new Blob(audioChunks, { type: mimeType });
-      if (blob.size === 0) { toast("Rekaman kosong 🥺"); return; }
-      if (blob.size > 600_000) { toast("Rekaman terlalu panjang (maks ~30 detik) 🥺"); return; }
-      const reader = new FileReader();
-      reader.onload = (ev) => socket.emit("chat", { audio: ev.target.result });
-      reader.readAsDataURL(blob);
-    };
-    mediaRecorderVoice.start();
-    isRecordingVoice = true;
-    el("voiceBtn").classList.add("recording");
-    el("voiceBtn").textContent = "⏹️";
-    toast("Merekam... Tekan ⏹️ untuk kirim 🎙️");
-  } catch (e) {
-    toast("Tidak bisa akses mikrofon 🥺 (izinkan akses)");
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    toast("Browser ini tidak mendukung rekaman suara 🥺");
+    return;
   }
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    toast("Tidak bisa akses mikrofon 🥺 — izinkan akses di browser");
+    return;
+  }
+  audioChunks = [];
+
+  // Cari MIME type yang didukung browser (iOS pakai mp4, desktop pakai webm)
+  const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"];
+  const mimeType = candidates.find((t) => {
+    try { return MediaRecorder.isTypeSupported(t); } catch { return false; }
+  }) || "";
+
+  try {
+    mediaRecorderVoice = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+  } catch (e) {
+    mediaRecorderVoice = new MediaRecorder(stream); // fallback tanpa opsi
+  }
+
+  const actualMime = mediaRecorderVoice.mimeType || mimeType || "audio/webm";
+
+  mediaRecorderVoice.ondataavailable = (e) => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
+  mediaRecorderVoice.onstop = () => {
+    stream.getTracks().forEach((t) => t.stop());
+    if (audioChunks.length === 0) { toast("Rekaman kosong 🥺"); return; }
+    const blob = new Blob(audioChunks, { type: actualMime });
+    if (blob.size === 0) { toast("Rekaman kosong 🥺"); return; }
+    if (blob.size > 600_000) { toast("Rekaman terlalu panjang (maks ~30 detik) 🥺"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => socket.emit("chat", { audio: ev.target.result });
+    reader.readAsDataURL(blob);
+  };
+
+  mediaRecorderVoice.start(250); // timeslice 250ms — pastikan data dikumpulkan bertahap
+  isRecordingVoice = true;
+  el("voiceBtn").classList.add("recording");
+  el("voiceBtn").textContent = "⏹️";
+  toast("Merekam... Tekan ⏹️ untuk kirim 🎙️");
 }
 
 function stopVoiceRecording() {
