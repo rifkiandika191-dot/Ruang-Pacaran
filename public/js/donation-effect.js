@@ -222,23 +222,22 @@
     const box = document.getElementById("donConfetti");
     if (!box) return;
     box.innerHTML = "";
-    for (let i = 0; i < 22; i++) {
-      const d = document.createElement("div");
+    for (let i = 0; i < 32; i++) {
+      const d   = document.createElement("div");
       d.className = "don-dot";
-      const size = 6 + Math.random() * 7;
+      const size = 5 + Math.random() * 9;
       d.style.cssText = [
-        `left:${5 + Math.random() * 90}%`,
+        `left:${2 + Math.random() * 96}%`,
         `top:${-size}px`,
         `width:${size}px`,
-        `height:${size * .6}px`,
+        `height:${size * .55}px`,
         `background:${CONF_COLORS[i % CONF_COLORS.length]}`,
-        `animation-duration:${.7 + Math.random() * .9}s`,
-        `animation-delay:${Math.random() * .6}s`,
+        `animation-duration:${.65 + Math.random() * 1}s`,
+        `animation-delay:${Math.random() * .7}s`,
       ].join(";");
       box.appendChild(d);
     }
-    // Bersihkan setelah animasi selesai
-    setTimeout(() => { if (box) box.innerHTML = ""; }, 2000);
+    setTimeout(() => { if (box) box.innerHTML = ""; }, 2200);
   }
 
   // ── Suara — ting! singkat (Web Audio, 3 not saja) ──
