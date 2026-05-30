@@ -630,22 +630,79 @@ io.on("connection", (socket) => {
     gcName = (name || "Anonim").trim().slice(0, 24) || "Anonim";
     socket.join(GLOBAL_ROOM);
     globalOnline++;
-    // Kirim riwayat pesan ke yang baru masuk
     socket.emit("gc-history", globalMessages);
-    // Beritahu jumlah online
     io.to(GLOBAL_ROOM).emit("gc-online", globalOnline);
-    // Pesan sistem
     const msg = { system: true, text: `${gcName} bergabung 👋`, ts: Date.now() };
     io.to(GLOBAL_ROOM).emit("gc-msg", msg);
     globalMessages.push(msg);
     if (globalMessages.length > 100) globalMessages.shift();
+
+    // Quote harian — kirim sekali per hari ke semua saat ada yang masuk
+    const today = new Date().toDateString();
+    if (lastQuoteDate !== today) {
+      lastQuoteDate = today;
+      const q = DAILY_QUOTES[Math.floor(Math.random() * DAILY_QUOTES.length)];
+      const qmsg = { system: true, isQuote: true, text: `🌸 Quote Hari Ini: "${q}"`, ts: Date.now() };
+      io.to(GLOBAL_ROOM).emit("gc-msg", qmsg);
+      globalMessages.push(qmsg);
+      if (globalMessages.length > 100) globalMessages.shift();
+    }
   });
 
   socket.on("gc-chat", ({ text }) => {
     if (!gcName || !text) return;
     const clean = String(text).trim().slice(0, 300);
     if (!clean) return;
-    const msg = { id: socket.id, name: gcName, text: clean, ts: Date.now() };
+
+    // ── Mulai Tebak Lagu ──
+    if (clean === "!tebak") {
+      if (guessGame.active) {
+        socket.emit("gc-msg", { system: true, text: "⚠️ Game Tebak Lagu sedang berlangsung!", ts: Date.now() });
+        return;
+      }
+      const song = SONGS[Math.floor(Math.random() * SONGS.length)];
+      guessGame = { active: true, song, timer: null };
+      const hint = song.title.split(" ").map(w => w[0] + "_ ".repeat(w.length - 1).trim()).join("  ");
+      const startMsg = { system: true, text: `🎵 TEBAK LAGU! Petunjuk: [ ${hint} ] — Artis: ${song.artist} | Ketik jawabanmu! ⏱️ 30 detik`, ts: Date.now() };
+      io.to(GLOBAL_ROOM).emit("gc-msg", startMsg);
+      io.to(GLOBAL_ROOM).emit("tebak-start", { ytId: song.ytId, start: song.start });
+      globalMessages.push(startMsg);
+      guessGame.timer = setTimeout(() => {
+        if (guessGame.active) {
+          guessGame.active = false;
+          const reveal = { system: true, text: `⏰ Waktu habis! Jawaban: "${song.title}" — ${song.artist}`, ts: Date.now() };
+          io.to(GLOBAL_ROOM).emit("gc-msg", reveal);
+          io.to(GLOBAL_ROOM).emit("tebak-end");
+          globalMessages.push(reveal);
+        }
+      }, 30000);
+      return;
+    }
+
+    // ── Cek jawaban Tebak Lagu ──
+    if (guessGame.active) {
+      const guess = clean.toLowerCase().replace(/[^a-z0-9 ]/g, "");
+      const title = guessGame.song.title.toLowerCase().replace(/[^a-z0-9 ]/g, "");
+      const words = title.split(" ").filter(w => w.length > 2);
+      const correct = guess.includes(title) || (words.length > 0 && words.every(w => guess.includes(w)));
+      if (correct) {
+        clearTimeout(guessGame.timer);
+        guessGame.active = false;
+        const winMsg = { system: true, text: `🏆 ${gcName} BENAR! Jawabannya: "${guessGame.song.title}" — ${guessGame.song.artist} 🎉`, ts: Date.now() };
+        io.to(GLOBAL_ROOM).emit("gc-msg", winMsg);
+        io.to(GLOBAL_ROOM).emit("tebak-end");
+        globalMessages.push(winMsg);
+        return;
+      }
+    }
+
+    // ── Badge tracking ──
+    const bKey = gcName.toLowerCase();
+    userBadges[bKey] = (userBadges[bKey] || 0) + 1;
+    saveBadges();
+    const badge = getBadge(userBadges[bKey]);
+
+    const msg = { id: socket.id, name: gcName, text: clean, ts: Date.now(), badge };
     io.to(GLOBAL_ROOM).emit("gc-msg", msg);
     globalMessages.push(msg);
     if (globalMessages.length > 100) globalMessages.shift();
