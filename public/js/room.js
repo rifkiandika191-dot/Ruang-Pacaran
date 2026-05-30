@@ -1227,6 +1227,35 @@ el("locationBtn").addEventListener("click", () => {
   el("locHint").textContent = "";
   el("locationModal").classList.remove("hidden");
   refreshLocationDisplay();
+  // Auto-detect lokasi dari GPS perangkat (hanya jika belum diset)
+  if (!c.myCity && navigator.geolocation) {
+    el("locHint").textContent = "📡 Mendeteksi lokasi perangkatmu...";
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude: lat, longitude: lon } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=id`,
+            { headers: { "User-Agent": "RuangPacaran/1.0" } }
+          );
+          const data = await res.json();
+          const city = data.address.city || data.address.town || data.address.county || data.address.state || "Lokasiku";
+          el("cityInput").value = city;
+          el("locHint").textContent = `📍 Terdeteksi: ${city} — tekan Simpan untuk bagikan`;
+        } catch {
+          el("locHint").textContent = "Deteksi otomatis gagal — isi nama kota manual.";
+        }
+      },
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          el("locHint").textContent = "Izin lokasi ditolak — isi nama kota manual di bawah.";
+        } else {
+          el("locHint").textContent = "Tidak bisa deteksi otomatis — isi nama kota manual.";
+        }
+      },
+      { timeout: 8000, maximumAge: 300000 }
+    );
+  }
 });
 el("locationClose").addEventListener("click", () => el("locationModal").classList.add("hidden"));
 el("locationModal").addEventListener("click", (e) => { if (e.target === el("locationModal")) el("locationModal").classList.add("hidden"); });
