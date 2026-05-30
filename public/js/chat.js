@@ -73,8 +73,12 @@ function doJoin() {
 g("gcJoinBtn").addEventListener("click", doJoin);
 g("gcNameInput").addEventListener("keydown", (e) => { if (e.key === "Enter") doJoin(); });
 
-// Isi nama dari localStorage
-g("gcNameInput").value = localStorage.getItem("pacaran_name") || "";
+// Kalau sudah ada nama dari halaman depan, langsung masuk tanpa isi form
+const _savedName = localStorage.getItem("pacaran_name") || "";
+if (_savedName) {
+  g("gcNameInput").value = _savedName;
+  doJoin();
+}
 
 // ── Kirim pesan ──
 function sendMsg() {
