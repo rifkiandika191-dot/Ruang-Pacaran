@@ -309,6 +309,31 @@
     .gc-send:hover  { transform: scale(1.08); box-shadow: 0 6px 18px rgba(236,72,153,.45); }
     .gc-send:active { transform: scale(.94); }
 
+    /* ── Leaderboard ── */
+    .lb-wrap {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(252,231,243,.9), rgba(237,233,254,.9));
+      border-bottom: 1.5px solid rgba(236,72,153,.15);
+      padding: 8px 14px; display: flex; align-items: center; gap: 10px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .lb-wrap::-webkit-scrollbar { display: none; }
+    .lb-title { font-size: 11px; font-weight: 800; color: #be185d; white-space: nowrap; flex-shrink: 0; }
+    .lb-items { display: flex; gap: 8px; }
+    .lb-item {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.8); border: 1.5px solid #fbcfe8;
+      border-radius: 999px; padding: 3px 10px 3px 4px;
+      font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+    }
+    .lb-item:nth-child(1) { border-color: #fbbf24; background: linear-gradient(135deg,rgba(255,248,220,.9),rgba(255,237,153,.7)); }
+    .lb-item:nth-child(2) { border-color: #9ca3af; }
+    .lb-item:nth-child(3) { border-color: #d97706; }
+    .lb-rank { font-size: 14px; }
+    .lb-name { color: #be185d; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+    .lb-count { color: #a855f7; font-size: 11px; }
+    .lb-empty { font-size: 11px; color: #c084a8; font-style: italic; }
+
     /* ── Toast ── */
     .toast {
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
