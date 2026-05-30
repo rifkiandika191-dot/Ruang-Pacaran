@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💡 Saran & Bug — Ruang Pacaran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="landing">
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <main class="saran-page">
+    <div class="saran-card">
+
+      <!-- Header -->
+      <div class="saran-header">
+        <a href="/" class="saran-back">← Kembali</a>
+        <div class="logo" style="font-size:40px">💡</div>
+        <h1>Saran, Fitur & Bug</h1>
+        <p class="subtitle">Idemu bisa jadi fitur nyata di Ruang Pacaran 💕<br>
+          Atau laporkan bug agar kita perbaiki bersama.</p>
+      </div>
+
+      <!-- Form kirim -->
+      <div class="saran-form-box">
+        <div class="sf-tabs">
+          <button class="sf-tab active" data-type="saran">💡 Saran</button>
+          <button class="sf-tab" data-type="fitur">✨ Fitur Baru</button>
+          <button class="sf-tab" data-type="bug">🐛 Bug</button>
+        </div>
+        <input type="hidden" id="fbType" value="saran" />
+
+        <label>Namamu (opsional)</label>
+        <input type="text" id="fbName" placeholder="Nama panggilanmu..." maxlength="40" />
+
+        <label id="fbMsgLabel">Tuliskan saranmu</label>
+        <textarea id="fbMsg" rows="4" placeholder="Ceritakan idenya..."></textarea>
+
+        <button class="btn btn-primary" id="fbSubmit" style="width:100%;margin-top:10px">
+          Kirim 🚀
+        </button>
+        <div class="fb-status hidden" id="fbStatus"></div>
+      </div>
+
+      <!-- Daftar masukan -->
+      <div class="saran-list-wrap">
+        <div class="sl-header">
+          <div class="sl-title">📬 Masukan dari Komunitas</div>
+          <div class="sl-filters">
+            <button class="slf active" data-filter="all">Semua</button>
+            <button class="slf" data-filter="saran">💡 Saran</button>
+            <button class="slf" data-filter="fitur">✨ Fitur</button>
+            <button class="slf" data-filter="bug">🐛 Bug</button>
+          </div>
+        </div>
+        <div class="sl-list" id="slList">
+          <div class="sl-loading">Memuat masukan...</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/saran.js"></script>
+</body>
+</html>
