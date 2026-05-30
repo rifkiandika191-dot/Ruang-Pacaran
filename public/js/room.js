@@ -1285,13 +1285,12 @@ function refreshLocationDisplay() {
   locTimeTimer = setInterval(refreshLocationDisplay, 60000);
 }
 
-// Terima lokasi pasangan via couple-info (yang sudah ada)
-const _origCoupleInfo = socket.listeners ? null : null;
+// Terima lokasi pasangan via couple-info (menggantikan handler yang lama)
 socket.on("couple-info", (c) => {
-  // Simpan data lokasi pasangan di couple settings lokal
   const local = loadCouple();
+  // Data lokasi pasangan (field myCity/myLat/myLon/myTz = milik pengirim)
   if (c.myCity) { local.partnerCity = c.myCity; local.partnerLat = c.myLat; local.partnerLon = c.myLon; local.partnerTz = c.myTz; }
-  // Merge nama & tanggal dari pasangan juga (behaviour lama)
+  // Nama & tanggal (sinkron tampilan seperti dulu)
   if (c.name1) local.name1 = c.name1;
   if (c.name2) local.name2 = c.name2;
   if (c.date) local.date = c.date;
