@@ -108,6 +108,15 @@
           </div>
           <textarea id="storyText" placeholder="Ceritakan harimu... (max 200 karakter)" maxlength="200"
             style="width:100%;padding:10px;border:2px solid #fbcfe8;border-radius:12px;font-family:inherit;font-size:13px;resize:none;height:80px;outline:none;display:block;margin-bottom:10px"></textarea>
+          <!-- Preview foto -->
+          <div id="storyImgPreview" style="display:none;position:relative;margin-bottom:10px">
+            <img id="storyImgPreviewEl" style="width:100%;max-height:160px;object-fit:cover;border-radius:12px;border:2px solid #fbcfe8"/>
+            <button id="storyImgDel" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center">✕</button>
+          </div>
+          <input type="file" id="storyImgInput" accept="image/*" style="display:none"/>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button id="storyImgBtn" style="flex:1;padding:9px;border:2px solid #fbcfe8;border-radius:12px;background:#fff8fb;color:#be185d;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📷 Tambah Foto</button>
+          </div>
           <div style="display:flex;gap:8px">
             <button onclick="closeAddStory()" style="flex:1;padding:10px;border:2px solid #fbcfe8;border-radius:12px;background:#fff;color:#be185d;font-weight:700;cursor:pointer;font-family:inherit">Batal</button>
             <button id="storySubmitBtn" style="flex:1;padding:10px;border:none;border-radius:12px;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;font-weight:800;cursor:pointer;font-family:inherit">Bagikan 📖</button>
