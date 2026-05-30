@@ -241,70 +241,36 @@
   }
 
   // ════════════════════════════════════════════════════════
-  //  AUDIO — Render offline → WAV blob → <audio> HTML
-  //  OfflineAudioContext tidak butuh user gesture untuk render.
-  //  <audio> HTML jauh lebih reliable di iOS/Android
-  //  dibanding WebAudio yang butuh gesture tiap kali.
+  //  AUDIO — Web Audio API langsung, lebih reliable
   // ════════════════════════════════════════════════════════
-  let _tingEl = null;   // elemen <audio>
-  let _unlocked = false;
+  let _audioCtx = null;
 
-  // Konversi AudioBuffer → ArrayBuffer WAV
-  function _toWav(buf) {
-    const sr = buf.sampleRate, len = buf.length;
-    const out = new ArrayBuffer(44 + len * 2);
-    const v = new DataView(out);
-    const s = (o, t) => [...t].forEach((c,i) => v.setUint8(o+i, c.charCodeAt(0)));
-    s(0,"RIFF"); v.setUint32(4, 36+len*2, true); s(8,"WAVE");
-    s(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true);
-    v.setUint16(22,1,true); v.setUint32(24,sr,true);
-    v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
-    s(36,"data"); v.setUint32(40,len*2,true);
-    const ch = buf.getChannelData(0);
-    let off = 44;
-    for (let i=0;i<len;i++) {
-      v.setInt16(off, Math.max(-1,Math.min(1,ch[i])) * 0x7FFF, true);
-      off += 2;
-    }
-    return out;
+  function _getCtx() {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (_audioCtx.state === "suspended") _audioCtx.resume();
+    return _audioCtx;
   }
 
-  // Render ting offline (tidak butuh gesture) lalu simpan sebagai <audio>
-  async function _buildTing() {
-    try {
-      const sr = 22050, dur = 1.3;
-      const off = new OfflineAudioContext(1, Math.ceil(sr*dur), sr);
-      [[880,0,.18],[1047,.15,.18],[1319,.32,.28]].forEach(([f,t,d]) => {
-        const o=off.createOscillator(), g=off.createGain();
-        o.connect(g); g.connect(off.destination);
-        o.type="triangle"; o.frequency.value=f;
-        g.gain.setValueAtTime(.45,t);
-        g.gain.exponentialRampToValueAtTime(.001,t+d);
-        o.start(t); o.stop(t+d+.02);
-      });
-      const rendered = await off.startRendering();
-      const blob = new Blob([_toWav(rendered)], {type:"audio/wav"});
-      _tingEl = new Audio(URL.createObjectURL(blob));
-      _tingEl.preload = "auto";
-    } catch(_) {}
-  }
-  _buildTing(); // render segera saat halaman load
-
-  // Unlock <audio> pada gesture pertama (wajib di iOS)
-  function _unlockTing() {
-    if (_unlocked || !_tingEl) return;
-    _tingEl.play()
-      .then(() => { _tingEl.pause(); _tingEl.currentTime = 0; _unlocked = true; })
-      .catch(() => {});
-  }
-  ["touchstart","touchend","pointerdown","click"].forEach(ev =>
-    document.addEventListener(ev, _unlockTing, { passive: true })
+  // Unlock AudioContext pada gesture pertama (wajib di semua browser modern)
+  ["touchstart","pointerdown","click"].forEach(ev =>
+    document.addEventListener(ev, () => { try { _getCtx(); } catch(_) {} }, { passive: true })
   );
 
   function playTing() {
-    if (!_tingEl) return;
-    _tingEl.currentTime = 0;
-    _tingEl.play().catch(() => {});
+    try {
+      const ctx = _getCtx();
+      [[880,0,.18],[1047,.15,.2],[1319,.32,.3]].forEach(([freq,delay,dur]) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = "triangle";
+        o.frequency.value = freq;
+        const t = ctx.currentTime + delay;
+        g.gain.setValueAtTime(0.35, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        o.start(t); o.stop(t + dur + 0.05);
+      });
+    } catch(_) {}
   }
 
   // ── Format Rupiah ──
