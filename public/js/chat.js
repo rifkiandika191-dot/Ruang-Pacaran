@@ -30,6 +30,20 @@ function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
 }
 
+// ── Warna avatar dari nama ──
+const AVATAR_COLORS = [
+  ["#ec4899","#a855f7"], ["#f97316","#ef4444"], ["#14b8a6","#3b82f6"],
+  ["#8b5cf6","#ec4899"], ["#10b981","#06b6d4"], ["#f43f5e","#f97316"],
+];
+function avatarColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function avatarInitial(name) {
+  return (name || "?")[0].toUpperCase();
+}
+
 // ── Render satu pesan ──
 function addMsg(m, prepend = false) {
   const list = g("gcList");
@@ -39,11 +53,23 @@ function addMsg(m, prepend = false) {
     div.className = "gc-msg gc-system";
     div.textContent = m.text;
   } else {
-    const mine = m.name === myName;
+    const mine   = m.name === myName;
+    const colors = avatarColor(m.name);
+    const init   = avatarInitial(m.name);
     div.className = "gc-msg " + (mine ? "gc-me" : "gc-them");
+
+    const avatarStyle = mine
+      ? ""
+      : `background:linear-gradient(135deg,${colors[0]},${colors[1]})`;
+
     div.innerHTML = `
-      <div class="gc-who">${esc(mine ? "Kamu" : m.name)}</div>
-      <div class="gc-bubble">${esc(m.text)}</div>
+      <div class="gc-row">
+        <div class="gc-avatar" style="${avatarStyle}">${init}</div>
+        <div class="gc-content">
+          <div class="gc-who">${esc(mine ? "Kamu" : m.name)}</div>
+          <div class="gc-bubble">${esc(m.text)}</div>
+        </div>
+      </div>
       <div class="gc-time">${fmtTime(m.ts)}</div>
     `;
   }
@@ -64,6 +90,18 @@ function doJoin() {
 
   socket.emit("gc-join", { name });
   joined = true;
+
+  // Tampilkan badge nama di header
+  const badge  = g("gcMyBadge");
+  const avatar = g("gcMyAvatar");
+  const label  = g("gcMyName");
+  if (badge && avatar && label) {
+    const colors = avatarColor(name);
+    avatar.style.background = `linear-gradient(135deg,${colors[0]},${colors[1]})`;
+    avatar.textContent = avatarInitial(name);
+    label.textContent  = name;
+    badge.style.display = "flex";
+  }
 
   g("gcJoinWrap").classList.add("hidden");
   g("gcChatWrap").classList.remove("hidden");
@@ -101,14 +139,23 @@ document.querySelectorAll(".gc-emoji-row button").forEach((btn) => {
   });
 });
 
+// ── Typing indicator ──
+let _typingTimer;
+g("gcText").addEventListener("input", () => {
+  if (!joined) return;
+  socket.emit("gc-typing", { name: myName });
+  clearTimeout(_typingTimer);
+  _typingTimer = setTimeout(() => socket.emit("gc-stop-typing"), 1500);
+});
+
 // ── Socket events ──
 socket.on("gc-history", (msgs) => {
   const list = g("gcList");
   list.innerHTML = "";
   if (msgs.length) {
     const sep = document.createElement("div");
-    sep.className = "gc-msg gc-system";
-    sep.textContent = "─── Pesan sebelumnya ───";
+    sep.className = "gc-date-sep";
+    sep.textContent = "── Pesan sebelumnya ──";
     list.appendChild(sep);
   }
   msgs.forEach((m) => addMsg(m));
@@ -116,7 +163,6 @@ socket.on("gc-history", (msgs) => {
 
 socket.on("gc-msg", (m) => {
   addMsg(m);
-  // Kedipkan tab jika tidak fokus
   if (document.hidden && !m.system) {
     document.title = `💬 (${m.name}) ${m.text.slice(0, 20)}...`;
     setTimeout(() => { document.title = "💬 Chat Global — Ruang Pacaran"; }, 4000);
@@ -127,5 +173,13 @@ socket.on("gc-online", (n) => {
   g("gcOnlineCount").textContent = n;
 });
 
-// ── Notifikasi donasi (injection dari donation-effect.js) ──
-// sudah include di bawah lewat script tag terpisah
+// Typing indicator dari orang lain
+socket.on("gc-typing", ({ name }) => {
+  if (name === myName) return;
+  const el = g("gcTyping");
+  if (el) el.textContent = `${name} sedang mengetik...`;
+});
+socket.on("gc-stop-typing", () => {
+  const el = g("gcTyping");
+  if (el) el.textContent = "";
+});
