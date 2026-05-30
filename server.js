@@ -387,11 +387,7 @@ io.on("connection", (socket) => {
         "users",
         Array.from(room.users, ([id, n]) => ({ id, name: n }))
       );
-      io.to(currentRoom).emit("chat", {
-        system: true,
-        text: `${myName} keluar dari ruangan 🥺`,
-        ts: Date.now(),
-      });
+      emitRoomChat(currentRoom, { system: true, text: `${myName} keluar dari ruangan 🥺`, ts: Date.now() });
       if (room.users.size === 0) {
         if (roomActiveSince[currentRoom]) {
           roomSeconds[currentRoom] = (roomSeconds[currentRoom] || 0) + (Date.now() - roomActiveSince[currentRoom]) / 1000;
