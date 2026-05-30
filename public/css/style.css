@@ -1094,9 +1094,12 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   .home-nav .navlink { text-align: center; }
 
   /* ── Donasi & top donors (mobile) ── */
-  .btn-donate { width: 100%; justify-content: center; }
-  .td-item { padding: 8px 12px; }
-  .td-rank { font-size: 16px; }
+  .donate-hero { padding: 18px 14px 18px; border-radius: 18px; }
+  .dh-title { font-size: 18px; }
+  .btn-donate-big { font-size: 16px; padding: 15px 16px; }
+  .td-item { padding: 10px 12px; gap: 10px; }
+  .td-name { font-size: 13px; }
+  .td-amount { font-size: 13px; }
   .saran-promo-card { padding: 14px 14px; gap: 10px; }
 
   /* ── Halaman saran (mobile) ── */
