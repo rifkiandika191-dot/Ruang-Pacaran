@@ -316,6 +316,39 @@ Kebab</textarea>
     </div>
   </div>
 
+  <!-- Modal LOKASI & WAKTU LOKAL -->
+  <div class="modal-overlay hidden" id="locationModal">
+    <div class="modal">
+      <h3>🌍 Lokasi & Waktu Lokal</h3>
+      <div class="location-display" id="locationDisplay">
+        <div class="loc-card loc-me">
+          <div class="loc-flag">📍</div>
+          <div class="loc-city-name" id="myCityName">Belum diset</div>
+          <div class="loc-time" id="myLocalTime">—</div>
+          <div class="loc-label">Kamu</div>
+        </div>
+        <div class="loc-middle">
+          <div class="loc-distance-km" id="distanceKm">—</div>
+          <div class="loc-distance-label">km antara kalian</div>
+          <div class="loc-tz-diff" id="tzDiff"></div>
+        </div>
+        <div class="loc-card loc-partner">
+          <div class="loc-flag">📍</div>
+          <div class="loc-city-name" id="partnerCityName">Belum diset</div>
+          <div class="loc-time" id="partnerLocalTime">—</div>
+          <div class="loc-label">Pasangan</div>
+        </div>
+      </div>
+      <label style="margin-top:12px;display:block;font-weight:600;color:var(--pink-dark)">Nama kotamu</label>
+      <input type="text" id="cityInput" placeholder="cth: Jakarta, Surabaya, Bandung, Makassar..." style="margin-top:6px" />
+      <small class="loc-hint" id="locHint"></small>
+      <div class="modal-actions" style="margin-top:14px">
+        <button class="btn btn-secondary" id="locationClose">Tutup</button>
+        <button class="btn btn-primary" id="locationSave">Simpan & Bagikan 📍</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
