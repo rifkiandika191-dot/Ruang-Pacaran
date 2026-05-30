@@ -285,7 +285,7 @@ let dindingPosts = [];
 try { dindingPosts = JSON.parse(fs.readFileSync(DINDING_FILE, "utf8")) || []; } catch { dindingPosts = []; }
 function saveDinding() { try { fs.writeFileSync(DINDING_FILE, JSON.stringify(dindingPosts)); } catch(e) {} }
 function cleanDinding() {
-  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - 3 * 60 * 60 * 1000;
   const before = dindingPosts.length;
   dindingPosts = dindingPosts.filter(p => p.ts > cutoff);
   if (dindingPosts.length !== before) saveDinding();
