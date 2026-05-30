@@ -160,7 +160,14 @@ io.on("connection", (socket) => {
       users: Array.from(room.users, ([id, n]) => ({ id, name: n })),
       videoState: room.videoState,
       durationSeconds: currentRoomSeconds(roomId),
+      streak: roomStreaks[roomId] || { streak: 0, longest: 0, lastDate: null },
     });
+
+    // Update streak ketika ada 2+ orang di room (kedua pasangan hadir)
+    if (room.users.size >= 2) {
+      const streak = updateStreak(roomId);
+      io.to(roomId).emit("streak", streak);
+    }
 
     // Beri tahu yang lain
     socket.to(roomId).emit("user-joined", { id: socket.id, name: myName });
