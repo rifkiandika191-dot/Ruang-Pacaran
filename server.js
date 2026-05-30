@@ -56,6 +56,39 @@ try { roomScores = JSON.parse(fs.readFileSync(SCORES_FILE, "utf8")) || {}; } cat
 function saveScores() { try { fs.writeFileSync(SCORES_FILE, JSON.stringify(roomScores)); } catch (e) {} }
 
 // ------------------------------------------------------------
+//  RIWAYAT CHAT (persisten) — { roomId: [{ name, text, ts, system? }] }
+//  Gambar & audio tidak disimpan (terlalu besar), hanya ditandai.
+// ------------------------------------------------------------
+const CHATS_FILE = path.join(DATA_DIR, "chats.json");
+let roomChats = {};
+try { roomChats = JSON.parse(fs.readFileSync(CHATS_FILE, "utf8")) || {}; } catch { roomChats = {}; }
+let chatSaveTimer = null;
+function saveChats() {
+  clearTimeout(chatSaveTimer);
+  chatSaveTimer = setTimeout(() => {
+    try { fs.writeFileSync(CHATS_FILE, JSON.stringify(roomChats)); } catch (e) {}
+  }, 2000); // debounce agar tidak terlalu sering tulis file
+}
+const CHAT_LIMIT = 100; // simpan maks 100 pesan per room
+
+// Helper: emit chat ke room DAN simpan ke riwayat
+function emitRoomChat(roomId, msg) {
+  io.to(roomId).emit("chat", msg);
+  if (!roomChats[roomId]) roomChats[roomId] = [];
+  const record = { ts: msg.ts || Date.now() };
+  if (msg.system) { record.system = true; record.text = msg.text; }
+  else {
+    record.name = msg.name;
+    if (msg.text) record.text = msg.text;
+    else if (msg.img) record.text = "[📷 Gambar]";
+    else if (msg.audio) record.text = "[🎙️ Pesan Suara]";
+  }
+  if (roomChats[roomId].length >= CHAT_LIMIT) roomChats[roomId].shift();
+  roomChats[roomId].push(record);
+  saveChats();
+}
+
+// ------------------------------------------------------------
 //  STREAK HARIAN — { roomId: { lastDate, streak, longest } }
 // ------------------------------------------------------------
 const STREAKS_FILE = path.join(DATA_DIR, "streaks.json");
