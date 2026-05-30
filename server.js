@@ -225,6 +225,18 @@ io.on("connection", (socket) => {
     emitRoomChat(currentRoom, msg);
   });
 
+  // --- Hapus pesan chat ---
+  socket.on("chat-delete", ({ msgId }) => {
+    if (!currentRoom || !msgId) return;
+    // Hanya pemilik pesan yang bisa hapus (cek via socket.id + prefix)
+    socket.to(currentRoom).emit("chat-delete", { msgId, by: myName });
+    // Tandai di riwayat sebagai dihapus (ganti text)
+    if (roomChats[currentRoom]) {
+      const m = roomChats[currentRoom].find((r) => r.msgId === msgId);
+      if (m) { m.text = "[🚫 Pesan dihapus]"; m.deleted = true; saveChats(); }
+    }
+  });
+
   // --- Typing indicator ---
   socket.on("typing", ({ on }) => {
     if (!currentRoom) return;
