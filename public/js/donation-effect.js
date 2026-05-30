@@ -208,7 +208,8 @@
       <div class="dt-body">
         <div class="dt-who"  id="dtWho"></div>
         <div class="dt-amt"  id="dtAmt"></div>
-        <div class="dt-hint">🎆 min. Rp 3rb = efek untuk semua!</div>
+        <div class="dt-msg"  id="dtMsg" style="display:none"></div>
+        <div class="dt-hint" id="dtHint">🎆 min. Rp 3rb = efek untuk semua!</div>
       </div>
       <a href="${SAWERIA}" target="_blank" rel="noopener" class="dt-btn">☕ Donasi</a>
       <button class="dt-close" id="dtClose">✕</button>
