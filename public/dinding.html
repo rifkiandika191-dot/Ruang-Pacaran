@@ -258,12 +258,6 @@
     if(btn) btn.querySelector(".dw-like-num").textContent = likes;
   });
 
-  // Lightbox
-  function openLightbox(src) {
-    g("lightboxImg").src = src; g("lightbox").classList.add("show");
-  }
-  g("lightbox-close").addEventListener("click", () => g("lightbox").classList.remove("show"));
-  g("lightbox").addEventListener("click", e => { if(e.target===g("lightbox")) g("lightbox").classList.remove("show"); });
   </script>
 </body>
 </html>
