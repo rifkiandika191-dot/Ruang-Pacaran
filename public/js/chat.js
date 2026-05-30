@@ -193,3 +193,42 @@ socket.on("gc-stop-typing", () => {
   const el = g("gcTyping");
   if (el) el.textContent = "";
 });
+
+// ── Tebak Lagu ──
+let _tebakInterval = null;
+
+socket.on("tebak-start", ({ ytId, start }) => {
+  const overlay = g("tebakOverlay");
+  const yt      = g("tebakYt");
+  const fill    = g("tebakFill");
+  const num     = g("tebakNum");
+  if (!overlay || !yt) return;
+
+  // Load YouTube iframe
+  yt.src = `https://www.youtube-nocookie.com/embed/${ytId}?start=${start}&autoplay=1&rel=0&modestbranding=1`;
+  overlay.classList.add("show");
+
+  // Countdown 30 detik
+  let sisa = 30;
+  num.textContent = sisa;
+  fill.style.transition = "none";
+  fill.style.width = "100%";
+  void fill.offsetWidth;
+  fill.style.transition = "width 30s linear";
+  fill.style.width = "0%";
+
+  clearInterval(_tebakInterval);
+  _tebakInterval = setInterval(() => {
+    sisa--;
+    num.textContent = sisa;
+    if (sisa <= 0) clearInterval(_tebakInterval);
+  }, 1000);
+});
+
+socket.on("tebak-end", () => {
+  clearInterval(_tebakInterval);
+  const overlay = g("tebakOverlay");
+  const yt      = g("tebakYt");
+  if (overlay) overlay.classList.remove("show");
+  if (yt) yt.src = "";
+});
