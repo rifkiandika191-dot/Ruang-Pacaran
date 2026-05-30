@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log
+.DS_Store
+*.log
+
+# Data & foto yang diunggah (konten pribadi, jangan ikut ke repo)
+data/*.json
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Claude Code local settings (berisi izin sesi lokal, jangan di-commit)
+.claude/settings.local.json

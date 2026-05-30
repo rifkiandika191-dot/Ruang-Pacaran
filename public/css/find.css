@@ -1,0 +1,77 @@
+/* ============================================================
+   Halaman Cari Pacar Online — find.css
+   ============================================================ */
+
+.find-page { align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+.find-main { width: 100%; max-width: 440px; position: relative; z-index: 2; }
+
+.find-card {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 36px 30px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  animation: modalPop .35s ease;
+}
+.find-logo { font-size: 64px; animation: bounce 2.4s infinite ease-in-out; margin-bottom: 6px; }
+.find-card h1 { color: var(--pink-dark); font-size: 26px; margin-bottom: 6px; }
+.find-sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; line-height: 1.5; }
+
+/* Online indicator */
+.find-online { display: inline-flex; align-items: center; gap: 7px; background: var(--cream); border: 1px solid var(--peach); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 22px; }
+.fo-dot { width: 9px; height: 9px; border-radius: 50%; background: #2ecc71; animation: pulse 1.2s infinite; flex-shrink: 0; }
+
+/* Form */
+.find-form { text-align: left; display: flex; flex-direction: column; gap: 10px; }
+.find-form label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.btn-find-start {
+  width: 100%; padding: 16px; font-size: 17px; font-weight: 700;
+  background: linear-gradient(135deg, #ff6fa8, #ff5c8a, #ff7eb0);
+  color: #fff; border: none; border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(255,92,138,.45);
+  cursor: pointer; transition: transform .12s, box-shadow .12s;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.btn-find-start:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255,92,138,.55); }
+.btn-find-start:active { transform: scale(.97); }
+
+.find-back { display: block; margin-top: 20px; color: var(--muted); font-size: 13px; text-decoration: none; }
+.find-back:hover { color: var(--pink-dark); }
+
+/* Tombol di landing page */
+.find-section { margin-top: 6px; text-align: center; }
+.btn-find { display: block; width: 100%; padding: 14px; font-size: 16px; font-weight: 700; text-decoration: none; text-align: center; border-radius: 16px; background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff; box-shadow: 0 6px 20px rgba(168,85,247,.4); margin-top: 4px; transition: transform .12s, box-shadow .12s; }
+.btn-find:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(168,85,247,.5); }
+.find-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+/* ---- STATE: Searching ---- */
+.find-pulse-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
+.find-pulse-ring { position: absolute; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; animation: searchPulse 2.4s ease-out infinite; }
+.find-pulse-ring.r1 { width: 120px; height: 120px; animation-delay: 0s; }
+.find-pulse-ring.r2 { width: 90px;  height: 90px;  animation-delay: .6s; }
+.find-pulse-ring.r3 { width: 60px;  height: 60px;  animation-delay: 1.2s; }
+@keyframes searchPulse {
+  0%   { transform: scale(.4); opacity: .9; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+.find-pulse-emoji { font-size: 44px; z-index: 2; animation: bounce 1.6s infinite ease-in-out; }
+.find-searching-title { color: var(--pink-dark); font-size: 22px; margin-bottom: 6px; }
+.find-searching-sub { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+.find-tips { min-height: 38px; font-size: 13px; color: var(--muted); font-style: italic; padding: 0 16px; margin-bottom: 18px; line-height: 1.5; }
+.find-cancel { width: 100%; }
+
+/* ---- STATE: Found ---- */
+.find-match-anim { position: relative; font-size: 64px; margin-bottom: 12px; animation: foundBurst .6s cubic-bezier(.2,1.2,.3,1); }
+.fm-burst { position: absolute; font-size: 30px; top: -10px; right: -10px; animation: spin 2s linear infinite; display: inline-block; }
+@keyframes foundBurst { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.find-found-title { color: var(--pink-dark); font-size: 26px; margin-bottom: 6px; }
+.find-found-sub { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+.find-partner-name { font-size: 30px; font-weight: 800; color: var(--pink-dark); margin-bottom: 16px; padding: 12px 20px; background: var(--cream); border-radius: 14px; border: 2px solid var(--peach); }
+.find-countdown { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+.find-countdown span { font-weight: 800; color: var(--pink-dark); font-size: 20px; }
+
+@media (max-width: 480px) {
+  .find-card { padding: 28px 18px; }
+  .find-card h1 { font-size: 22px; }
+  .find-partner-name { font-size: 24px; }
+}

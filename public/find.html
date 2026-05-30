@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💝 Cari Pacar Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/find.css" />
+</head>
+<body class="landing find-page">
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <main class="find-main">
+    <!-- STATE: IDLE -->
+    <div class="find-card" id="stateIdle">
+      <div class="find-logo">💝</div>
+      <h1>Cari Pacar Online</h1>
+      <p class="find-sub">Temukan seseorang yang juga sedang mencari, secara acak & real-time.</p>
+
+      <div class="find-online">
+        <span class="fo-dot"></span>
+        <span id="onlineSeeking">0</span> orang sedang mencari sekarang
+      </div>
+
+      <div class="find-form">
+        <label>Nama panggilanmu</label>
+        <input type="text" id="findName" placeholder="Siapa namamu?" maxlength="24" />
+        <button class="btn btn-find-start" id="startFindBtn">💝 Mulai Mencari</button>
+      </div>
+
+      <a href="/" class="find-back">← Kembali ke beranda</a>
+    </div>
+
+    <!-- STATE: SEARCHING -->
+    <div class="find-card hidden" id="stateSearching">
+      <div class="find-pulse-wrap">
+        <div class="find-pulse-ring r1"></div>
+        <div class="find-pulse-ring r2"></div>
+        <div class="find-pulse-ring r3"></div>
+        <div class="find-pulse-emoji">💝</div>
+      </div>
+      <h2 class="find-searching-title">Mencari Pasangan…</h2>
+      <p class="find-searching-sub" id="searchingCount">— orang lain sedang mencari</p>
+      <div class="find-tips" id="findTips"></div>
+      <button class="btn btn-secondary find-cancel" id="cancelFindBtn">✕ Batalkan</button>
+    </div>
+
+    <!-- STATE: FOUND -->
+    <div class="find-card hidden" id="stateFound">
+      <div class="find-match-anim">
+        <span class="fm-heart">💕</span>
+        <span class="fm-burst">✨</span>
+      </div>
+      <h2 class="find-found-title">Ketemu! 🎉</h2>
+      <p class="find-found-sub">Kamu dipasangkan dengan</p>
+      <div class="find-partner-name" id="partnerNameEl">—</div>
+      <div class="find-countdown">
+        Masuk ruangan dalam <span id="foundCountdown">3</span>s...
+      </div>
+      <button class="btn btn-find-start" id="goNowBtn">Masuk Sekarang 💕</button>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/find.js"></script>
+</body>
+</html>

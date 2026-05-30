@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💕 Nonton Bareng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="room">
+  <header class="topbar">
+    <div class="brand">💑 <span id="brandText">Ruang Pacaran</span></div>
+    <div class="room-meta">
+      <span class="countdown" id="countdown"></span>
+      <span class="session-timer" id="roomDuration">⏱️ 00:00</span>
+      <span class="room-code">Kode: <strong id="roomCode">—</strong></span>
+      <button class="btn btn-mini" id="copyLinkBtn">🔗 Salin Link</button>
+      <button class="btn btn-mini" id="settingsBtn">⚙️ Setelan</button>
+      <button class="btn btn-mini" id="themeBtn">🌙</button>
+      <span class="users-pill" id="usersPill">👥 0</span>
+      <button class="btn btn-mini btn-skip hidden" id="skipBtn">⏭️ Skip — Cari Lain</button>
+      <button class="btn btn-mini btn-leave" id="leaveBtn">🚪 Keluar</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- KIRI: Player / Screen Share -->
+    <section class="stage">
+      <!-- Mode pilih sumber -->
+      <div class="source-bar">
+        <div class="tabs">
+          <button class="tab active" data-mode="link">📺 Dari Link</button>
+          <button class="tab" data-mode="screen">🖥️ Share Screen</button>
+        </div>
+
+        <div class="source-panel" id="panel-link">
+          <input type="text" id="videoUrl" placeholder="Tempel link YouTube atau link video (.mp4) di sini..." />
+          <button class="btn btn-primary" id="loadVideoBtn">Putar 🎬</button>
+        </div>
+
+        <div class="source-panel hidden" id="panel-screen">
+          <button class="btn btn-primary" id="shareScreenBtn">🖥️ Mulai Bagikan Layar</button>
+          <button class="btn btn-secondary hidden" id="stopScreenBtn">⏹️ Stop Berbagi</button>
+          <span class="hint">Pasanganmu akan langsung melihat layarmu.</span>
+        </div>
+      </div>
+
+      <!-- Wadah tampilan -->
+      <div class="player-wrap">
+        <div id="ytPlayer" class="player hidden"></div>
+        <video id="htmlPlayer" class="player hidden" controls playsinline></video>
+        <video id="screenPlayer" class="player hidden" autoplay playsinline></video>
+        <div id="placeholder" class="placeholder">
+          <div class="ph-emoji">🍿</div>
+          <p>Belum ada yang diputar.</p>
+          <small>Tempel link video, bagikan layar, atau pilih dari daftar film 💕</small>
+        </div>
+
+        <!-- Floating reaction layer -->
+        <div class="reaction-layer" id="reactionLayer"></div>
+
+        <!-- Floating reaction layer -->
+
+
+        <!-- Tombol layar penuh -->
+        <button class="fs-btn" id="fsBtn" title="Layar penuh (atau klik 2x pada layar)">⛶</button>
+        <!-- Tombol stop nonton bareng -->
+        <button class="stop-watch-btn hidden" id="stopWatchBtn" title="Stop nonton bareng">⏹️ Stop Nonton</button>
+      </div>
+
+      <!-- Toolbar bawah: video call + reaksi -->
+      <div class="action-bar">
+        <button class="btn btn-secondary" id="joinCallBtn">📞 Gabung Panggilan</button>
+        <button class="btn btn-secondary hidden" id="endCallBtn">📵 Keluar Panggilan</button>
+        <span class="voice-status hidden" id="callStatus">📞 Dalam panggilan</span>
+        <button class="btn btn-mini hidden" id="micBtn">🎤 Mic: Mati</button>
+        <button class="btn btn-mini hidden" id="camToggleBtn">📷 Kamera: Mati</button>
+        <button class="btn btn-mini hidden" id="flipCamBtn">🔄 Balik Kamera</button>
+        <div class="react-buttons">
+          <button data-emoji="❤️">❤️</button>
+          <button data-emoji="😘">😘</button>
+          <button data-emoji="🥰">🥰</button>
+          <button data-emoji="😂">😂</button>
+          <button data-emoji="🔥">🔥</button>
+          <button data-emoji="🎉">🎉</button>
+        </div>
+        <span class="sync-note" id="syncNote"></span>
+      </div>
+
+      <!-- Panel Kamera Peserta (muncul otomatis saat ada yang on cam) -->
+      <div class="cam-panel hidden" id="camPanel">
+        <div class="cam-panel-header">
+          <span class="cam-panel-title">📹 Kamera Aktif</span>
+          <div class="cam-size-presets" id="camSizePresets">
+            <button class="csp-btn" data-size="xs" title="Mini">XS</button>
+            <button class="csp-btn" data-size="sm" title="Kecil">S</button>
+            <button class="csp-btn active" data-size="md" title="Sedang">M</button>
+            <button class="csp-btn" data-size="lg" title="Besar">L</button>
+            <button class="csp-btn" data-size="xl" title="Penuh">XL</button>
+          </div>
+          <span class="cam-panel-count" id="camPanelCount">0 kamera</span>
+        </div>
+        <div class="cam-panel-grid size-md" id="camPanelGrid">
+          <!-- Kamera kita -->
+          <div class="cpg-tile hidden" id="localTile">
+            <video id="localCam" class="cpg-video" autoplay playsinline muted></video>
+            <div class="cpg-off" id="localOff"><span>📷</span></div>
+            <div class="cpg-label">
+              <span class="cpg-mic" id="localMicBadge">🔇</span>
+              <span class="cpg-name">Kamu</span>
+            </div>
+          </div>
+          <!-- Kamera pasangan -->
+          <div class="cpg-tile hidden" id="remoteTile">
+            <video id="remoteCam" class="cpg-video" autoplay playsinline></video>
+            <div class="cpg-off" id="remoteOff"><span>📷</span></div>
+            <div class="cpg-label">
+              <span class="cpg-mic" id="remoteMicIco">🔇</span>
+              <span class="cpg-name" id="remoteName">Pasangan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar fitur seru -->
+      <div class="fun-bar">
+        <button class="btn btn-secondary fun-btn" id="missYouBtn">💌 Kangen</button>
+        <button class="btn btn-secondary fun-btn" id="kissBtn">😘 Ciuman</button>
+        <button class="btn btn-secondary fun-btn" id="gameBtn">🎮 Game</button>
+        <button class="btn btn-secondary fun-btn" id="wheelBtn">🎡 Roda</button>
+      </div>
+    </section>
+
+    <!-- KANAN: Chat -->
+    <aside class="chat">
+      <div class="chat-head">💬 Obrolan</div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="typing-indicator hidden" id="typingIndicator">✏️ <span id="typingName">Pasangan</span> sedang mengetik...</div>
+      <div class="chat-input">
+        <div class="emoji-quick">
+          <button>❤️</button><button>😘</button><button>🥰</button>
+          <button>😂</button><button>🍿</button><button>🔥</button>
+        </div>
+        <div class="chat-send">
+          <input type="text" id="chatText" placeholder="Tulis pesan untuk pasanganmu..." maxlength="500" />
+          <label class="img-upload-btn" title="Kirim gambar 📷">
+            📷
+            <input type="file" id="imgInput" accept="image/*" style="display:none" />
+          </label>
+          <button class="btn btn-primary" id="sendBtn">Kirim</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Modal Setelan Pasangan -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal">
+      <h3>💑 Setelan Pasangan</h3>
+      <label>Nama kamu</label>
+      <input type="text" id="setName1" placeholder="cth: Dika" maxlength="24" />
+      <label>Nama pasanganmu</label>
+      <input type="text" id="setName2" placeholder="cth: Sasa" maxlength="24" />
+      <label>Tanggal spesial (anniversary / rencana ketemuan)</label>
+      <input type="date" id="setDate" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="settingsClose">Tutup</button>
+        <button class="btn btn-primary" id="settingsSave">Simpan 💖</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal konfirmasi keluar -->
+  <div class="modal-overlay hidden" id="leaveModal">
+    <div class="modal">
+      <h3>🚪 Keluar dari Room?</h3>
+      <p class="modal-text">Kamu akan meninggalkan ruangan ini dan kembali ke beranda. Yakin?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="leaveCancel">Batal</button>
+        <button class="btn btn-primary" id="leaveConfirm">Ya, Keluar 👋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: pasangan men-skip kita -->
+  <div class="modal-overlay hidden" id="skippedModal">
+    <div class="modal" style="text-align:center">
+      <div style="font-size:52px;margin-bottom:6px">🥺</div>
+      <h3 id="skippedTitle">Pasanganmu pergi…</h3>
+      <p class="modal-text" id="skippedText">Dia pindah mencari yang lain. Mau cari pasangan baru juga?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="skippedStay">Tetap di sini</button>
+        <button class="btn btn-primary" id="skippedFindNew" style="flex:1">💝 Cari Pasangan Baru</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup notifikasi -->
+  <div class="popup-notif" id="popupNotif">
+    <span class="pn-emoji" id="pnEmoji">💕</span>
+    <div class="pn-text">
+      <div class="pn-title" id="pnTitle"></div>
+      <div class="pn-sub" id="pnSub"></div>
+    </div>
+  </div>
+
+  <!-- Overlay animasi (Kangen / Ciuman) -->
+  <div class="missyou-overlay" id="missYouOverlay">
+    <div class="missyou-card">
+      <div class="my-emoji" id="myEmoji">🥺💕</div>
+      <div class="my-text" id="missYouText">Kangen kamu!</div>
+    </div>
+  </div>
+
+  <!-- Modal GAME -->
+  <div class="modal-overlay hidden" id="gameModal">
+    <div class="modal game-modal">
+      <h3>🎮 Main Bareng</h3>
+      <div class="scoreboard-wrap">
+        <div class="scoreboard" id="scoreboard">
+          <span class="sb-trophy">🏆</span>
+          <span class="sb-text">Skor tersimpan otomatis</span>
+        </div>
+      </div>
+      <div class="game-tabs">
+        <button class="gtab active" data-game="ttt">⭕ XOX 5×5</button>
+        <button class="gtab" data-game="connect4">🔴 Sambung 4</button>
+        <button class="gtab" data-game="tap">👊 Tap Battle</button>
+        <button class="gtab" data-game="quiz">🧠 Kuis</button>
+        <button class="gtab" data-game="suit">✊ Suit</button>
+        <button class="gtab" data-game="tod">💋 Truth/Dare</button>
+        <button class="gtab" data-game="likely">🤔 Lebih Mungkin</button>
+      </div>
+      <div id="game-ttt">
+        <div class="ttt-status" id="tttStatus">—</div>
+        <div class="ttt-board" id="tttBoard"></div>
+        <div class="modal-actions"><button class="btn btn-secondary" id="tttReset">🔄 Main lagi</button></div>
+      </div>
+      <div id="game-connect4" class="hidden">
+        <div class="ttt-status" id="c4Status">—</div>
+        <div class="c4-board" id="c4Board"></div>
+        <div class="modal-actions"><button class="btn btn-secondary" id="c4Reset">🔄 Main lagi</button></div>
+      </div>
+      <div id="game-tap" class="hidden">
+        <div class="ttt-status" id="tapStatus">Tekan Mulai, lalu tap tombol di bawah sekencangnya! 👊</div>
+        <div class="tap-arena">
+          <div class="tap-counter-box me">
+            <div class="tap-label">Kamu 👇</div>
+            <div class="tap-count" id="myTapCount">0</div>
+          </div>
+          <div class="tap-vs">VS</div>
+          <div class="tap-counter-box them">
+            <div class="tap-label">Pasangan 👇</div>
+            <div class="tap-count" id="theirTapCount">—</div>
+          </div>
+        </div>
+        <button class="tap-battle-btn" id="tapBattleBtn" disabled>TAP!</button>
+        <div class="tap-timer" id="tapTimer"></div>
+        <div class="modal-actions"><button class="btn btn-primary" id="tapStart">Mulai 🚀</button></div>
+      </div>
+      <div id="game-quiz" class="hidden">
+        <div class="tod-card" id="quizQ">Tekan "Soal Baru" untuk mulai 🧠</div>
+        <div class="quiz-opts" id="quizOpts"></div>
+        <div class="ttt-status" id="quizStatus"></div>
+        <div class="modal-actions"><button class="btn btn-primary" id="quizNew">Soal Baru 🎲</button></div>
+      </div>
+      <div id="game-suit" class="hidden">
+        <div class="ttt-status" id="suitStatus">Pilih jurusmu! ✊✌️✋</div>
+        <div class="suit-choices">
+          <button class="suit-btn" data-suit="batu" title="Batu">✊</button>
+          <button class="suit-btn" data-suit="gunting" title="Gunting">✌️</button>
+          <button class="suit-btn" data-suit="kertas" title="Kertas">✋</button>
+        </div>
+        <div class="suit-result" id="suitResult"></div>
+        <div class="modal-actions"><button class="btn btn-secondary" id="suitReset">🔄 Ronde baru</button></div>
+      </div>
+      <div id="game-tod" class="hidden">
+        <div class="tod-card" id="todCard">Pilih Truth atau Dare untuk mulai 💕</div>
+        <div class="tod-actions">
+          <button class="btn btn-primary" id="todTruth">Truth 💬</button>
+          <button class="btn btn-primary" id="todDare">Dare 🔥</button>
+        </div>
+      </div>
+      <div id="game-likely" class="hidden">
+        <div class="tod-card" id="likelyCard">Tarik kartu "Siapa lebih mungkin…" 🤔</div>
+        <div class="tod-actions"><button class="btn btn-primary" id="likelyDraw">Tarik Kartu 🎴</button></div>
+      </div>
+      <div class="modal-actions"><button class="btn btn-secondary" id="gameClose">✕ Tutup</button></div>
+    </div>
+  </div>
+
+  <!-- Modal RODA KEPUTUSAN -->
+  <div class="modal-overlay hidden" id="wheelModal">
+    <div class="modal wheel-modal">
+      <h3>🎡 Roda Keputusan</h3>
+      <div class="wheel-wrap">
+        <canvas id="wheelCanvas" width="280" height="280"></canvas>
+        <div class="wheel-pointer">▼</div>
+      </div>
+      <div class="wheel-result" id="wheelResult"></div>
+      <label class="wheel-lbl">Pilihan (satu per baris):</label>
+      <textarea id="wheelOptions" rows="4">Bakso
+Mie Ayam
+Pizza
+Sushi
+Martabak
+Kebab</textarea>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="wheelClose">Tutup</button>
+        <button class="btn btn-primary" id="wheelSpin">Putar! 🎯</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="/js/room.js"></script>
+  <script src="/js/fun.js"></script>
+</body>
+</html>

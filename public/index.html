@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💕 Ruang Pacaran — Nonton Bareng Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="landing">
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <main class="hero">
+    <div class="hero-card">
+      <div class="logo">💑</div>
+      <h1>Ruang Pacaran</h1>
+      <p class="subtitle">Nonton bareng & berbagi layar, walau berjauhan 💕</p>
+
+      <div class="form">
+        <label>Nama panggilanmu</label>
+        <input type="text" id="nameInput" placeholder="contoh: Sayang" maxlength="24" />
+
+        <div class="divider"><span>Buat ruangan baru</span></div>
+        <button class="btn btn-primary" id="createBtn">✨ Buat Ruang Baru</button>
+
+        <div class="divider"><span>atau gabung ruangan</span></div>
+        <div class="join-row">
+          <input type="text" id="roomInput" placeholder="Kode ruangan (cth: LOVE12)" maxlength="8" />
+          <button class="btn btn-secondary" id="joinBtn">Gabung 💌</button>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature">📺<span>Nonton video dari link</span></div>
+        <div class="feature">🖥️<span>Share screen</span></div>
+        <div class="feature">💬<span>Chat real-time</span></div>
+      </div>
+
+      <div class="find-section">
+        <div class="divider"><span>atau temukan seseorang baru</span></div>
+        <a href="/find" class="btn btn-find">
+          <span class="btn-find-pulse"></span>
+          💝 Cari Pacar Online
+        </a>
+        <div class="find-live-badge">
+          <span class="fo-dot"></span>
+          <span id="onlineCount">Sedang memuat...</span>
+        </div>
+        <p class="find-tagline">Dipasangkan secara acak & real-time 🌐</p>
+      </div>
+    </div>
+    <footer class="foot">Dibuat dengan 💖 untuk kalian berdua</footer>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
