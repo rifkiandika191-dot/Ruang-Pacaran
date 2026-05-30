@@ -640,23 +640,37 @@
   function escS(s){ return String(s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   async function openStory(id) {
+    const modal   = document.getElementById("storyModal");
+    const content = document.getElementById("storyContent");
+    content.innerHTML = `<div style="text-align:center;color:#c084a8;padding:20px">Memuat... 💕</div>`;
+    modal.style.display = "flex";
     try {
       const res = await fetch(`/api/stories/${id}`);
+      if (!res.ok) throw new Error("not found");
       const s = await res.json();
-      const modal = document.getElementById("storyModal");
-      const content = document.getElementById("storyContent");
       const expires = Math.max(0, Math.floor((s.ts + 86400000 - Date.now()) / 3600000));
+
+      // Buat struktur HTML tanpa embed base64 di template literal
       content.innerHTML = `
         <div style="text-align:center;margin-bottom:14px">
           <div style="font-size:48px;margin-bottom:6px">${s.emoji||"😊"}</div>
           <div style="font-size:16px;font-weight:800;color:#be185d">${escS(s.name)}</div>
           <div style="font-size:11px;color:#c084a8;margin-top:2px">Berakhir dalam ${expires} jam</div>
         </div>
-        ${s.image?`<img src="${s.image}" style="width:100%;border-radius:14px;margin-bottom:12px;max-height:200px;object-fit:cover"/>`:``}
+        <div id="_storyImgWrap"></div>
         <div style="font-size:14px;color:#4a1942;line-height:1.6;background:rgba(255,255,255,.7);border-radius:12px;padding:12px;text-align:center">${escS(s.text)}</div>
       `;
-      modal.style.display = "flex";
-    } catch(e) {}
+
+      // Set src gambar via DOM langsung — aman untuk base64 besar
+      if (s.image) {
+        const img = document.createElement("img");
+        img.style.cssText = "width:100%;border-radius:14px;margin-bottom:12px;max-height:280px;object-fit:cover;display:block";
+        img.src = s.image;
+        document.getElementById("_storyImgWrap").appendChild(img);
+      }
+    } catch(e) {
+      content.innerHTML = `<div style="text-align:center;color:#c084a8;padding:20px">Cerita tidak ditemukan atau sudah berakhir 😢</div>`;
+    }
   }
 
   function closeStory() { document.getElementById("storyModal").style.display = "none"; }
