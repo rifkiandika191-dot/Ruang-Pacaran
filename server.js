@@ -182,8 +182,9 @@ app.post("/api/donation-webhook", (req, res) => {
     return res.status(400).json({ error: "Invalid payload" });
   }
 
-  // Saweria kadang kirim amount sebagai string "10.000" (titik = ribuan)
-  const rawAmount = String(data.amount || "0").replace(/\./g, "").replace(/,/g, ".");
+  // Saweria kirim amount di field "amount_raw", bukan "amount"
+  const amountVal = data.amount_raw ?? data.amount ?? (data.etc && data.etc.amount_to_display) ?? 0;
+  const rawAmount = String(amountVal).replace(/\./g, "").replace(/,/g, ".");
   const donation = {
     name:    String(data.donator_name).slice(0, 50).trim(),
     amount:  Math.max(0, parseFloat(rawAmount) || 0),
