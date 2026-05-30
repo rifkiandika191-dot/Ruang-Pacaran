@@ -260,6 +260,78 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    /* ── Badge ── */
+    .gc-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 700;
+      background: rgba(251,207,232,.6); color: #be185d;
+      border: 1px solid #fbcfe8; border-radius: 999px;
+      padding: 1px 7px; margin-left: 5px;
+      vertical-align: middle;
+    }
+    .gc-me .gc-badge { background: rgba(255,255,255,.25); color: #fff; border-color: rgba(255,255,255,.4); }
+
+    /* ── Quote harian ── */
+    .gc-quote {
+      align-self: center; max-width: 92%;
+      background: linear-gradient(135deg, rgba(252,231,243,.9), rgba(237,233,254,.9));
+      border: 1.5px solid #f9a8d4; border-radius: 16px;
+      padding: 10px 16px; text-align: center; margin: 8px 0;
+      font-size: 13px; color: #9d174d; font-style: italic; line-height: 1.5;
+      box-shadow: 0 2px 10px rgba(236,72,153,.1);
+    }
+
+    /* ── Tebak Lagu overlay ── */
+    #tebakOverlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(10,5,15,.85); backdrop-filter: blur(6px);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; padding: 24px;
+    }
+    #tebakOverlay.show { display: flex; }
+    .tebak-card {
+      background: linear-gradient(135deg, #1e0d1a, #150a25);
+      border: 2px solid #ec4899; border-radius: 24px;
+      padding: 20px; width: 100%; max-width: 480px;
+      box-shadow: 0 0 40px rgba(236,72,153,.4);
+    }
+    .tebak-title {
+      font-size: 16px; font-weight: 700; color: #f9a8d4;
+      text-align: center; margin-bottom: 12px;
+      letter-spacing: .5px;
+    }
+    .tebak-yt {
+      width: 100%; aspect-ratio: 16/9; border-radius: 14px;
+      border: none; background: #000;
+    }
+    .tebak-timer-wrap {
+      display: flex; align-items: center; gap: 10px; margin-top: 12px;
+    }
+    .tebak-timer-bar {
+      flex: 1; height: 8px; background: rgba(255,255,255,.15);
+      border-radius: 999px; overflow: hidden;
+    }
+    .tebak-timer-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, #ec4899, #a855f7);
+      border-radius: 999px;
+      transition: width 1s linear;
+    }
+    .tebak-timer-num {
+      font-size: 20px; font-weight: 800; color: #f9a8d4;
+      min-width: 32px; text-align: right;
+    }
+    .tebak-hint {
+      font-size: 12px; color: #c084a8; text-align: center; margin-top: 8px;
+    }
+    .tebak-close {
+      background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.2);
+      color: #fff; border-radius: 999px; padding: 8px 24px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: background .15s;
+    }
+    .tebak-close:hover { background: rgba(255,255,255,.2); }
+
     /* ── Dark mode ── */
     body.dark.gc-page { background: #1a0d12; }
     body.dark .gc-header { background: linear-gradient(135deg, #2d0e1f 0%, #1e1028 100%); }
