@@ -203,6 +203,17 @@ app.get("/api/top-donors", (req, res) => {
 // API: donasi terbaru
 app.get("/api/recent-donations", (req, res) => res.json(donations.slice(0, 10)));
 
+// API: test donasi — broadcast ke SEMUA user (hanya untuk testing)
+app.post("/api/test-donation", (req, res) => {
+  const donation = {
+    name:    (req.body && req.body.name)    || "Test Donatur",
+    amount:  (req.body && req.body.amount)  || 50000,
+    message: (req.body && req.body.message) || "Semangat terus! 🎉",
+  };
+  io.emit("new-donation", donation);
+  res.json({ ok: true });
+});
+
 // ─────────────────────────────────────────────────────────────
 //  API: SARAN / FITUR / BUG
 // ─────────────────────────────────────────────────────────────
