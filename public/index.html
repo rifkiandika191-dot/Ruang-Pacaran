@@ -668,6 +668,28 @@
   function closeAddStory() { document.getElementById("addStoryModal").style.display = "none"; }
   document.getElementById("addStoryModal").addEventListener("click", e => { if(e.target===document.getElementById("addStoryModal")) closeAddStory(); });
 
+  // Foto untuk story
+  let storyImgData = null;
+  document.getElementById("storyImgBtn").addEventListener("click", () => document.getElementById("storyImgInput").click());
+  document.getElementById("storyImgInput").addEventListener("change", e => {
+    const file = e.target.files[0]; if(!file) return;
+    if(file.size > 2*1024*1024) { alert("Foto max 2MB"); return; }
+    const reader = new FileReader();
+    reader.onload = r => {
+      storyImgData = r.result;
+      document.getElementById("storyImgPreviewEl").src = storyImgData;
+      document.getElementById("storyImgPreview").style.display = "block";
+      document.getElementById("storyImgBtn").textContent = "📷 Ganti Foto";
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById("storyImgDel").addEventListener("click", () => {
+    storyImgData = null;
+    document.getElementById("storyImgPreview").style.display = "none";
+    document.getElementById("storyImgInput").value = "";
+    document.getElementById("storyImgBtn").textContent = "📷 Tambah Foto";
+  });
+
   document.getElementById("storySubmitBtn").addEventListener("click", async () => {
     const name = localStorage.getItem("pacaran_name") || document.getElementById("nameInput")?.value?.trim();
     const text = document.getElementById("storyText").value.trim();
@@ -676,10 +698,14 @@
     try {
       await fetch("/api/stories", {
         method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ name, text, emoji: selectedEmoji }),
+        body: JSON.stringify({ name, text, emoji: selectedEmoji, image: storyImgData }),
       });
       closeAddStory();
       document.getElementById("storyText").value = "";
+      storyImgData = null;
+      document.getElementById("storyImgPreview").style.display = "none";
+      document.getElementById("storyImgInput").value = "";
+      document.getElementById("storyImgBtn").textContent = "📷 Tambah Foto";
       loadStories();
     } catch(e) { alert("Gagal mengirim cerita"); }
   });
