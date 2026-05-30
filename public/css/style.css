@@ -298,53 +298,103 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ============================================================
-   DONASI & TOP DONORS
+   DONASI — kartu besar, mencolok, mobile-first
    ============================================================ */
-.donate-section { margin-top: 8px; text-align: center; }
-
-.btn-donate {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 28px; font-size: 16px; font-weight: 700;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  color: #fff; border-radius: 999px; text-decoration: none;
-  box-shadow: 0 6px 20px rgba(239,68,68,.35);
-  transition: transform .15s, box-shadow .15s, filter .15s;
+.donate-hero {
+  margin-top: 16px;
+  background: linear-gradient(145deg, #fff8f0 0%, #fff3e0 50%, #fff8f0 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 22px;
+  padding: 22px 18px 20px;
+  text-align: center;
+  box-shadow: 0 6px 28px rgba(251,191,36,.25);
+  position: relative;
+  overflow: hidden;
 }
-.btn-donate:hover { transform: translateY(-2px); filter: brightness(1.08);
-  box-shadow: 0 8px 24px rgba(239,68,68,.45); }
+/* Kilap tipis di sudut */
+.donate-hero::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b);
+}
 
-.donate-sub { font-size: 13px; color: var(--muted); margin: 8px 0 12px; }
+.dh-icon { font-size: 42px; line-height: 1; margin-bottom: 6px; }
+.dh-title {
+  font-size: 20px; font-weight: 700; color: #92400e;
+  margin-bottom: 4px;
+}
+.dh-sub {
+  font-size: 13px; color: #b45309; margin-bottom: 16px; line-height: 1.5;
+}
+
+/* Tombol donasi — besar & mencolok */
+.btn-donate-big {
+  display: block; width: 100%;
+  padding: 16px 20px; font-size: 17px; font-weight: 700;
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  color: #fff; border-radius: 16px; text-decoration: none;
+  box-shadow: 0 6px 22px rgba(239,68,68,.38);
+  transition: transform .15s, filter .15s, box-shadow .15s;
+  font-family: inherit; letter-spacing: .3px;
+  animation: donatePulse 2.5s ease-in-out infinite;
+}
+.btn-donate-big:hover, .btn-donate-big:active {
+  transform: translateY(-2px) scale(1.01);
+  filter: brightness(1.08);
+  box-shadow: 0 10px 28px rgba(239,68,68,.48);
+  animation: none;
+}
+@keyframes donatePulse {
+  0%, 100% { box-shadow: 0 6px 22px rgba(239,68,68,.38); }
+  50%       { box-shadow: 0 6px 30px rgba(239,68,68,.6); }
+}
+
+/* Pemisah top donors */
+.dh-divider {
+  font-weight: 700; font-size: 14px; color: #92400e;
+  margin: 18px 0 10px;
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+}
+.dh-divider::before, .dh-divider::after {
+  content: ""; flex: 1; height: 1px; background: #fcd34d;
+}
 
 /* Ticker donasi live */
 .donation-ticker {
   display: flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg,#fff7ed,#fef3c7); border: 1.5px solid #fcd34d;
-  border-radius: 12px; padding: 10px 14px; font-size: 13px;
-  color: #92400e; font-weight: 600; margin-bottom: 12px;
-  animation: fadeIn .3s ease;
+  background: #fffbeb; border: 1.5px solid #fcd34d;
+  border-radius: 12px; padding: 9px 14px; font-size: 13px;
+  color: #92400e; font-weight: 600; margin-bottom: 14px;
+  animation: fadeIn .3s ease; text-align: left;
 }
 .dt-dot {
-  width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0;
+  width: 8px; height: 8px; flex-shrink: 0;
+  border-radius: 50%; background: #ef4444;
   animation: blink 1s infinite;
 }
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
 
-/* Top Donors leaderboard */
-.top-donors {
-  background: var(--cream); border: 1.5px solid var(--peach);
-  border-radius: 18px; padding: 16px; text-align: left; margin-top: 4px;
-}
-.td-title { font-weight: 700; font-size: 15px; color: var(--pink-dark); margin-bottom: 10px; text-align: center; }
-.td-list { display: flex; flex-direction: column; gap: 8px; }
+/* Top donors list */
+.td-list { display: flex; flex-direction: column; gap: 8px; text-align: left; }
 .td-item {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--card); border-radius: 12px; padding: 10px 14px;
-  border: 1px solid var(--peach);
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,.75); border-radius: 14px;
+  padding: 11px 14px; border: 1.5px solid #fde68a;
+  backdrop-filter: blur(4px);
 }
-.td-rank { font-size: 20px; flex-shrink: 0; }
-.td-name { flex: 1; font-weight: 700; font-size: 14px; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.td-amount { font-weight: 700; color: var(--pink-dark); font-size: 13px; flex-shrink: 0; }
-.td-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 10px 0; }
+.td-rank { font-size: 22px; flex-shrink: 0; width: 28px; text-align: center; }
+.td-name {
+  flex: 1; font-weight: 700; font-size: 14px; color: #78350f;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.td-count { font-size: 11px; color: #b45309; font-weight: 600; flex-shrink: 0; }
+.td-amount {
+  font-weight: 700; font-size: 14px; color: #dc2626; flex-shrink: 0;
+}
+.td-empty {
+  text-align: center; color: #b45309; font-size: 13px;
+  padding: 12px 0; font-style: italic;
+}
 
 /* Saran promo card */
 .saran-promo { margin-top: 8px; }
