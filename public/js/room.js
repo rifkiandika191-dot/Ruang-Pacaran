@@ -653,7 +653,7 @@ el("settingsSave").addEventListener("click", () => {
   toast("Setelan tersimpan 💖");
 });
 settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) settingsModal.classList.add("hidden"); });
-socket.on("couple-info", (c) => { saveCouple(c); applyCouple(c); });
+// couple-info handler dipindah ke bagian LOKASI di bawah (supaya bisa proses data lokasi juga)
 applyCouple(loadCouple());
 // refresh countdown tiap menit
 setInterval(() => updateCountdown(loadCouple().date), 60000);
