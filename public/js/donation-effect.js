@@ -264,28 +264,49 @@
   }
 
   // ── Show ──
+  const DURATION = 8; // detik sebelum auto-close
+
   function show(donation) {
     inject();
+
+    // Emoji bergantian tiap donasi
+    const emojis = ["🎆","🎇","✨","🎊","🎉"];
+    document.getElementById("dtEmoji").textContent =
+      emojis[Math.floor(Math.random() * emojis.length)];
     document.getElementById("dtWho").textContent = `🎉 ${donation.name} baru saja donasi!`;
     document.getElementById("dtAmt").textContent  = fmtRp(donation.amount || 0);
 
     const toast = document.getElementById("donToast");
-    // Reset animasi toast jika sedang tampil
-    toast.classList.remove("show");
-    void toast.offsetWidth; // reflow
-    toast.classList.add("show");
+    const bd    = document.getElementById("donBackdrop");
+    const prog  = document.getElementById("donProgress");
+
+    // Reset lalu tampilkan
+    toast.classList.remove("show"); bd.classList.remove("show");
+    void toast.offsetWidth;
+    toast.classList.add("show"); bd.classList.add("show");
+
+    // Progress bar countdown
+    if (prog) {
+      prog.style.transition = "none";
+      prog.style.width = "100%";
+      void prog.offsetWidth;
+      prog.style.transition = `width ${DURATION}s linear`;
+      prog.style.width = "0%";
+    }
 
     spawnConfetti();
     playTing();
 
     clearTimeout(closeTimer);
-    closeTimer = setTimeout(hide, 7000);
+    closeTimer = setTimeout(hide, DURATION * 1000);
   }
 
   // ── Hide ──
   function hide() {
     const toast = document.getElementById("donToast");
+    const bd    = document.getElementById("donBackdrop");
     if (toast) toast.classList.remove("show");
+    if (bd)    bd.classList.remove("show");
     clearTimeout(closeTimer);
   }
 
