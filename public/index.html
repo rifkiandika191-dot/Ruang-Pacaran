@@ -543,6 +543,104 @@
     }
   </script>
 
+  <script>
+  // ── Cerita Hari Ini ──
+  let selectedEmoji = "😊";
+  let _stories = [];
+
+  document.querySelectorAll(".emoji-pick").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".emoji-pick").forEach(x => x.classList.remove("active"));
+      b.classList.add("active"); selectedEmoji = b.dataset.e;
+    });
+  });
+  document.querySelector('.emoji-pick[data-e="😊"]')?.classList.add("active");
+
+  function timeAgoShort(ts) {
+    const d = Date.now()-ts;
+    if(d<3600000) return Math.floor(d/60000)+"m";
+    return Math.floor(d/3600000)+"j";
+  }
+
+  async function loadStories() {
+    try {
+      const res = await fetch("/api/stories");
+      _stories = await res.json();
+      const row = document.getElementById("storiesRow");
+      const sec = document.getElementById("storiesSection");
+      const add = document.getElementById("addStorySection");
+      row.innerHTML = "";
+      if(_stories.length > 0) {
+        sec.style.display = ""; add.style.display = "";
+        _stories.forEach(s => {
+          const div = document.createElement("div");
+          div.className = "story-circle";
+          div.innerHTML = `<div class="story-ring"><div class="story-inner">${s.emoji||"😊"}</div></div><div class="story-name">${escS(s.name)}</div>`;
+          div.addEventListener("click", () => openStory(s.id));
+          row.appendChild(div);
+        });
+      } else {
+        sec.style.display = ""; add.style.display = "";
+      }
+    } catch(e) {}
+  }
+
+  function escS(s){ return String(s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function openStory(id) {
+    try {
+      const res = await fetch(`/api/stories/${id}`);
+      const s = await res.json();
+      const modal = document.getElementById("storyModal");
+      const content = document.getElementById("storyContent");
+      const expires = Math.max(0, Math.floor((s.ts + 86400000 - Date.now()) / 3600000));
+      content.innerHTML = `
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:48px;margin-bottom:6px">${s.emoji||"😊"}</div>
+          <div style="font-size:16px;font-weight:800;color:#be185d">${escS(s.name)}</div>
+          <div style="font-size:11px;color:#c084a8;margin-top:2px">Berakhir dalam ${expires} jam</div>
+        </div>
+        ${s.image?`<img src="${s.image}" style="width:100%;border-radius:14px;margin-bottom:12px;max-height:200px;object-fit:cover"/>`:``}
+        <div style="font-size:14px;color:#4a1942;line-height:1.6;background:rgba(255,255,255,.7);border-radius:12px;padding:12px;text-align:center">${escS(s.text)}</div>
+      `;
+      modal.style.display = "flex";
+    } catch(e) {}
+  }
+
+  function closeStory() { document.getElementById("storyModal").style.display = "none"; }
+  document.getElementById("storyModal").addEventListener("click", e => { if(e.target===document.getElementById("storyModal")) closeStory(); });
+
+  document.getElementById("addStoryBtn").addEventListener("click", () => {
+    document.getElementById("addStoryModal").style.display = "flex";
+  });
+  function closeAddStory() { document.getElementById("addStoryModal").style.display = "none"; }
+  document.getElementById("addStoryModal").addEventListener("click", e => { if(e.target===document.getElementById("addStoryModal")) closeAddStory(); });
+
+  document.getElementById("storySubmitBtn").addEventListener("click", async () => {
+    const name = localStorage.getItem("pacaran_name") || document.getElementById("nameInput")?.value?.trim();
+    const text = document.getElementById("storyText").value.trim();
+    if(!name) { alert("Isi nama panggilanmu dulu di form utama!"); closeAddStory(); return; }
+    if(!text) { alert("Tulis ceritanya dulu!"); return; }
+    try {
+      await fetch("/api/stories", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ name, text, emoji: selectedEmoji }),
+      });
+      closeAddStory();
+      document.getElementById("storyText").value = "";
+      loadStories();
+    } catch(e) { alert("Gagal mengirim cerita"); }
+  });
+
+  // Real-time story baru
+  if(typeof io !== "undefined") {
+    const _s = io();
+    _s.on("story-new", () => loadStories());
+  }
+
+  loadStories();
+  </script>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/donation-effect.js"></script>
