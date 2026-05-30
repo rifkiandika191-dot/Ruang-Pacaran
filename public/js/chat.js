@@ -138,15 +138,27 @@ g("gcText").addEventListener("keydown", (e) => { if (e.key === "Enter") sendMsg(
 // Emoji cepat
 document.querySelectorAll(".gc-emoji-row button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const val = btn.dataset.val || btn.textContent;
     if (btn.dataset.val === "!tebak") {
-      g("gcText").value = "!tebak";
-      sendMsg();
+      // Tampilkan alert konfirmasi dulu
+      const alert = g("tebakAlert");
+      if (alert) alert.classList.add("show");
     } else {
-      g("gcText").value += val;
+      g("gcText").value += btn.textContent;
       g("gcText").focus();
     }
   });
+});
+
+// Alert tebak lagu — tombol batal & mulai
+const _tebakAlertCancel = g("tebakAlertCancel");
+const _tebakAlertOk     = g("tebakAlertOk");
+if (_tebakAlertCancel) _tebakAlertCancel.addEventListener("click", () => {
+  g("tebakAlert").classList.remove("show");
+});
+if (_tebakAlertOk) _tebakAlertOk.addEventListener("click", () => {
+  g("tebakAlert").classList.remove("show");
+  g("gcText").value = "!tebak";
+  sendMsg();
 });
 
 // ── Typing indicator ──
