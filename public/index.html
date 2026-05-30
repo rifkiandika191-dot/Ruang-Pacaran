@@ -453,14 +453,34 @@
     const clModal    = document.getElementById("clModal");
     const clBackdrop = document.getElementById("clBackdrop");
     const clClose    = document.getElementById("clClose");
+    const clFabHint  = document.getElementById("clFabHint");
 
-    function openCl()  { clModal.classList.add("show"); clBackdrop.classList.add("show"); document.body.style.overflow = "hidden"; }
-    function closeCl() { clModal.classList.remove("show"); clBackdrop.classList.remove("show"); document.body.style.overflow = ""; }
+    function openCl() {
+      clModal.classList.add("show");
+      clBackdrop.classList.add("show");
+      document.body.style.overflow = "hidden";
+      // Sembunyikan hint setelah dibuka pertama kali
+      clFabHint.classList.add("hide");
+      localStorage.setItem("cl_hint_seen", "1");
+    }
+    function closeCl() {
+      clModal.classList.remove("show");
+      clBackdrop.classList.remove("show");
+      document.body.style.overflow = "";
+    }
 
     clFab.addEventListener("click", openCl);
+    clFabHint.addEventListener("click", openCl);
     clClose.addEventListener("click", closeCl);
     clBackdrop.addEventListener("click", closeCl);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCl(); });
+
+    // Sembunyikan hint setelah 6 detik, atau kalau sudah pernah diklik
+    if (localStorage.getItem("cl_hint_seen")) {
+      clFabHint.classList.add("hide");
+    } else {
+      setTimeout(() => clFabHint.classList.add("hide"), 6000);
+    }
   </script>
 
   <script src="/socket.io/socket.io.js"></script>
