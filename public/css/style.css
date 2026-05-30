@@ -728,35 +728,6 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ============================================================
-   VOICE NOTE — tombol & audio player
-   ============================================================ */
-.voice-note-btn {
-  width: 42px; height: 42px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--cream); border: 1.5px solid var(--peach);
-  border-radius: 12px; font-size: 18px; cursor: pointer;
-  transition: background .12s, box-shadow .12s;
-}
-.voice-note-btn:hover { background: var(--peach); }
-.voice-note-btn.recording {
-  background: #ffe0e8;
-  border-color: var(--pink);
-  box-shadow: 0 0 0 4px rgba(255,92,138,.2);
-  animation: recordPulse 1s infinite;
-}
-@keyframes recordPulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(255,92,138,.2); }
-  50% { box-shadow: 0 0 0 8px rgba(255,92,138,.08); }
-}
-.chat-audio {
-  display: block;
-  width: 100%;
-  margin-top: 6px;
-  border-radius: 10px;
-  accent-color: var(--pink);
-}
-.msg.msg-audio { padding-bottom: 8px; }
 
 /* ============================================================
    LOKASI & WAKTU LOKAL
