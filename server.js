@@ -248,11 +248,7 @@ io.on("connection", (socket) => {
     const room = getRoom(currentRoom);
     room.videoState = { url: null, type: null, time: 0, playing: false, updatedAt: Date.now() };
     socket.to(currentRoom).emit("video-stop");
-    io.to(currentRoom).emit("chat", {
-      system: true,
-      text: `${myName} menghentikan nonton bareng ⏹️`,
-      ts: Date.now(),
-    });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} menghentikan nonton bareng ⏹️`, ts: Date.now() });
   });
 
   // --- Kontrol pemutar (play/pause/seek) ---
