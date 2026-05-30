@@ -1119,3 +1119,183 @@ window.addEventListener("beforeunload", () => {
   if (isSharing) stopScreenShare();
   if (inCall) endCall();
 });
+
+// ============================================================
+//  STREAK HARIAN
+// ============================================================
+function applyStreak({ streak, longest }) {
+  const badge = el("streakBadge");
+  if (!streak || streak === 0) { badge.classList.add("hidden"); return; }
+  badge.classList.remove("hidden");
+  badge.textContent = `🔥 ${streak}`;
+  badge.title = `Streak: ${streak} hari berturut-turut!\nTerpanjang: ${longest} hari`;
+}
+socket.on("streak", applyStreak);
+
+// ============================================================
+//  VOICE NOTE
+// ============================================================
+let mediaRecorderVoice = null;
+let audioChunks = [];
+let isRecordingVoice = false;
+
+el("voiceBtn").addEventListener("click", () => {
+  if (isRecordingVoice) stopVoiceRecording();
+  else startVoiceRecording();
+});
+
+async function startVoiceRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
+    mediaRecorderVoice = new MediaRecorder(stream, { mimeType });
+    mediaRecorderVoice.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorderVoice.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(audioChunks, { type: mimeType });
+      if (blob.size === 0) { toast("Rekaman kosong 🥺"); return; }
+      if (blob.size > 600_000) { toast("Rekaman terlalu panjang (maks ~30 detik) 🥺"); return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => socket.emit("chat", { audio: ev.target.result });
+      reader.readAsDataURL(blob);
+    };
+    mediaRecorderVoice.start();
+    isRecordingVoice = true;
+    el("voiceBtn").classList.add("recording");
+    el("voiceBtn").textContent = "⏹️";
+    toast("Merekam... Tekan ⏹️ untuk kirim 🎙️");
+  } catch (e) {
+    toast("Tidak bisa akses mikrofon 🥺 (izinkan akses)");
+  }
+}
+
+function stopVoiceRecording() {
+  if (mediaRecorderVoice && mediaRecorderVoice.state === "recording") mediaRecorderVoice.stop();
+  isRecordingVoice = false;
+  el("voiceBtn").classList.remove("recording");
+  el("voiceBtn").textContent = "🎙️";
+}
+
+// ============================================================
+//  LOKASI & WAKTU LOKAL
+// ============================================================
+let myGeo = null;      // { lat, lon, city, tz }
+let partnerGeo = null; // { lat, lon, city, tz }
+let locTimeTimer = null;
+
+el("locationBtn").addEventListener("click", () => {
+  const c = loadCouple();
+  el("cityInput").value = c.myCity || "";
+  el("locHint").textContent = "";
+  el("locationModal").classList.remove("hidden");
+  refreshLocationDisplay();
+});
+el("locationClose").addEventListener("click", () => el("locationModal").classList.add("hidden"));
+el("locationModal").addEventListener("click", (e) => { if (e.target === el("locationModal")) el("locationModal").classList.add("hidden"); });
+
+el("locationSave").addEventListener("click", async () => {
+  const cityName = el("cityInput").value.trim();
+  if (!cityName) { toast("Masukkan nama kota dulu 📍"); return; }
+  el("locHint").textContent = "Mencari koordinat...";
+  el("locationSave").disabled = true;
+  try {
+    const geo = await geocodeCity(cityName);
+    if (!geo) { el("locHint").textContent = "Kota tidak ditemukan, coba nama lain."; el("locationSave").disabled = false; return; }
+    myGeo = { lat: geo.lat, lon: geo.lon, city: cityName, tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
+    // Simpan ke couple settings
+    const c = loadCouple();
+    c.myCity = cityName;
+    c.myLat = geo.lat;
+    c.myLon = geo.lon;
+    c.myTz = myGeo.tz;
+    saveCouple(c);
+    // Bagikan ke pasangan via couple-info
+    socket.emit("couple-info", c);
+    el("locHint").textContent = `✅ ${geo.display.split(",")[0]}`;
+    refreshLocationDisplay();
+    toast("Lokasi tersimpan & dibagikan ke pasangan 📍");
+  } catch (e) {
+    el("locHint").textContent = "Gagal mengambil data, periksa koneksi.";
+  }
+  el("locationSave").disabled = false;
+});
+
+async function geocodeCity(city) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`;
+  const res = await fetch(url, { headers: { "User-Agent": "RuangPacaran/1.0" } });
+  const data = await res.json();
+  if (!data || data.length === 0) return null;
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
+}
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+function localTimeStr(tz) {
+  if (!tz) return "—";
+  try {
+    return new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date());
+  } catch { return "—"; }
+}
+
+function refreshLocationDisplay() {
+  const c = loadCouple();
+  // Sisi kita
+  if (c.myCity) {
+    myGeo = { lat: c.myLat, lon: c.myLon, city: c.myCity, tz: c.myTz || Intl.DateTimeFormat().resolvedOptions().timeZone };
+    el("myCityName").textContent = c.myCity;
+    el("myLocalTime").textContent = localTimeStr(myGeo.tz);
+  } else {
+    el("myCityName").textContent = "Belum diset";
+    el("myLocalTime").textContent = "—";
+  }
+  // Sisi pasangan
+  if (c.partnerCity) {
+    partnerGeo = { lat: c.partnerLat, lon: c.partnerLon, city: c.partnerCity, tz: c.partnerTz };
+    el("partnerCityName").textContent = c.partnerCity;
+    el("partnerLocalTime").textContent = localTimeStr(c.partnerTz);
+  } else {
+    el("partnerCityName").textContent = "Belum diset";
+    el("partnerLocalTime").textContent = "—";
+  }
+  // Jarak
+  if (myGeo && partnerGeo) {
+    const km = haversineKm(myGeo.lat, myGeo.lon, partnerGeo.lat, partnerGeo.lon);
+    el("distanceKm").textContent = km.toLocaleString("id-ID");
+    // Beda waktu
+    try {
+      const nowMs = Date.now();
+      const myOffset = new Date(nowMs).toLocaleString("en-US", { timeZone: myGeo.tz, hour: "numeric", hour12: false }) - new Date(nowMs).getUTCHours();
+      const pOffset = new Date(nowMs).toLocaleString("en-US", { timeZone: partnerGeo.tz, hour: "numeric", hour12: false }) - new Date(nowMs).getUTCHours();
+      const diff = Math.round(pOffset - myOffset);
+      el("tzDiff").textContent = diff === 0 ? "Zona waktu sama" : `Selisih ${Math.abs(diff)} jam`;
+    } catch { el("tzDiff").textContent = ""; }
+  } else {
+    el("distanceKm").textContent = "—";
+    el("tzDiff").textContent = "";
+  }
+  // Update waktu setiap menit
+  clearInterval(locTimeTimer);
+  locTimeTimer = setInterval(refreshLocationDisplay, 60000);
+}
+
+// Terima lokasi pasangan via couple-info (yang sudah ada)
+const _origCoupleInfo = socket.listeners ? null : null;
+socket.on("couple-info", (c) => {
+  // Simpan data lokasi pasangan di couple settings lokal
+  const local = loadCouple();
+  if (c.myCity) { local.partnerCity = c.myCity; local.partnerLat = c.myLat; local.partnerLon = c.myLon; local.partnerTz = c.myTz; }
+  // Merge nama & tanggal dari pasangan juga (behaviour lama)
+  if (c.name1) local.name1 = c.name1;
+  if (c.name2) local.name2 = c.name2;
+  if (c.date) local.date = c.date;
+  saveCouple(local);
+  applyCouple(local);
+  refreshLocationDisplay();
+});
