@@ -923,8 +923,18 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   /* ── Hapus pesan: tombol tampil tanpa hover di touch ── */
   .msg-delete-btn { display: inline-block; }
 
-  /* ── Topbar sangat padat: sembunyikan elemen sekunder ── */
-  .session-timer { display: none; }
-  .countdown { font-size: 10px; padding: 4px 8px; max-width: 160px;
+  /* ── Topbar sangat padat: compact & sembunyikan yang tidak kritis ── */
+  .session-timer { font-size: 11px; }
+  .countdown { font-size: 10px; padding: 4px 8px; max-width: 150px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .streak-badge { font-size: 11px; padding: 4px 8px; }
+  /* Pada layar <480px sembunyikan timer untuk ruang lebih */
+}
+
+@media (max-width: 480px) {
+  .session-timer { display: none; }
+  .streak-badge { font-size: 10px; padding: 3px 7px; }
+  /* Fun bar jadi 2 kolom di layar sangat kecil */
+  .fun-bar { grid-template-columns: repeat(2, 1fr); }
+  .rh-meta { font-size: 12px; }
 }
