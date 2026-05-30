@@ -1268,19 +1268,18 @@ el("locationSave").addEventListener("click", async () => {
   try {
     const geo = await geocodeCity(cityName);
     if (!geo) { el("locHint").textContent = "Kota tidak ditemukan, coba nama lain."; el("locationSave").disabled = false; return; }
-    myGeo = { lat: geo.lat, lon: geo.lon, city: cityName, tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
-    // Simpan ke couple settings
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    myGeo = { lat: geo.lat, lon: geo.lon, city: cityName, tz };
     const c = loadCouple();
     c.myCity = cityName;
     c.myLat = geo.lat;
     c.myLon = geo.lon;
-    c.myTz = myGeo.tz;
+    c.myTz = tz;
     saveCouple(c);
-    // Bagikan ke pasangan via couple-info
     socket.emit("couple-info", c);
-    el("locHint").textContent = `✅ ${geo.display.split(",")[0]}`;
+    el("locHint").textContent = `✅ Tersimpan: ${geo.display.split(",")[0]}`;
     refreshLocationDisplay();
-    toast("Lokasi tersimpan & dibagikan ke pasangan 📍");
+    toast("Lokasi dibagikan ke pasangan 📍");
   } catch (e) {
     el("locHint").textContent = "Gagal mengambil data, periksa koneksi.";
   }
