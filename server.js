@@ -433,8 +433,9 @@ function removeFromQueue(socketId) {
 // Route eksplisit (biar refresh di /room tetap jalan)
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/room", (req, res) => res.sendFile(path.join(__dirname, "public", "room.html")));
-app.get("/find", (req, res) => res.sendFile(path.join(__dirname, "public", "find.html")));
-app.get("/saran", (req, res) => res.sendFile(path.join(__dirname, "public", "saran.html")));
+app.get("/find",   (req, res) => res.sendFile(path.join(__dirname, "public", "find.html")));
+app.get("/saran",  (req, res) => res.sendFile(path.join(__dirname, "public", "saran.html")));
+app.get("/dinding",(req, res) => res.sendFile(path.join(__dirname, "public", "dinding.html")));
 
 // ─────────────────────────────────────────────────────────────
 //  API: SAWERIA WEBHOOK (terima notifikasi donasi)
