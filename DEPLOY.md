@@ -69,20 +69,91 @@ Buka `https://pacaran.domainku.com` — itulah link permanen kamu untuk dibagika
 
 ---
 
-## (Opsional) Agar Skor & Durasi Room Permanen
+## LANGKAH 4 — Agar Data Tidak Hilang Saat Deploy Ulang ⚠️
 
-Filesystem Railway bersifat sementara — data skor/durasi **reset saat redeploy**. Untuk menyimpannya permanen:
+> **Mengapa ini penting?**
+> Railway menggunakan filesystem sementara — artinya setiap kali kamu push kode baru dan Railway deploy ulang, file seperti `scores.json`, `durations.json`, dan `streaks.json` akan **terhapus otomatis**.
+> Dengan Railway Volume, file-file tersebut tersimpan di disk permanen yang tidak ikut terhapus.
 
-1. Railway → service → **Variables** → tambah:
-   - `DATA_DIR` = `/data`
-2. Railway → service → **Settings → Volumes → + New Volume** → mount path: `/data`
-3. Redeploy. Sekarang `durations.json` & `scores.json` tersimpan di volume permanen.
-
-> Tanpa langkah ini pun website tetap jalan normal — hanya skor/durasi yang ter-reset tiap update kode.
+Data yang dilindungi oleh Volume ini:
+- 🏆 **Skor game** (XOX, Sambung4, Suit, dll)
+- ⏱️ **Durasi room** (berapa lama kalian habiskan bersama)
+- 🔥 **Streak harian** (hari berturut-turut login bareng)
 
 ---
 
-## Ringkasan
+### Bagian A — Tambahkan Environment Variable
+
+> Langkah ini memberitahu server untuk menyimpan data ke folder `/data` (lokasi Volume).
+
+1. Buka [railway.app](https://railway.app) → login
+2. Klik proyek **Ruang Pacaran** kamu
+3. Klik service **web** (kotak yang ada nama proyekmu)
+4. Klik tab **"Variables"** di panel atas
+
+   ```
+   [ Deployments ] [ Variables ] [ Settings ] [ Metrics ]
+   ```
+
+5. Klik tombol **"+ New Variable"**
+6. Isi:
+   - **Key** → `DATA_DIR`
+   - **Value** → `/data`
+7. Klik **Add** / Enter untuk menyimpan
+
+---
+
+### Bagian B — Buat Volume (Disk Permanen)
+
+> Volume ini adalah disk khusus yang tidak terhapus walau Railway deploy ulang berkali-kali.
+
+1. Masih di halaman proyek yang sama
+2. Klik tombol **"+ New"** di pojok kiri atas (atau tombol **"+"** di sidebar)
+3. Pilih **"Volume"**
+
+   ```
+   ┌─────────────────────────────┐
+   │  + New                      │
+   │  ┌──────────────────────┐   │
+   │  │ 📦 Empty Service     │   │
+   │  │ 🗄️  Database         │   │
+   │  │ 💾 Volume            │ ← klik ini
+   │  └──────────────────────┘   │
+   └─────────────────────────────┘
+   ```
+
+4. Railway akan meminta kamu menghubungkan Volume ke service.
+   - Pilih service web kamu (nama proyekmu)
+   - **Mount Path** → ketik: `/data`
+   - Klik **Create**
+
+5. Tunggu beberapa detik — Railway otomatis redeploy service kamu dengan Volume terpasang.
+
+---
+
+### Bagian C — Verifikasi (Opsional tapi Direkomendasikan)
+
+Setelah redeploy selesai, cek apakah data tersimpan dengan benar:
+
+1. Masuk ke room bersama pasangan → mainkan game → catat skor
+2. Push kode baru (atau tunggu auto-deploy terjadi)
+3. Buka room yang sama → cek apakah skor masih ada ✅
+
+Kalau skor masih ada = Volume berhasil terpasang! 🎉
+
+---
+
+### Ringkasan Langkah
+
+| Langkah | Aksi | Keterangan |
+|---------|------|------------|
+| A | Variables → `DATA_DIR` = `/data` | Arahkan server ke folder Volume |
+| B | + New → Volume → mount `/data` | Buat disk permanen |
+| C | Test skor setelah deploy ulang | Verifikasi berhasil |
+
+---
+
+## Ringkasan Keseluruhan
 | Hal | Status |
 |-----|--------|
 | PORT | otomatis (`process.env.PORT`) ✅ |
@@ -90,5 +161,6 @@ Filesystem Railway bersifat sementara — data skor/durasi **reset saat redeploy
 | WebSocket (Socket.IO) | didukung Railway ✅ |
 | WebRTC (kamera/share screen) | jalan karena HTTPS ✅ |
 | Domain sendiri | via Custom Domain + CNAME ✅ |
+| Data permanen (skor, streak, durasi) | via Railway Volume ✅ |
 
 Setelah online di domainmu, **matikan** tunnel cloudflare lokal (tutup jendela `share-online.bat`) — sudah tidak diperlukan.
