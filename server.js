@@ -186,13 +186,14 @@ io.on("connection", (socket) => {
   });
 
   // --- Chat ---
-  socket.on("chat", ({ text, img }) => {
+  socket.on("chat", ({ text, img, audio }) => {
     if (!currentRoom) return;
-    if (!text && !img) return;
+    if (!text && !img && !audio) return;
     const msg = { id: socket.id, name: myName, ts: Date.now() };
     if (text) msg.text = String(text).slice(0, 500);
-    // img = base64 data URL, batasi 2MB
     if (img && typeof img === "string" && img.length < 2_200_000) msg.img = img;
+    // audio = base64 data URL, batasi ~600KB (~30 detik opus/webm)
+    if (audio && typeof audio === "string" && audio.length < 650_000) msg.audio = audio;
     io.to(currentRoom).emit("chat", msg);
   });
 
