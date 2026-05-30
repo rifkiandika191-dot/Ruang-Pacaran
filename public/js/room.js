@@ -113,8 +113,12 @@ function addMsg({ name, text, img, audio, mine, system }) {
     if (audio) {
       const audioEl = document.createElement("audio");
       audioEl.controls = true;
-      audioEl.src = audio;
+      audioEl.preload = "metadata";
       audioEl.className = "chat-audio";
+      // Gunakan <source> agar browser bisa pilih format yang didukung
+      const src = document.createElement("source");
+      src.src = audio;
+      audioEl.appendChild(src);
       d.className += " msg-audio";
       d.innerHTML = inner;
       d.appendChild(audioEl);
