@@ -220,6 +220,15 @@ app.post("/api/test-donation", (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────
+//  GLOBAL CHAT — semua pengunjung bisa chat bersama
+// ─────────────────────────────────────────────────────────────
+const GLOBAL_ROOM = "__global__";
+let globalMessages = []; // simpan 100 pesan terakhir di memori
+let globalOnline = 0;    // jumlah user di halaman chat global
+
+app.get("/chat", (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
+
+// ─────────────────────────────────────────────────────────────
 //  API: SARAN / FITUR / BUG
 // ─────────────────────────────────────────────────────────────
 app.post("/api/feedback", (req, res) => {
