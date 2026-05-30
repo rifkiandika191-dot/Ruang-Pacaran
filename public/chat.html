@@ -415,6 +415,22 @@
     </div>
   </div>
 
+  <!-- Tebak Lagu Overlay -->
+  <div id="tebakOverlay">
+    <div class="tebak-card">
+      <div class="tebak-title">🎵 Tebak Lagu — Ketik jawabanmu di chat!</div>
+      <iframe id="tebakYt" class="tebak-yt" allow="autoplay" allowfullscreen></iframe>
+      <div class="tebak-timer-wrap">
+        <div class="tebak-timer-bar"><div class="tebak-timer-fill" id="tebakFill"></div></div>
+        <div class="tebak-timer-num" id="tebakNum">30</div>
+      </div>
+      <div class="tebak-hint">Tulis judul lagu di kolom chat di bawah ⬇️</div>
+    </div>
+    <button class="tebak-close" onclick="document.getElementById('tebakOverlay').classList.remove('show')">
+      Tutup sementara ✕
+    </button>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
