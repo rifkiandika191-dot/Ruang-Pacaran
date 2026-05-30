@@ -240,58 +240,71 @@
     setTimeout(() => { if (box) box.innerHTML = ""; }, 2200);
   }
 
-  // ── Audio — satu AudioContext global, unlock saat interaksi pertama ──
-  let _actx = null;
+  // ════════════════════════════════════════════════════════
+  //  AUDIO — Render offline → WAV blob → <audio> HTML
+  //  OfflineAudioContext tidak butuh user gesture untuk render.
+  //  <audio> HTML jauh lebih reliable di iOS/Android
+  //  dibanding WebAudio yang butuh gesture tiap kali.
+  // ════════════════════════════════════════════════════════
+  let _tingEl = null;   // elemen <audio>
+  let _unlocked = false;
 
-  function getCtx() {
-    if (!_actx) {
-      try { _actx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch(_) { return null; }
+  // Konversi AudioBuffer → ArrayBuffer WAV
+  function _toWav(buf) {
+    const sr = buf.sampleRate, len = buf.length;
+    const out = new ArrayBuffer(44 + len * 2);
+    const v = new DataView(out);
+    const s = (o, t) => [...t].forEach((c,i) => v.setUint8(o+i, c.charCodeAt(0)));
+    s(0,"RIFF"); v.setUint32(4, 36+len*2, true); s(8,"WAVE");
+    s(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true);
+    v.setUint16(22,1,true); v.setUint32(24,sr,true);
+    v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+    s(36,"data"); v.setUint32(40,len*2,true);
+    const ch = buf.getChannelData(0);
+    let off = 44;
+    for (let i=0;i<len;i++) {
+      v.setInt16(off, Math.max(-1,Math.min(1,ch[i])) * 0x7FFF, true);
+      off += 2;
     }
-    return _actx;
+    return out;
   }
 
-  // iOS & Android memerlukan gesture sebelum audio bisa diputar.
-  // Kita "unlock" dengan memainkan buffer kosong saat pertama kali user tap/klik.
-  function unlockAudio() {
-    const ctx = getCtx();
-    if (!ctx) return;
-    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
-    // Buffer senyap — cukup untuk membuka kunci audio iOS
+  // Render ting offline (tidak butuh gesture) lalu simpan sebagai <audio>
+  async function _buildTing() {
     try {
-      const buf = ctx.createBuffer(1, 1, 22050);
-      const src = ctx.createBufferSource();
-      src.buffer = buf; src.connect(ctx.destination); src.start(0);
+      const sr = 22050, dur = 1.3;
+      const off = new OfflineAudioContext(1, Math.ceil(sr*dur), sr);
+      [[880,0,.18],[1047,.15,.18],[1319,.32,.28]].forEach(([f,t,d]) => {
+        const o=off.createOscillator(), g=off.createGain();
+        o.connect(g); g.connect(off.destination);
+        o.type="triangle"; o.frequency.value=f;
+        g.gain.setValueAtTime(.45,t);
+        g.gain.exponentialRampToValueAtTime(.001,t+d);
+        o.start(t); o.stop(t+d+.02);
+      });
+      const rendered = await off.startRendering();
+      const blob = new Blob([_toWav(rendered)], {type:"audio/wav"});
+      _tingEl = new Audio(URL.createObjectURL(blob));
+      _tingEl.preload = "auto";
     } catch(_) {}
   }
+  _buildTing(); // render segera saat halaman load
 
-  ["touchstart","touchend","pointerdown","click"].forEach((ev) =>
-    document.addEventListener(ev, unlockAudio, { once: false, passive: true })
+  // Unlock <audio> pada gesture pertama (wajib di iOS)
+  function _unlockTing() {
+    if (_unlocked || !_tingEl) return;
+    _tingEl.play()
+      .then(() => { _tingEl.pause(); _tingEl.currentTime = 0; _unlocked = true; })
+      .catch(() => {});
+  }
+  ["touchstart","touchend","pointerdown","click"].forEach(ev =>
+    document.addEventListener(ev, _unlockTing, { passive: true })
   );
 
   function playTing() {
-    const A = getCtx();
-    if (!A) return;
-    const doPlay = () => {
-      try {
-        const now = A.currentTime;
-        [[880,.14],[1047,.13],[1319,.22]].forEach(([f,d],i)=>{
-          const o=A.createOscillator(), g=A.createGain();
-          o.connect(g); g.connect(A.destination);
-          o.type="triangle"; o.frequency.value=f;
-          const t=now+i*.13;
-          g.gain.setValueAtTime(.18,t);
-          g.gain.exponentialRampToValueAtTime(.001,t+d);
-          o.start(t); o.stop(t+d);
-        });
-      } catch(_) {}
-    };
-    // Jika context masih terkunci (belum ada interaksi), coba resume dulu
-    if (A.state === "suspended") {
-      A.resume().then(doPlay).catch(()=>{});
-    } else {
-      doPlay();
-    }
+    if (!_tingEl) return;
+    _tingEl.currentTime = 0;
+    _tingEl.play().catch(() => {});
   }
 
   // ── Format Rupiah ──
