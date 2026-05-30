@@ -138,18 +138,21 @@ let lastQuoteDate = "";
 //  TEBAK LAGU
 // ------------------------------------------------------------
 const SONGS = [
-  { title: "Perfect",                       artist: "Ed Sheeran",                    ytId: "2Vv-BfVoq4g", start: 55  },
-  { title: "A Thousand Years",              artist: "Christina Perri",               ytId: "rtOvBOTyX00", start: 65  },
-  { title: "All of Me",                     artist: "John Legend",                   ytId: "450p7goxZqg", start: 50  },
-  { title: "Thinking Out Loud",             artist: "Ed Sheeran",                    ytId: "lp-EO5I60KA", start: 78  },
-  { title: "Just the Way You Are",          artist: "Bruno Mars",                    ytId: "LjhCEhWiKXk", start: 20  },
-  { title: "Shape of You",                  artist: "Ed Sheeran",                    ytId: "JGwWNGJdvx8", start: 25  },
-  { title: "Can't Help Falling in Love",    artist: "Elvis Presley",                 ytId: "vGJTaP6anOU", start: 15  },
-  { title: "Senorita",                      artist: "Shawn Mendes & Camila Cabello", ytId: "Pkh8UtuejGw", start: 30  },
-  { title: "Havana",                        artist: "Camila Cabello",                ytId: "HCjNJDNzw8Y", start: 18  },
-  { title: "Marry You",                     artist: "Bruno Mars",                    ytId: "kYtGl1dX5qI", start: 20  },
-  { title: "Lover",                         artist: "Taylor Swift",                  ytId: "ApXoWvfEYVU", start: 40  },
-  { title: "Golden Hour",                   artist: "JVKE",                          ytId: "PEM0Vs8jf1w", start: 30  },
+  { title: "Hati-Hati di Jalan",             artist: "Tulus",                        ytId: "9II3OGZETo4", start: 55 },
+  { title: "Cinta Luar Biasa",               artist: "Andmesh Kamaleng",             ytId: "FcOctsNXyjk", start: 48 },
+  { title: "Tak Ingin Usai",                 artist: "Keisya Levronka",              ytId: "_ZYvZ7XfQU4", start: 52 },
+  { title: "Sial",                           artist: "Mahalini",                     ytId: "QSWYyoF79oE", start: 45 },
+  { title: "Lathi",                          artist: "Weird Genius feat. Sara Fajira",ytId: "8uy7G2JXVSA", start: 38 },
+  { title: "Ruang Sendiri",                  artist: "Tulus",                        ytId: "c0p-61mLUGw",  start: 60 },
+  { title: "Yang Terdalam",                  artist: "Peterpan",                     ytId: "igaeQ2fJRxE", start: 55 },
+  { title: "Separuh Aku",                    artist: "Noah",                         ytId: "b0ZBBjViV8Y", start: 50 },
+  { title: "Sisa Rasa",                      artist: "Mahalini",                     ytId: "Wh66ThpxvI4", start: 45 },
+  { title: "Adu Rayu",                       artist: "Yovie, Tulus & Glenn Fredly",  ytId: "zi2dYEIwSkA", start: 55 },
+  { title: "Kisinan 2",                      artist: "Ndarboy Genk",                 ytId: "vu-RRck8ThA", start: 40 },
+  { title: "Mungkin Hari Ini Esok Atau Nanti",artist: "Anneth",                      ytId: "fR4B5FDlNBA", start: 50 },
+  { title: "Bohongi Hati",                   artist: "Mahalini",                     ytId: "weG-sqHHCB8", start: 48 },
+  { title: "Melawan Restu",                  artist: "Mahalini",                     ytId: "Svz5F8J1Ap0", start: 42 },
+  { title: "Bunga Terakhir",                 artist: "Afgan feat. Raisa",            ytId: "hSaQwNMiW5A", start: 50 },
 ];
 let guessGame = { active: false, song: null, timer: null };
 
