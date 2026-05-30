@@ -698,6 +698,15 @@ body.dark .btn-leave { background: #3a1f24 !important; color: #ff9a9a !important
   .fun-btn { font-size: 13px; padding: 9px 10px; }
 }
 
+/* Pemisah riwayat chat */
+.chat-history-sep {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  opacity: 0.7;
+  letter-spacing: 0.5px;
+  margin: 4px 0 8px !important;
+}
+
 /* ============================================================
    STREAK HARIAN
    ============================================================ */
