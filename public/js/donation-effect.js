@@ -363,6 +363,27 @@
 
   // ── Socket ──
   _sock.on("new-donation", show);
+  // Donasi kecil (<10rb) — toast tanpa konfeti & suara
+  _sock.on("new-donation-small", (d) => {
+    inject();
+    document.getElementById("dtEmoji").textContent = "☕";
+    document.getElementById("dtWho").textContent = `🙏 ${d.name} baru saja donasi!`;
+    document.getElementById("dtAmt").textContent  = fmtRp(d.amount || 0);
+
+    const toast = document.getElementById("donToast");
+    const bd    = document.getElementById("donBackdrop");
+    const prog  = document.getElementById("donProgress");
+    toast.classList.remove("show"); bd.classList.remove("show");
+    void toast.offsetWidth;
+    toast.classList.add("show"); bd.classList.add("show");
+    if (prog) {
+      prog.style.transition = "none"; prog.style.width = "100%";
+      void prog.offsetWidth;
+      prog.style.transition = `width ${DURATION}s linear`; prog.style.width = "0%";
+    }
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(hide, DURATION * 1000);
+  });
 
   // ── Tombol mengambang di room ──
   document.addEventListener("DOMContentLoaded", () => {
