@@ -50,7 +50,7 @@ function addMsg(m, prepend = false) {
   const div  = document.createElement("div");
 
   if (m.system) {
-    div.className = "gc-msg gc-system";
+    div.className = m.isQuote ? "gc-quote" : "gc-msg gc-system";
     div.textContent = m.text;
   } else {
     const mine   = m.name === myName;
@@ -62,11 +62,15 @@ function addMsg(m, prepend = false) {
       ? ""
       : `background:linear-gradient(135deg,${colors[0]},${colors[1]})`;
 
+    const badgeHtml = m.badge
+      ? `<span class="gc-badge">${m.badge.emoji} ${m.badge.label}</span>`
+      : "";
+
     div.innerHTML = `
       <div class="gc-row">
         <div class="gc-avatar" style="${avatarStyle}">${init}</div>
         <div class="gc-content">
-          <div class="gc-who">${esc(mine ? "Kamu" : m.name)}</div>
+          <div class="gc-who">${esc(mine ? "Kamu" : m.name)}${badgeHtml}</div>
           <div class="gc-bubble">${esc(m.text)}</div>
         </div>
       </div>
