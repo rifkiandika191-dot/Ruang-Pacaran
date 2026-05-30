@@ -89,13 +89,14 @@ function updateUsers(users) {
 // ------------------------------------------------------------
 //  CHAT
 // ------------------------------------------------------------
-function addMsg({ name, text, img, audio, mine, system }) {
+function addMsg({ name, text, img, mine, system, msgId, isHistory }) {
   const d = document.createElement("div");
   if (system) {
     d.className = "msg system";
     d.textContent = text;
   } else {
     d.className = "msg " + (mine ? "me" : "them");
+    if (msgId) d.dataset.msgId = msgId;
     let inner = `<span class="who">${escapeHtml(mine ? "Kamu" : name)}</span>`;
     if (text) inner += escapeHtml(text);
     if (img) {
@@ -107,31 +108,48 @@ function addMsg({ name, text, img, audio, mine, system }) {
       d.className += " msg-img";
       d.innerHTML = inner;
       d.appendChild(imgEl);
-      chatList.appendChild(d);
-      chatList.scrollTop = chatList.scrollHeight;
-      return;
-    }
-    if (audio) {
-      const audioEl = document.createElement("audio");
-      audioEl.controls = true;
-      audioEl.preload = "metadata";
-      audioEl.className = "chat-audio";
-      // Gunakan <source> agar browser bisa pilih format yang didukung
-      const src = document.createElement("source");
-      src.src = audio;
-      audioEl.appendChild(src);
-      d.className += " msg-audio";
-      d.innerHTML = inner;
-      d.appendChild(audioEl);
+      // Tombol hapus hanya untuk pesan sendiri
+      if (mine && msgId && !isHistory) d.appendChild(makeDeleteBtn(msgId));
       chatList.appendChild(d);
       chatList.scrollTop = chatList.scrollHeight;
       return;
     }
     d.innerHTML = inner;
+    if (mine && msgId && !isHistory) d.appendChild(makeDeleteBtn(msgId));
   }
   chatList.appendChild(d);
   chatList.scrollTop = chatList.scrollHeight;
 }
+
+function makeDeleteBtn(msgId) {
+  const btn = document.createElement("button");
+  btn.className = "msg-delete-btn";
+  btn.title = "Hapus pesan";
+  btn.textContent = "🗑️";
+  btn.addEventListener("click", () => {
+    if (!confirm("Hapus pesan ini?")) return;
+    socket.emit("chat-delete", { msgId });
+    deleteLocalMsg(msgId);
+  });
+  return btn;
+}
+
+function deleteLocalMsg(msgId) {
+  const d = chatList.querySelector(`[data-msg-id="${msgId}"]`);
+  if (d) {
+    d.classList.add("msg-deleted");
+    d.innerHTML = `<span class="who">Kamu</span><em class="deleted-text">🚫 Pesan dihapus</em>`;
+  }
+}
+
+socket.on("chat-delete", ({ msgId, by }) => {
+  const d = chatList.querySelector(`[data-msg-id="${msgId}"]`);
+  if (d) {
+    d.classList.add("msg-deleted");
+    d.innerHTML = `<span class="who">${escapeHtml(by)}</span><em class="deleted-text">🚫 Pesan dihapus</em>`;
+  }
+  toast(`${by} menghapus sebuah pesan 🚫`);
+});
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
