@@ -1133,6 +1133,7 @@ document.addEventListener("webkitfullscreenchange", updateFsIcon);
 });
 
 window.addEventListener("beforeunload", () => {
+  saveRoomHistory();
   if (isSharing) stopScreenShare();
   if (inCall) endCall();
 });
