@@ -1229,6 +1229,15 @@ async function geocodeCity(city) {
   return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
 }
 
+function getTzOffsetMins(tz) {
+  try {
+    const now = new Date();
+    // Format tanggal+waktu di zona target & UTC, hitung selisih menit
+    const fmt = (t) => new Date(now.toLocaleString("en-US", { timeZone: t }));
+    return (fmt(tz) - fmt("UTC")) / 60000;
+  } catch { return 0; }
+}
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
