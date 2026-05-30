@@ -73,15 +73,17 @@ const CHAT_LIMIT = 100; // simpan maks 100 pesan per room
 
 // Helper: emit chat ke room DAN simpan ke riwayat
 function emitRoomChat(roomId, msg) {
+  // Beri ID unik pada setiap pesan (untuk fitur hapus)
+  if (!msg.system && !msg.msgId) msg.msgId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
   io.to(roomId).emit("chat", msg);
   if (!roomChats[roomId]) roomChats[roomId] = [];
   const record = { ts: msg.ts || Date.now() };
   if (msg.system) { record.system = true; record.text = msg.text; }
   else {
+    record.msgId = msg.msgId;
     record.name = msg.name;
     if (msg.text) record.text = msg.text;
     else if (msg.img) record.text = "[📷 Gambar]";
-    else if (msg.audio) record.text = "[🎙️ Pesan Suara]";
   }
   if (roomChats[roomId].length >= CHAT_LIMIT) roomChats[roomId].shift();
   roomChats[roomId].push(record);
