@@ -239,11 +239,7 @@ io.on("connection", (socket) => {
     const room = getRoom(currentRoom);
     room.videoState = { url, type, time: 0, playing: false, updatedAt: Date.now() };
     io.to(currentRoom).emit("video-source", { url, type });
-    io.to(currentRoom).emit("chat", {
-      system: true,
-      text: `${myName} memutar video baru 🎬`,
-      ts: Date.now(),
-    });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} memutar video baru 🎬`, ts: Date.now() });
   });
 
   // --- Stop nonton bareng (bersihkan video) ---
