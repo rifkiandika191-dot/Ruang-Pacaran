@@ -57,7 +57,7 @@ setInterval(updateRoomDuration, 1000);
 // ------------------------------------------------------------
 socket.emit("join", { roomId: ROOM, name: NAME });
 
-socket.on("joined", ({ you, users, videoState, durationSeconds, streak }) => {
+socket.on("joined", ({ you, users, videoState, durationSeconds, streak, chatHistory }) => {
   myId = you.id;
   updateUsers(users);
   if (typeof durationSeconds === "number") { durBase = durationSeconds; durFrom = Date.now(); }
@@ -65,6 +65,18 @@ socket.on("joined", ({ you, users, videoState, durationSeconds, streak }) => {
     applySource(videoState.url, videoState.type, false);
   }
   if (streak) applyStreak(streak);
+  // Muat riwayat chat dari sesi sebelumnya
+  if (chatHistory && chatHistory.length > 0) {
+    const sep = document.createElement("div");
+    sep.className = "msg system chat-history-sep";
+    sep.textContent = "─── Riwayat sebelumnya ───";
+    chatList.appendChild(sep);
+    chatHistory.forEach((m) => {
+      if (m.system) { addMsg({ system: true, text: m.text }); return; }
+      addMsg({ name: m.name, text: m.text, mine: m.name === NAME, isHistory: true });
+    });
+    chatList.scrollTop = chatList.scrollHeight;
+  }
 });
 
 socket.on("users", updateUsers);
