@@ -216,14 +216,12 @@ io.on("connection", (socket) => {
   });
 
   // --- Chat ---
-  socket.on("chat", ({ text, img, audio }) => {
+  socket.on("chat", ({ text, img }) => {
     if (!currentRoom) return;
-    if (!text && !img && !audio) return;
+    if (!text && !img) return;
     const msg = { id: socket.id, name: myName, ts: Date.now() };
     if (text) msg.text = String(text).slice(0, 500);
     if (img && typeof img === "string" && img.length < 2_200_000) msg.img = img;
-    // audio = base64 data URL, batasi ~600KB (~30 detik opus/webm)
-    if (audio && typeof audio === "string" && audio.length < 650_000) msg.audio = audio;
     emitRoomChat(currentRoom, msg);
   });
 
