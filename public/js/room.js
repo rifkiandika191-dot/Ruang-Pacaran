@@ -57,13 +57,14 @@ setInterval(updateRoomDuration, 1000);
 // ------------------------------------------------------------
 socket.emit("join", { roomId: ROOM, name: NAME });
 
-socket.on("joined", ({ you, users, videoState, durationSeconds }) => {
+socket.on("joined", ({ you, users, videoState, durationSeconds, streak }) => {
   myId = you.id;
   updateUsers(users);
   if (typeof durationSeconds === "number") { durBase = durationSeconds; durFrom = Date.now(); }
   if (videoState && videoState.url) {
     applySource(videoState.url, videoState.type, false);
   }
+  if (streak) applyStreak(streak);
 });
 
 socket.on("users", updateUsers);
