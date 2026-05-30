@@ -323,48 +323,6 @@ app.post("/api/dinding/:id/like", (req, res) => {
   res.json({ likes: post.likes });
 });
 
-// ------------------------------------------------------------
-//  CERITA HARI INI (expire 24 jam)
-// ------------------------------------------------------------
-const STORIES_FILE = path.join(DATA_DIR, "stories.json");
-let stories = [];
-try { stories = JSON.parse(fs.readFileSync(STORIES_FILE, "utf8")) || []; } catch { stories = []; }
-function saveStories() { try { fs.writeFileSync(STORIES_FILE, JSON.stringify(stories)); } catch(e) {} }
-function cleanStories() {
-  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-  const before = stories.length;
-  stories = stories.filter(s => s.ts > cutoff);
-  if (stories.length !== before) saveStories();
-}
-cleanStories();
-setInterval(cleanStories, 15 * 60 * 1000);
-
-app.get("/api/stories", (req, res) => { cleanStories(); res.json(stories.slice(0,30).map(s => ({ ...s, image: s.image ? true : false }))); });
-app.get("/api/stories/:id", (req, res) => {
-  const s = stories.find(s => s.id === req.params.id);
-  if (!s) return res.status(404).json({ error: "Story tidak ditemukan atau sudah expire" });
-  res.json(s);
-});
-app.post("/api/stories", (req, res) => {
-  const { name, text, image, emoji } = req.body || {};
-  if (!name || !text) return res.status(400).json({ error: "Wajib diisi" });
-  if (String(text).length > 200) return res.status(400).json({ error: "Terlalu panjang" });
-  if (image && String(image).length > 140000000) return res.status(400).json({ error: "Gambar terlalu besar (max 100MB)" });
-  stories = stories.filter(s => s.name.toLowerCase() !== String(name).toLowerCase().trim());
-  const story = {
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-    name: String(name).slice(0,24).trim(),
-    text: String(text).slice(0,200).trim(),
-    image: image || null,
-    emoji: emoji || "😊",
-    ts: Date.now(),
-  };
-  stories.unshift(story);
-  if (stories.length > 50) stories = stories.slice(0,50);
-  saveStories();
-  io.emit("story-new", { ...story, image: !!story.image });
-  res.json({ ...story, image: !!story.image });
-});
 
 // ------------------------------------------------------------
 //  LEADERBOARD MINGGUAN CHAT GLOBAL
