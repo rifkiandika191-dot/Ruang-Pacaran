@@ -194,6 +194,7 @@ io.on("connection", (socket) => {
       videoState: room.videoState,
       durationSeconds: currentRoomSeconds(roomId),
       streak: roomStreaks[roomId] || { streak: 0, longest: 0, lastDate: null },
+      chatHistory: roomChats[roomId] || [],
     });
 
     // Update streak ketika ada 2+ orang di room (kedua pasangan hadir)
