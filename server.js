@@ -596,6 +596,14 @@ io.on("connection", (socket) => {
     if (globalMessages.length > 100) globalMessages.shift();
   });
 
+  socket.on("gc-typing", () => {
+    if (!gcName) return;
+    socket.to(GLOBAL_ROOM).emit("gc-typing", { name: gcName });
+  });
+  socket.on("gc-stop-typing", () => {
+    socket.to(GLOBAL_ROOM).emit("gc-stop-typing");
+  });
+
   socket.on("disconnecting", () => {
     if (socket.rooms.has(GLOBAL_ROOM) && gcName) {
       globalOnline = Math.max(0, globalOnline - 1);
