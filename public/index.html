@@ -683,45 +683,69 @@
   document.getElementById("addStoryModal").addEventListener("click", e => { if(e.target===document.getElementById("addStoryModal")) closeAddStory(); });
 
   // Foto untuk story
-  let storyImgData = null;
+  let storyImgData  = null;
+  let storyImgReady = true; // false saat FileReader sedang berjalan
+
   document.getElementById("storyImgBtn").addEventListener("click", () => document.getElementById("storyImgInput").click());
+
   document.getElementById("storyImgInput").addEventListener("change", e => {
     const file = e.target.files[0]; if(!file) return;
     if(file.size > 100*1024*1024) { alert("Foto max 100MB"); return; }
+
+    storyImgReady = false;
+    document.getElementById("storyImgBtn").textContent = "⏳ Memproses...";
+
     const reader = new FileReader();
     reader.onload = r => {
-      storyImgData = r.result;
-      document.getElementById("storyImgPreviewEl").src = storyImgData;
+      storyImgData  = r.result;
+      storyImgReady = true;
+      // Set src via DOM bukan template literal — aman untuk foto besar
+      const prev = document.getElementById("storyImgPreviewEl");
+      prev.src = "";
+      prev.src = storyImgData;
       document.getElementById("storyImgPreview").style.display = "block";
       document.getElementById("storyImgBtn").textContent = "📷 Ganti Foto";
     };
+    reader.onerror = () => {
+      storyImgReady = true;
+      alert("Gagal membaca foto");
+      document.getElementById("storyImgBtn").textContent = "📷 Tambah Foto";
+    };
     reader.readAsDataURL(file);
   });
+
   document.getElementById("storyImgDel").addEventListener("click", () => {
-    storyImgData = null;
+    storyImgData  = null;
+    storyImgReady = true;
     document.getElementById("storyImgPreview").style.display = "none";
     document.getElementById("storyImgInput").value = "";
     document.getElementById("storyImgBtn").textContent = "📷 Tambah Foto";
   });
 
   document.getElementById("storySubmitBtn").addEventListener("click", async () => {
+    if(!storyImgReady) { alert("Foto masih diproses, tunggu sebentar..."); return; }
     const name = localStorage.getItem("pacaran_name") || document.getElementById("nameInput")?.value?.trim();
     const text = document.getElementById("storyText").value.trim();
     if(!name) { alert("Isi nama panggilanmu dulu di form utama!"); closeAddStory(); return; }
     if(!text) { alert("Tulis ceritanya dulu!"); return; }
+
+    const btn = document.getElementById("storySubmitBtn");
+    btn.disabled = true; btn.textContent = "Mengirim...";
     try {
-      await fetch("/api/stories", {
+      const res = await fetch("/api/stories", {
         method:"POST", headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ name, text, emoji: selectedEmoji, image: storyImgData }),
       });
+      if(!res.ok) { const err = await res.json(); throw new Error(err.error || "Gagal"); }
       closeAddStory();
       document.getElementById("storyText").value = "";
-      storyImgData = null;
+      storyImgData = null; storyImgReady = true;
       document.getElementById("storyImgPreview").style.display = "none";
       document.getElementById("storyImgInput").value = "";
       document.getElementById("storyImgBtn").textContent = "📷 Tambah Foto";
       loadStories();
-    } catch(e) { alert("Gagal mengirim cerita"); }
+    } catch(e) { alert("Gagal mengirim: " + e.message); }
+    btn.disabled = false; btn.textContent = "Bagikan 📖";
   });
 
   // Real-time story baru
