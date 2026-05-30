@@ -67,7 +67,7 @@
         position:fixed;top:0;left:50%;
         transform:translateX(-50%);
         width:420px;height:110px;
-        pointer-events:none;z-index:99998;
+        pointer-events:none;z-index:2147483646;
         overflow:hidden;
       }
       .don-dot {
