@@ -392,11 +392,18 @@
     }
   });
 
-  // Expose untuk test manual di console: _testDonasi()
-  window._testDonasi = () => show({
-    name:    "Test Donatur",
-    amount:  50000,
-    message: "Semangat terus ya! 🎉",
-  });
+  // Test: kirim lewat SERVER → muncul di SEMUA pengunjung
+  window._testDonasi = async (name, amount, message) => {
+    await fetch("/api/test-donation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:    name    || "Test Donatur",
+        amount:  amount  || 50000,
+        message: message || "Semangat terus! 🎉",
+      }),
+    });
+    console.log("✅ Test donasi dikirim ke semua pengunjung!");
+  };
 
 })();
