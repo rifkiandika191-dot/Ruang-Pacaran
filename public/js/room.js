@@ -227,11 +227,27 @@ socket.on("typing", ({ name, on }) => {
 // ------------------------------------------------------------
 el("copyLinkBtn").addEventListener("click", async () => {
   const url = `${location.origin}/room?room=${ROOM}`;
+  // Coba Web Share API dulu (lebih baik di HP — membuka share sheet native)
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "Ruang Pacaran 💕", text: "Yuk nonton bareng!", url });
+      return;
+    } catch (e) {
+      if (e.name === "AbortError") return; // user cancel — tidak perlu fallback
+    }
+  }
+  // Clipboard API
   try {
     await navigator.clipboard.writeText(url);
     toast("Link undangan disalin! Kirim ke pasanganmu 💌");
   } catch {
-    prompt("Salin link ini:", url);
+    // Fallback manual select untuk browser lama
+    const ta = document.createElement("textarea");
+    ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand("copy"); toast("Link disalin! 💌"); }
+    catch { prompt("Salin link ini:", url); }
+    document.body.removeChild(ta);
   }
 });
 
