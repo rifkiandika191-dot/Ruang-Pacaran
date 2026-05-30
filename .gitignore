@@ -10,4 +10,3 @@ public/uploads/*
 
 # Claude Code local settings (berisi izin sesi lokal, jangan di-commit)
 .claude/settings.local.json
-# hook-test-145538
