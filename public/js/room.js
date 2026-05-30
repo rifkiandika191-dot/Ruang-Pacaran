@@ -1139,6 +1139,27 @@ window.addEventListener("beforeunload", () => {
 });
 
 // ============================================================
+//  ROOM HISTORY — simpan ke localStorage untuk halaman utama
+// ============================================================
+function saveRoomHistory() {
+  const totalSecs = Math.floor(durBase + (Date.now() - durFrom) / 1000);
+  const all = JSON.parse(localStorage.getItem("pacaran_room_history") || "[]");
+  const idx = all.findIndex((r) => r.roomId === ROOM);
+  const entry = {
+    roomId: ROOM,
+    lastVisited: Date.now(),
+    durationSeconds: totalSecs,
+    myName: NAME,
+    partnerNames: otherUsers.map((u) => u.name),
+  };
+  if (idx >= 0) all[idx] = entry;
+  else all.unshift(entry);
+  localStorage.setItem("pacaran_room_history", JSON.stringify(all.slice(0, 20)));
+}
+// Update history setiap 60 detik saat aktif di room
+setInterval(saveRoomHistory, 60000);
+
+// ============================================================
 //  STREAK HARIAN
 // ============================================================
 function applyStreak({ streak, longest }) {
