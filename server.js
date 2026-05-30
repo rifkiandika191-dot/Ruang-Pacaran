@@ -349,7 +349,7 @@ app.post("/api/stories", (req, res) => {
   const { name, text, image, emoji } = req.body || {};
   if (!name || !text) return res.status(400).json({ error: "Wajib diisi" });
   if (String(text).length > 200) return res.status(400).json({ error: "Terlalu panjang" });
-  if (image && String(image).length > 1500000) return res.status(400).json({ error: "Gambar terlalu besar" });
+  if (image && String(image).length > 140000000) return res.status(400).json({ error: "Gambar terlalu besar (max 100MB)" });
   stories = stories.filter(s => s.name.toLowerCase() !== String(name).toLowerCase().trim());
   const story = {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
