@@ -76,6 +76,58 @@
         <p class="find-tagline">Dipasangkan secara acak & real-time 🌐</p>
       </div>
 
+      <!-- Cerita Hari Ini -->
+      <div class="saran-promo" id="storiesSection" style="display:none">
+        <div class="divider"><span>📖 cerita hari ini</span></div>
+        <div class="stories-row" id="storiesRow"></div>
+      </div>
+
+      <!-- Story modal -->
+      <div id="storyModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,5,15,.8);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+        <div style="background:linear-gradient(135deg,#fff0f8,#f3e8ff);border:2px solid #ec4899;border-radius:24px;padding:24px;width:100%;max-width:380px;position:relative;animation:storyPop .25s ease">
+          <button onclick="closeStory()" style="position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(236,72,153,.15);color:#be185d;cursor:pointer;font-size:14px">✕</button>
+          <div id="storyContent"></div>
+        </div>
+      </div>
+
+      <!-- Tambah story button -->
+      <div id="addStorySection" style="display:none;text-align:center;margin-top:-4px">
+        <button class="add-story-btn" id="addStoryBtn">+ Bagikan Ceritamu Hari Ini</button>
+      </div>
+
+      <!-- Add story modal -->
+      <div id="addStoryModal" style="display:none;position:fixed;inset:0;z-index:901;background:rgba(10,5,15,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px">
+        <div style="background:#fff;border:2px solid #ec4899;border-radius:20px;padding:20px;width:100%;max-width:360px">
+          <div style="font-size:15px;font-weight:800;color:#be185d;margin-bottom:12px">📖 Cerita Hari Ini</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="emojiPicker">
+            <span style="font-size:11px;color:#9d4b78;width:100%;margin-bottom:4px">Pilih mood:</span>
+            <button class="emoji-pick" data-e="😊">😊</button><button class="emoji-pick" data-e="😍">😍</button>
+            <button class="emoji-pick" data-e="😢">😢</button><button class="emoji-pick" data-e="🥰">🥰</button>
+            <button class="emoji-pick" data-e="😂">😂</button><button class="emoji-pick" data-e="😎">😎</button>
+            <button class="emoji-pick" data-e="🤗">🤗</button><button class="emoji-pick" data-e="💕">💕</button>
+          </div>
+          <textarea id="storyText" placeholder="Ceritakan harimu... (max 200 karakter)" maxlength="200"
+            style="width:100%;padding:10px;border:2px solid #fbcfe8;border-radius:12px;font-family:inherit;font-size:13px;resize:none;height:80px;outline:none;display:block;margin-bottom:10px"></textarea>
+          <div style="display:flex;gap:8px">
+            <button onclick="closeAddStory()" style="flex:1;padding:10px;border:2px solid #fbcfe8;border-radius:12px;background:#fff;color:#be185d;font-weight:700;cursor:pointer;font-family:inherit">Batal</button>
+            <button id="storySubmitBtn" style="flex:1;padding:10px;border:none;border-radius:12px;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;font-weight:800;cursor:pointer;font-family:inherit">Bagikan 📖</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dinding Cinta -->
+      <div class="saran-promo">
+        <div class="divider"><span>💌 dinding cinta</span></div>
+        <a href="/dinding" class="saran-promo-card" style="border-color:#f9a8d4">
+          <div class="sp-icons">💌❤️✉️</div>
+          <div class="sp-text">
+            <div class="sp-title" style="color:#be185d">Dinding Cinta — Papan Publik</div>
+            <div class="sp-sub">Tulis pesan untuk pasanganmu, semua bisa lihat & kasih ❤️</div>
+          </div>
+          <div class="sp-arrow">→</div>
+        </a>
+      </div>
+
       <!-- Chat Global -->
       <div class="saran-promo">
         <div class="divider"><span>💬 ngobrol bareng semua orang</span></div>
