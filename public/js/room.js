@@ -1268,13 +1268,12 @@ function refreshLocationDisplay() {
   if (myGeo && partnerGeo) {
     const km = haversineKm(myGeo.lat, myGeo.lon, partnerGeo.lat, partnerGeo.lon);
     el("distanceKm").textContent = km.toLocaleString("id-ID");
-    // Beda waktu
+    // Beda waktu antara dua zona
     try {
-      const nowMs = Date.now();
-      const myOffset = new Date(nowMs).toLocaleString("en-US", { timeZone: myGeo.tz, hour: "numeric", hour12: false }) - new Date(nowMs).getUTCHours();
-      const pOffset = new Date(nowMs).toLocaleString("en-US", { timeZone: partnerGeo.tz, hour: "numeric", hour12: false }) - new Date(nowMs).getUTCHours();
-      const diff = Math.round(pOffset - myOffset);
-      el("tzDiff").textContent = diff === 0 ? "Zona waktu sama" : `Selisih ${Math.abs(diff)} jam`;
+      const myOffMins = getTzOffsetMins(myGeo.tz);
+      const pOffMins = getTzOffsetMins(partnerGeo.tz);
+      const diffHrs = Math.round((pOffMins - myOffMins) / 60);
+      el("tzDiff").textContent = diffHrs === 0 ? "Zona waktu sama ⏰" : `Selisih ${Math.abs(diffHrs)} jam ${diffHrs > 0 ? "(pasangan lebih maju)" : "(kamu lebih maju)"}`;
     } catch { el("tzDiff").textContent = ""; }
   } else {
     el("distanceKm").textContent = "—";
