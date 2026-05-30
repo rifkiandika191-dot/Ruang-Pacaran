@@ -198,7 +198,7 @@ app.post("/api/donation-webhook", (req, res) => {
   saveDonations();
 
   // Semua donasi → notif (besar = kembang api, kecil = toast saja)
-  if (donation.amount >= 10000) {
+  if (donation.amount >= 3000) {
     io.emit("new-donation", donation);
   } else {
     io.emit("new-donation-small", donation);
