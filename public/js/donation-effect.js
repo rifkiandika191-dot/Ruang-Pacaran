@@ -151,8 +151,11 @@
         <div class="don-msg"  id="donMsg"></div>
         <div class="don-badge">🦸 Pahlawan Ruang Pacaran!</div><br>
         <a href="${SAWERIA}" target="_blank" rel="noopener" class="don-cta">
-          ☕ Yuk Donasi Juga!
+          ☕ Yuk Donasi Juga! (min. Rp 10rb)
         </a>
+        <div style="font-size:11px;color:#aaa;margin-top:8px;font-family:Quicksand,system-ui,sans-serif">
+          🎆 Donasi ≥ Rp 10.000 = kembang api meriah untuk semua!
+        </div>
         <div class="don-timer" id="donTimer"></div>
       </div>
     `;
