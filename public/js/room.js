@@ -65,6 +65,7 @@ socket.on("joined", ({ you, users, videoState, durationSeconds, streak, chatHist
     applySource(videoState.url, videoState.type, false);
   }
   if (streak) applyStreak(streak);
+  saveRoomHistory(); // simpan entry awal
   // Muat riwayat chat dari sesi sebelumnya
   if (chatHistory && chatHistory.length > 0) {
     const sep = document.createElement("div");
