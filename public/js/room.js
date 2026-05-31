@@ -335,6 +335,11 @@ el("videoUnmuteBtn").addEventListener("click", () => {
   el("videoUnmuteBtn").classList.add("hidden");
 });
 
+function showVideoControls(active) {
+  el("videoInputRow").classList.toggle("hidden", active);
+  el("stopVideoBtn").classList.toggle("hidden", !active);
+}
+
 // --- Stop nonton bareng (bersihkan video, kembali ke placeholder) ---
 function stopWatching(mine) {
   stopSyncLoop();
@@ -345,11 +350,14 @@ function stopWatching(mine) {
   htmlPlayer.classList.add("hidden");
   el("stopWatchBtn").classList.add("hidden");
   el("videoUnmuteBtn").classList.add("hidden");
+  el("videoUrl").value = "";
+  showVideoControls(false);
   syncNote.textContent = "";
   if (!isSharing) { screenPlayer.classList.add("hidden"); placeholder.classList.remove("hidden"); }
-  if (mine) { socket.emit("video-stop"); toast("Berhenti nonton bareng ⏹️ — silakan pilih fitur lain 💕"); }
+  if (mine) { socket.emit("video-stop"); toast("Nonton bareng dihentikan ⏹️"); }
 }
 el("stopWatchBtn").addEventListener("click", () => stopWatching(true));
+el("stopVideoBtn").addEventListener("click", () => stopWatching(true));
 socket.on("video-stop", () => stopWatching(false));
 
 function showPlayer(which) {
