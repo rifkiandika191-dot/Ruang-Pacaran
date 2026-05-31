@@ -1498,6 +1498,12 @@ function onMusicStateChange(e) {
     socket.emit("music-control", { action: "play", time: ytMusic.getCurrentTime() });
     startMusicSyncLoop();
     startMusicProgressLoop();
+    // Update judul & thumbnail saat lagu ganti (playlist)
+    try {
+      const info = ytMusic.getVideoData();
+      if (info && info.title) el("musicTitle").textContent = "🎵 " + info.title;
+      if (info && info.video_id) el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${info.video_id}/default.jpg)`;
+    } catch (_) {}
   } else if (e.data === YT.PlayerState.PAUSED) {
     musicPlaying = false;
     el("musicPlayBtn").textContent = "▶";
