@@ -181,8 +181,11 @@ input::placeholder { color: #c9a9b4; }
   padding: 9px 16px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px;
 }
 .tab.active { background: var(--grad); color: #fff; box-shadow: 0 4px 12px rgba(255,92,138,.35); }
-.source-panel { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.source-panel { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-direction: column; }
 .source-panel input { flex: 1; min-width: 200px; }
+.video-input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+.video-input-row input { flex: 1; min-width: 200px; }
+#stopVideoBtn { width: 100%; }
 .hint { font-size: 12px; color: var(--muted); }
 
 .player-wrap {
