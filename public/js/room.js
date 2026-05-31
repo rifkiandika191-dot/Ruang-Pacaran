@@ -328,6 +328,13 @@ el("videoUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") el("l
 
 socket.on("video-source", ({ url, type }) => applySource(url, type, false));
 
+// Unmute video untuk partner
+el("videoUnmuteBtn").addEventListener("click", () => {
+  if (currentType === "youtube" && ytPlayer) ytPlayer.unMute();
+  if (currentType === "html") htmlPlayer.muted = false;
+  el("videoUnmuteBtn").classList.add("hidden");
+});
+
 // --- Stop nonton bareng (bersihkan video, kembali ke placeholder) ---
 function stopWatching(mine) {
   stopSyncLoop();
@@ -337,6 +344,7 @@ function stopWatching(mine) {
   ytDiv.classList.add("hidden");
   htmlPlayer.classList.add("hidden");
   el("stopWatchBtn").classList.add("hidden");
+  el("videoUnmuteBtn").classList.add("hidden");
   syncNote.textContent = "";
   if (!isSharing) { screenPlayer.classList.add("hidden"); placeholder.classList.remove("hidden"); }
   if (mine) { socket.emit("video-stop"); toast("Berhenti nonton bareng ⏹️ — silakan pilih fitur lain 💕"); }
