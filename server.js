@@ -442,15 +442,18 @@ app.post("/api/donation-webhook", (req, res) => {
   res.json({ ok: true });
 });
 
-// API: top donatur (aggregate per nama)
+// API: top donatur mingguan (7 hari terakhir, reset otomatis tiap minggu)
 app.get("/api/top-donors", (req, res) => {
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const map = {};
-  donations.forEach((d) => {
-    const key = d.name.toLowerCase();
-    if (!map[key]) map[key] = { name: d.name, total: 0, count: 0 };
-    map[key].total += d.amount;
-    map[key].count++;
-  });
+  donations
+    .filter((d) => d.ts && d.ts >= oneWeekAgo)
+    .forEach((d) => {
+      const key = d.name.toLowerCase();
+      if (!map[key]) map[key] = { name: d.name, total: 0, count: 0 };
+      map[key].total += d.amount;
+      map[key].count++;
+    });
   const top = Object.values(map).sort((a, b) => b.total - a.total).slice(0, 10);
   res.json(top);
 });
