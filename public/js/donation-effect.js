@@ -411,6 +411,7 @@
       void prog.offsetWidth;
       prog.style.transition = `width ${DURATION}s linear`; prog.style.width = "0%";
     }
+    speakDonation(d.name, d.amount || 0);
     clearTimeout(closeTimer);
     closeTimer = setTimeout(hide, DURATION * 1000);
   });
