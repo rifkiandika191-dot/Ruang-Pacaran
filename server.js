@@ -583,9 +583,10 @@ io.on("connection", (socket) => {
   socket.on("chat", ({ text, img }) => {
     if (!currentRoom) return;
     if (!text && !img) return;
-    const msg = { id: socket.id, name: myName, ts: Date.now() };
+    const msgId = `${socket.id}-${Date.now()}`;
+    const msg = { id: socket.id, name: myName, ts: Date.now(), msgId };
     if (text) msg.text = String(text).slice(0, 500);
-    if (img && typeof img === "string" && img.length < 2_200_000) msg.img = img;
+    if (img && typeof img === "string" && img.length < 5_000_000) msg.img = img;
     emitRoomChat(currentRoom, msg);
   });
 
