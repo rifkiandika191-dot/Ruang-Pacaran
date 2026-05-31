@@ -69,8 +69,7 @@ socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, stre
     if (_mid) {
       // Tunda sedikit agar YT API sempat siap
       setTimeout(() => {
-        el("musicPanel").classList.remove("hidden");
-        el("musicBtn").classList.add("active");
+        switchToMusicTab();
         startMusicPlayer(_mid, false);
       }, 800);
     }
