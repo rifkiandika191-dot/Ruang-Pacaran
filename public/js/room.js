@@ -57,12 +57,23 @@ setInterval(updateRoomDuration, 1000);
 // ------------------------------------------------------------
 socket.emit("join", { roomId: ROOM, name: NAME });
 
-socket.on("joined", ({ you, users, videoState, durationSeconds, streak, chatHistory }) => {
+socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, streak, chatHistory }) => {
   myId = you.id;
   updateUsers(users);
   if (typeof durationSeconds === "number") { durBase = durationSeconds; durFrom = Date.now(); }
   if (videoState && videoState.url) {
     applySource(videoState.url, videoState.type, false);
+  }
+  if (musicState && musicState.url) {
+    const _mid = extractYtId(musicState.url);
+    if (_mid) {
+      // Tunda sedikit agar YT API sempat siap
+      setTimeout(() => {
+        el("musicPanel").classList.remove("hidden");
+        el("musicBtn").classList.add("active");
+        startMusicPlayer(_mid, false);
+      }, 800);
+    }
   }
   if (streak) applyStreak(streak);
   saveRoomHistory(); // simpan entry awal
