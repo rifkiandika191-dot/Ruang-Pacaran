@@ -309,6 +309,30 @@
     return `Rp ${n}`;
   }
 
+  // ── Format Rupiah untuk TTS (agar dibaca natural) ──
+  function fmtRpSpeak(n) {
+    if (n >= 1_000_000) return `${+(n/1_000_000).toFixed(1)} juta rupiah`;
+    if (n >= 1_000)     return `${Math.floor(n/1_000)} ribu rupiah`;
+    return `${n} rupiah`;
+  }
+
+  // ── Text-to-Speech donasi ──
+  function speakDonation(name, amount) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const text = `${name} baru saja donasi ${fmtRpSpeak(amount)}. Makasih banyak!`;
+    const utt  = new SpeechSynthesisUtterance(text);
+    utt.lang   = "id-ID";
+    utt.rate   = 0.95;
+    utt.pitch  = 1.1;
+    utt.volume = 1;
+    // Pilih suara bahasa Indonesia jika tersedia
+    const voices = window.speechSynthesis.getVoices();
+    const idVoice = voices.find(v => v.lang.startsWith("id"));
+    if (idVoice) utt.voice = idVoice;
+    window.speechSynthesis.speak(utt);
+  }
+
   // ── Show ──
   const DURATION = 8; // detik sebelum auto-close
 
