@@ -1581,12 +1581,11 @@ function stopMusicProgressLoop() { if (musicProgTmr) clearInterval(musicProgTmr)
 
 // ── Terima event dari pasangan ──
 socket.on("music-source", ({ url, by }) => {
+  const id = extractYtId(url);
+  if (!id) return;
   toast(`${by} memutar musik bareng 🎵`);
   switchToMusicTab();
-  const ytId = extractYtId(url);
-  if (ytId) { startMusicPlayer(ytId, false); return; }
-  const sp = extractSpotifyInfo(url);
-  if (sp) { startSpotifyMusic(sp.type, sp.id, false); return; }
+  startMusicPlayer(id, false);
 });
 
 socket.on("music-control", ({ action, time, by }) => {
