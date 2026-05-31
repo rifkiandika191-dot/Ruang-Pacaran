@@ -124,6 +124,28 @@
         </div>
       </div>
 
+      <!-- Panel Musik Bareng (collapsible) -->
+      <div class="music-panel hidden" id="musicPanel">
+        <div class="music-input-row">
+          <input type="text" id="musicUrl" placeholder="Tempel link YouTube musik / playlist..." />
+          <button class="btn btn-primary music-load-btn" id="musicLoadBtn">▶ Putar</button>
+        </div>
+        <div class="music-now-playing hidden" id="musicNowPlaying">
+          <div class="music-thumbnail" id="musicThumb"></div>
+          <div class="music-info">
+            <div class="music-title" id="musicTitle">🎵 Memuat...</div>
+            <div class="music-sub" id="musicSub"></div>
+          </div>
+          <div class="music-controls">
+            <button class="music-ctrl-btn" id="musicPlayBtn" title="Play/Pause">⏸</button>
+            <button class="music-ctrl-btn" id="musicStopBtn" title="Stop">⏹</button>
+          </div>
+        </div>
+        <div class="music-progress-wrap" id="musicProgressWrap">
+          <div class="music-progress-bar" id="musicProgressBar" style="width:0%"></div>
+        </div>
+      </div>
+
       <!-- Bar fitur seru -->
       <div class="fun-bar">
         <button class="btn btn-secondary fun-btn" id="missYouBtn">💌 Kangen</button>
@@ -131,7 +153,11 @@
         <button class="btn btn-secondary fun-btn" id="gameBtn">🎮 Game</button>
         <button class="btn btn-secondary fun-btn" id="wheelBtn">🎡 Roda</button>
         <button class="btn btn-secondary fun-btn" id="locationBtn">🌍 Lokasi</button>
+        <button class="btn btn-secondary fun-btn" id="musicBtn">🎵 Musik</button>
       </div>
+
+      <!-- Hidden YouTube player khusus musik (1×1, off-screen) -->
+      <div id="musicYtDiv" style="position:absolute;width:1px;height:1px;opacity:0.01;pointer-events:none;overflow:hidden;left:-9999px;top:-9999px"></div>
     </section>
 
     <!-- KANAN: Chat -->
