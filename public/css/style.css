@@ -1307,40 +1307,6 @@ body.dark .gc-input-bar input { background: var(--card); }
 /* ============================================================
    MUSIK BARENG — mini player panel
    ============================================================ */
-.music-panel {
-  background: var(--card);
-  border: 1.5px solid var(--peach);
-  border-radius: 14px;
-  margin: 0 0 8px 0;
-  padding: 12px 14px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: var(--shadow-sm);
-  animation: slideDown .25s ease;
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.music-input-row {
-  display: flex;
-  gap: 8px;
-}
-.music-input-row input {
-  flex: 1;
-  border: 1.5px solid var(--peach);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 13px;
-  background: var(--cream);
-  color: var(--ink);
-  outline: none;
-  transition: border-color .15s;
-}
-.music-input-row input:focus { border-color: var(--pink); }
-.music-load-btn { padding: 8px 16px; font-size: 13px; white-space: nowrap; }
 
 /* Now playing bar */
 .music-now-playing {
