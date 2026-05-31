@@ -1308,6 +1308,26 @@ body.dark .gc-input-bar input { background: var(--card); }
    MUSIK BARENG — mini player panel
    ============================================================ */
 
+/* Tombol unmute untuk partner */
+.music-unmute-btn {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .75; }
+}
+
 /* Row info (thumbnail + judul + tombol play) */
 .music-np-info {
   display: flex;
