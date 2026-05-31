@@ -1397,3 +1397,204 @@ socket.on("couple-info", (c) => {
   applyCouple(local);
   refreshLocationDisplay();
 });
+
+// ============================================================
+//  MUSIK BARENG — player terpisah, tidak ganggu nonton bareng
+// ============================================================
+let ytMusic       = null;   // YT.Player instance khusus musik
+let musicPlaying  = false;
+let musicSuppres  = false;
+let musicSyncTmr  = null;
+let musicDuration = 0;
+let musicProgTmr  = null;
+
+const musicPanel     = el("musicPanel");
+const musicNowPlay   = el("musicNowPlaying");
+const musicProgressW = el("musicProgressWrap");
+
+// Toggle panel saat klik tombol Musik
+el("musicBtn").addEventListener("click", () => {
+  const open = !musicPanel.classList.contains("hidden");
+  musicPanel.classList.toggle("hidden", open);
+  el("musicBtn").classList.toggle("active", !open);
+});
+
+// Putar dari input URL
+el("musicLoadBtn").addEventListener("click", loadMusicFromInput);
+el("musicUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") loadMusicFromInput(); });
+
+function loadMusicFromInput() {
+  const url = el("musicUrl").value.trim();
+  if (!url) return;
+  const id = extractYtId(url);
+  if (!id) { toast("Hanya link YouTube yang didukung untuk musik 🎵"); return; }
+  socket.emit("music-source", { url });
+  startMusicPlayer(id, true);
+}
+
+function extractYtId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+function startMusicPlayer(videoId, mine) {
+  musicNowPlay.classList.remove("hidden");
+  musicProgressW.classList.remove("hidden");
+  el("musicTitle").textContent = "🎵 Memuat...";
+  el("musicSub").textContent   = "";
+  el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${videoId}/default.jpg)`;
+
+  const create = () => {
+    if (ytMusic) {
+      ytMusic.loadVideoById(videoId);
+      return;
+    }
+    ytMusic = new YT.Player("musicYtDiv", {
+      videoId,
+      playerVars: { rel: 0, playsinline: 1, controls: 0, autoplay: 1 },
+      events: {
+        onReady: (e) => {
+          musicDuration = e.target.getDuration();
+          el("musicTitle").textContent = "🎵 " + (e.target.videoTitle || "Memutar musik...");
+          startMusicSyncLoop();
+          startMusicProgressLoop();
+        },
+        onStateChange: onMusicStateChange,
+      },
+    });
+  };
+
+  if (ytReady && window.YT && YT.Player) create();
+  else {
+    const wait = setInterval(() => {
+      if (ytReady && window.YT && YT.Player) { clearInterval(wait); create(); }
+    }, 200);
+  }
+
+  musicPlaying = true;
+  el("musicPlayBtn").textContent = "⏸";
+  if (mine) toast("Musik dimuat — dengarkan bareng! 🎵");
+}
+
+function onMusicStateChange(e) {
+  if (musicSuppres) return;
+  if (e.data === YT.PlayerState.PLAYING) {
+    musicPlaying = true;
+    el("musicPlayBtn").textContent = "⏸";
+    socket.emit("music-control", { action: "play", time: ytMusic.getCurrentTime() });
+    startMusicSyncLoop();
+    startMusicProgressLoop();
+  } else if (e.data === YT.PlayerState.PAUSED) {
+    musicPlaying = false;
+    el("musicPlayBtn").textContent = "▶";
+    socket.emit("music-control", { action: "pause", time: ytMusic.getCurrentTime() });
+    stopMusicProgressLoop();
+  } else if (e.data === YT.PlayerState.ENDED) {
+    musicPlaying = false;
+    el("musicPlayBtn").textContent = "▶";
+    stopMusicSyncLoop();
+    stopMusicProgressLoop();
+  }
+}
+
+// Play/Pause tombol
+el("musicPlayBtn").addEventListener("click", () => {
+  if (!ytMusic) return;
+  if (musicPlaying) {
+    ytMusic.pauseVideo();
+  } else {
+    ytMusic.playVideo();
+  }
+});
+
+// Stop musik
+el("musicStopBtn").addEventListener("click", stopMusic);
+
+function stopMusic(mine = true) {
+  stopMusicSyncLoop();
+  stopMusicProgressLoop();
+  try { if (ytMusic) { ytMusic.stopVideo(); ytMusic.destroy(); ytMusic = null; } } catch (e) {}
+  musicPlaying = false;
+  musicNowPlay.classList.add("hidden");
+  musicProgressW.classList.add("hidden");
+  el("musicProgressBar").style.width = "0%";
+  el("musicUrl").value = "";
+  el("musicTitle").textContent = "🎵 Memuat...";
+  if (mine) { socket.emit("music-stop"); toast("Musik dihentikan ⏹️"); }
+}
+
+// Loop sync waktu ke pasangan
+function startMusicSyncLoop() {
+  stopMusicSyncLoop();
+  musicSyncTmr = setInterval(() => {
+    if (!ytMusic || !ytMusic.getCurrentTime) return;
+    socket.emit("music-sync", {
+      time: ytMusic.getCurrentTime(),
+      playing: musicPlaying,
+    });
+  }, 5000);
+}
+function stopMusicSyncLoop() { if (musicSyncTmr) clearInterval(musicSyncTmr); musicSyncTmr = null; }
+
+// Progress bar update
+function startMusicProgressLoop() {
+  stopMusicProgressLoop();
+  musicProgTmr = setInterval(() => {
+    if (!ytMusic || !ytMusic.getCurrentTime) return;
+    const cur = ytMusic.getCurrentTime();
+    const dur = ytMusic.getDuration() || musicDuration || 1;
+    el("musicProgressBar").style.width = Math.min(100, (cur / dur) * 100) + "%";
+    const fmt = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+    el("musicSub").textContent = `${fmt(cur)} / ${fmt(dur)}`;
+  }, 1000);
+}
+function stopMusicProgressLoop() { if (musicProgTmr) clearInterval(musicProgTmr); musicProgTmr = null; }
+
+// ── Terima event dari pasangan ──
+socket.on("music-source", ({ url, by }) => {
+  const id = extractYtId(url);
+  if (!id) return;
+  toast(`${by} memutar musik bareng 🎵`);
+  musicPanel.classList.remove("hidden");
+  el("musicBtn").classList.add("active");
+  startMusicPlayer(id, false);
+});
+
+socket.on("music-control", ({ action, time, by }) => {
+  if (!ytMusic) return;
+  musicSuppres = true;
+  try {
+    if (typeof time === "number") ytMusic.seekTo(time, true);
+    if (action === "play") { ytMusic.playVideo(); musicPlaying = true; el("musicPlayBtn").textContent = "⏸"; }
+    if (action === "pause") { ytMusic.pauseVideo(); musicPlaying = false; el("musicPlayBtn").textContent = "▶"; }
+  } catch (e) {}
+  setTimeout(() => { musicSuppres = false; }, 350);
+});
+
+socket.on("music-sync", ({ time, playing }) => {
+  if (!ytMusic || !ytMusic.getCurrentTime) return;
+  if (Math.abs(ytMusic.getCurrentTime() - time) > 2) {
+    musicSuppres = true;
+    ytMusic.seekTo(time, true);
+    setTimeout(() => { musicSuppres = false; }, 300);
+  }
+});
+
+socket.on("music-stop", ({ by }) => {
+  toast(`${by} menghentikan musik ⏹️`);
+  stopMusic(false);
+});
+
+// Sertakan musik di state joined (jika ada yang sedang diputar)
+socket.on("joined", (data) => {}); // handler utama di atas sudah ada
+// Terapkan musicState dari server saat pertama join
+socket.on("joined", ({ musicState }) => {
+  if (musicState && musicState.url) {
+    const id = extractYtId(musicState.url);
+    if (id) {
+      musicPanel.classList.remove("hidden");
+      el("musicBtn").classList.add("active");
+      startMusicPlayer(id, false);
+    }
+  }
+});
