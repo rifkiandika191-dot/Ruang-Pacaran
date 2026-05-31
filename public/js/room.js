@@ -386,6 +386,7 @@ function applySource(url, type, mine) {
     if (!mine) el("videoUnmuteBtn").classList.remove("hidden");
   }
   el("stopWatchBtn").classList.remove("hidden");
+  showVideoControls(true);
   if (mine) toast("Video dimuat — nikmati nonton bareng! 🍿");
 }
 
