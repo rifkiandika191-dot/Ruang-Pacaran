@@ -181,16 +181,43 @@ document.querySelectorAll(".emoji-quick button").forEach((b) => {
 });
 
 // --- Kirim gambar ---
-el("imgInput").addEventListener("change", (e) => {
+function compressImage(file, maxW, quality) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) { reject("Bukan gambar"); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject("Gagal membaca file");
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onerror = () => reject("Gagal memuat gambar");
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+el("imgInput").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 2_000_000) { toast("Gambar terlalu besar (maks 2MB) 🥺"); e.target.value = ""; return; }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    socket.emit("chat", { img: ev.target.result });
+  if (file.size > 20_000_000) { toast("Gambar terlalu besar (maks 20MB) 🥺"); e.target.value = ""; return; }
+
+  toast("⏳ Memproses gambar...");
+  try {
+    // Kompresi: max 1280px lebar, JPEG 82%
+    const compressed = await compressImage(file, 1280, 0.82);
+    socket.emit("chat", { img: compressed });
     e.target.value = "";
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    toast("Gagal memproses gambar 😢");
+    e.target.value = "";
+  }
 });
 
 // --- Typing indicator ---
