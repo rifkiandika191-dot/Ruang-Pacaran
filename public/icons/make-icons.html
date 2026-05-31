@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generate Icons — Ruang Pacaran</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+    button { padding: 12px 24px; background: #ff5c8a; color: white; border: none;
+             border-radius: 8px; font-size: 15px; cursor: pointer; margin: 6px; }
+    button:hover { background: #e23e6f; }
+    canvas { display: block; margin: 12px 0; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+    .preview { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin: 20px 0; }
+    h2 { color: #e23e6f; }
+    p { color: #666; }
+  </style>
+</head>
+<body>
+  <h2>🎨 Ruang Pacaran — Icon Generator</h2>
+  <p>Klik tombol di bawah untuk download semua icon PNG yang dibutuhkan PWA & iOS.</p>
+
+  <div class="preview" id="previews"></div>
+
+  <button onclick="downloadAll()">⬇️ Download Semua Icon</button>
+
+  <p style="font-size:13px;color:#999;margin-top:20px">
+    Setelah download, letakkan semua file PNG di folder <code>public/icons/</code>
+  </p>
+
+<script>
+const sizes = [
+  { name: "icon-192.png",        size: 192,  radius: 42  },
+  { name: "icon-512.png",        size: 512,  radius: 112 },
+  { name: "apple-touch-icon.png",size: 180,  radius: 40  },
+  { name: "icon-96.png",         size: 96,   radius: 20  },
+];
+
+function drawIcon(canvas, size, radius) {
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.height = size;
+  const s = size;
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, s, s);
+  grad.addColorStop(0, "#ff6f9c");
+  grad.addColorStop(1, "#e23e6f");
+
+  // Rounded rect
+  ctx.beginPath();
+  ctx.moveTo(radius, 0);
+  ctx.lineTo(s - radius, 0);
+  ctx.quadraticCurveTo(s, 0, s, radius);
+  ctx.lineTo(s, s - radius);
+  ctx.quadraticCurveTo(s, s, s - radius, s);
+  ctx.lineTo(radius, s);
+  ctx.quadraticCurveTo(0, s, 0, s - radius);
+  ctx.lineTo(0, radius);
+  ctx.quadraticCurveTo(0, 0, radius, 0);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Heart
+  const cx = s * 0.5, cy = s * 0.47, hw = s * 0.36;
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.beginPath();
+  drawHeart(ctx, cx, cy, hw);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHeart(ctx, cx, cy, hw) {
+  const hh = hw * 0.9;
+  ctx.moveTo(cx, cy + hh * 0.9);
+  // left curve
+  ctx.bezierCurveTo(
+    cx - hw * 0.05, cy + hh * 0.55,
+    cx - hw,        cy + hh * 0.2,
+    cx - hw,        cy - hh * 0.15
+  );
+  ctx.bezierCurveTo(
+    cx - hw,        cy - hh * 0.6,
+    cx - hw * 0.4,  cy - hh * 0.75,
+    cx,             cy - hh * 0.25
+  );
+  // right curve
+  ctx.bezierCurveTo(
+    cx + hw * 0.4,  cy - hh * 0.75,
+    cx + hw,        cy - hh * 0.6,
+    cx + hw,        cy - hh * 0.15
+  );
+  ctx.bezierCurveTo(
+    cx + hw,        cy + hh * 0.2,
+    cx + hw * 0.05, cy + hh * 0.55,
+    cx,             cy + hh * 0.9
+  );
+}
+
+// Render previews
+const container = document.getElementById("previews");
+sizes.forEach(({ name, size, radius }) => {
+  const wrap = document.createElement("div");
+  wrap.style.textAlign = "center";
+  const canvas = document.createElement("canvas");
+  const displaySize = Math.min(size, 120);
+  canvas.style.width = canvas.style.height = displaySize + "px";
+  drawIcon(canvas, size, radius);
+  const label = document.createElement("div");
+  label.style.cssText = "font-size:11px;color:#999;margin-top:4px";
+  label.textContent = name + " (" + size + "px)";
+  wrap.appendChild(canvas);
+  wrap.appendChild(label);
+  container.appendChild(wrap);
+});
+
+function downloadAll() {
+  sizes.forEach(({ name, size, radius }) => {
+    const canvas = document.createElement("canvas");
+    drawIcon(canvas, size, radius);
+    const a = document.createElement("a");
+    a.download = name;
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+}
+</script>
+</body>
+</html>
