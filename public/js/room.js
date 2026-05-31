@@ -1419,7 +1419,6 @@ let musicSuppres  = false;
 let musicSyncTmr  = null;
 let musicDuration = 0;
 let musicProgTmr  = null;
-let musicPlatform = null;   // 'youtube' | 'spotify'
 
 const musicNowPlay   = el("musicNowPlaying");
 const musicProgressW = el("musicProgressWrap");
