@@ -1610,11 +1610,11 @@ socket.on("music-control", ({ action, time, by }) => {
 
 socket.on("music-sync", ({ time, playing }) => {
   if (!ytMusic || !ytMusic.getCurrentTime) return;
-  if (Math.abs(ytMusic.getCurrentTime() - time) > 2) {
-    musicSuppres = true;
-    ytMusic.seekTo(time, true);
-    setTimeout(() => { musicSuppres = false; }, 300);
-  }
+  musicSuppres = true;
+  if (Math.abs(ytMusic.getCurrentTime() - time) > 1) ytMusic.seekTo(time, true);
+  if (playing && musicPlaying === false) { ytMusic.playVideo(); musicPlaying = true; el("musicPlayBtn").textContent = "⏸"; startMusicProgressLoop(); }
+  if (!playing && musicPlaying === true) { ytMusic.pauseVideo(); musicPlaying = false; el("musicPlayBtn").textContent = "▶"; }
+  setTimeout(() => { musicSuppres = false; }, 400);
 });
 
 socket.on("music-stop", ({ by }) => {
