@@ -1546,6 +1546,12 @@ el("musicPlayBtn").addEventListener("click", () => {
   }
 });
 
+// Unmute untuk partner (browser policy: butuh gesture user untuk ada suara)
+el("musicUnmuteBtn").addEventListener("click", () => {
+  if (ytMusic) ytMusic.unMute();
+  el("musicUnmuteBtn").classList.add("hidden");
+});
+
 // Stop musik
 el("musicStopBtn").addEventListener("click", () => stopMusic(true));
 
