@@ -1585,16 +1585,3 @@ socket.on("music-stop", ({ by }) => {
   stopMusic(false);
 });
 
-// Sertakan musik di state joined (jika ada yang sedang diputar)
-socket.on("joined", (data) => {}); // handler utama di atas sudah ada
-// Terapkan musicState dari server saat pertama join
-socket.on("joined", ({ musicState }) => {
-  if (musicState && musicState.url) {
-    const id = extractYtId(musicState.url);
-    if (id) {
-      musicPanel.classList.remove("hidden");
-      el("musicBtn").classList.add("active");
-      startMusicPlayer(id, false);
-    }
-  }
-});
