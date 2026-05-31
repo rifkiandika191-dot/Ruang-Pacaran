@@ -131,26 +131,19 @@
         </div>
       </div>
 
-      <!-- Panel Musik Bareng (collapsible) -->
-      <div class="music-panel hidden" id="musicPanel">
-        <div class="music-input-row">
-          <input type="text" id="musicUrl" placeholder="Tempel link YouTube musik / playlist..." />
-          <button class="btn btn-primary music-load-btn" id="musicLoadBtn">▶ Putar</button>
+      <!-- Now Playing bar musik (muncul saat musik aktif) -->
+      <div class="music-now-playing hidden" id="musicNowPlaying">
+        <div class="music-thumbnail" id="musicThumb"></div>
+        <div class="music-info">
+          <div class="music-title" id="musicTitle">🎵 Memuat...</div>
+          <div class="music-sub" id="musicSub"></div>
         </div>
-        <div class="music-now-playing hidden" id="musicNowPlaying">
-          <div class="music-thumbnail" id="musicThumb"></div>
-          <div class="music-info">
-            <div class="music-title" id="musicTitle">🎵 Memuat...</div>
-            <div class="music-sub" id="musicSub"></div>
-          </div>
-          <div class="music-controls">
-            <button class="music-ctrl-btn" id="musicPlayBtn" title="Play/Pause">⏸</button>
-            <button class="music-ctrl-btn" id="musicStopBtn" title="Stop">⏹</button>
-          </div>
+        <div class="music-controls">
+          <button class="music-ctrl-btn" id="musicPlayBtn" title="Play/Pause">⏸</button>
         </div>
-        <div class="music-progress-wrap" id="musicProgressWrap">
-          <div class="music-progress-bar" id="musicProgressBar" style="width:0%"></div>
-        </div>
+      </div>
+      <div class="music-progress-wrap hidden" id="musicProgressWrap">
+        <div class="music-progress-bar" id="musicProgressBar" style="width:0%"></div>
       </div>
 
       <!-- Bar fitur seru -->
@@ -160,7 +153,6 @@
         <button class="btn btn-secondary fun-btn" id="gameBtn">🎮 Game</button>
         <button class="btn btn-secondary fun-btn" id="wheelBtn">🎡 Roda</button>
         <button class="btn btn-secondary fun-btn" id="locationBtn">🌍 Lokasi</button>
-        <button class="btn btn-secondary fun-btn" id="musicBtn">🎵 Musik</button>
       </div>
 
       <!-- Hidden YouTube player khusus musik (1×1, off-screen) -->
