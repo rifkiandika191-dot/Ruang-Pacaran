@@ -7,6 +7,14 @@
   const _sock   = typeof io !== "undefined" ? io() : null;
   if (!_sock) return;
 
+  // Preload daftar suara TTS (Chrome memuat async)
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", () => {
+      window.speechSynthesis.getVoices();
+    }, { once: true });
+  }
+
   let closeTimer;
 
   // ── Style + HTML (inject sekali) ──
