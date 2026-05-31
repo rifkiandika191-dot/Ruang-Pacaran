@@ -1420,16 +1420,16 @@ let musicSyncTmr  = null;
 let musicDuration = 0;
 let musicProgTmr  = null;
 
-const musicPanel     = el("musicPanel");
 const musicNowPlay   = el("musicNowPlaying");
 const musicProgressW = el("musicProgressWrap");
 
-// Toggle panel saat klik tombol Musik
-el("musicBtn").addEventListener("click", () => {
-  const open = !musicPanel.classList.contains("hidden");
-  musicPanel.classList.toggle("hidden", open);
-  el("musicBtn").classList.toggle("active", !open);
-});
+function switchToMusicTab() {
+  document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+  document.querySelector('.tab[data-mode="music"]').classList.add("active");
+  el("panel-link").classList.add("hidden");
+  el("panel-screen").classList.add("hidden");
+  el("panel-music").classList.remove("hidden");
+}
 
 // Putar dari input URL
 el("musicLoadBtn").addEventListener("click", loadMusicFromInput);
