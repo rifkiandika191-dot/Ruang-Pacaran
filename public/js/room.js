@@ -1590,11 +1590,11 @@ function stopMusicProgressLoop() { if (musicProgTmr) clearInterval(musicProgTmr)
 
 // ── Terima event dari pasangan ──
 socket.on("music-source", ({ url, by }) => {
-  const id = extractYtId(url);
-  if (!id) return;
+  const info = extractYtInfo(url);
+  if (!info.id && !info.list) return;
   toast(`${by} memutar musik bareng 🎵`);
   switchToMusicTab();
-  startMusicPlayer(id, false);
+  startMusicPlayer(info, false);
 });
 
 socket.on("music-control", ({ action, time, by }) => {
