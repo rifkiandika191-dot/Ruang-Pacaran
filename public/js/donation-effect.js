@@ -370,8 +370,9 @@
   // Donasi kecil (<10rb) — toast tanpa konfeti & suara
   _sock.on("new-donation-small", (d) => {
     inject();
-    document.getElementById("dtWho").textContent = `🎉 ${d.name}`;
-    document.getElementById("dtAmt").textContent = fmtRp(d.amount || 0);
+    document.getElementById("dtEmoji").textContent = "☕";
+    document.getElementById("dtWho").textContent = `🙏 ${d.name} baru saja donasi!`;
+    document.getElementById("dtAmt").textContent  = fmtRp(d.amount || 0);
 
     const toast = document.getElementById("donToast");
     const bd    = document.getElementById("donBackdrop");
