@@ -1566,8 +1566,8 @@ function stopMusic(mine = true) {
 function startMusicSyncLoop() {
   stopMusicSyncLoop();
   musicSyncTmr = setInterval(() => {
-    if (!ytMusic || !ytMusic.getCurrentTime) return;
-    socket.emit("music-sync", { time: ytMusic.getCurrentTime(), playing: musicPlaying });
+    if (!ytMusic || !ytMusic.getCurrentTime || !musicPlaying) return;
+    socket.emit("music-sync", { time: ytMusic.getCurrentTime(), playing: true });
   }, 2000);
 }
 function stopMusicSyncLoop() { if (musicSyncTmr) clearInterval(musicSyncTmr); musicSyncTmr = null; }
