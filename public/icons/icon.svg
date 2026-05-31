@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6f9c"/>
+      <stop offset="100%" style="stop-color:#e23e6f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Hati besar -->
+  <path d="M256 390 C256 390 100 290 100 185
+    C100 140 135 110 175 110
+    C205 110 230 128 256 158
+    C282 128 307 110 337 110
+    C377 110 412 140 412 185
+    C412 290 256 390 256 390Z"
+    fill="white" opacity="0.95"/>
+  <!-- Hati kecil accent -->
+  <path d="M200 175 C200 175 168 155 168 138
+    C168 128 176 122 185 122
+    C191 122 196 125 200 130
+    C204 125 209 122 215 122
+    C224 122 232 128 232 138
+    C232 155 200 175 200 175Z"
+    fill="white" opacity="0.4"/>
+</svg>
