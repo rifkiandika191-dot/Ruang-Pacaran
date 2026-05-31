@@ -1418,8 +1418,7 @@ let musicSyncTmr  = null;
 let musicDuration = 0;
 let musicProgTmr  = null;
 
-const musicNowPlay   = el("musicNowPlaying");
-const musicProgressW = el("musicProgressWrap");
+const musicNowPlay = el("musicNowPlaying");
 
 function switchToMusicTab() {
   document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
