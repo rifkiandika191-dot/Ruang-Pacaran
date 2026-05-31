@@ -1315,17 +1315,12 @@ body.dark .gc-input-bar input { background: var(--card); }
   gap: 10px;
 }
 
-/* Wrapper player YT kecil */
+/* Wrapper player YT — iframe tetap di DOM agar audio jalan, video disembunyikan */
 .music-yt-wrap {
-  margin-top: 8px;
-  border-radius: 10px;
+  height: 0;
   overflow: hidden;
-  aspect-ratio: 16/9;
-  width: 100%;
-  background: #000;
+  pointer-events: none;
 }
-.music-yt-wrap iframe,
-.music-yt-wrap > div { width: 100% !important; height: 100% !important; }
 
 /* Now playing bar — tampil di bawah source-bar */
 .music-now-playing {
