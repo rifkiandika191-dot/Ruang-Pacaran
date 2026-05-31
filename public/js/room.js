@@ -1560,7 +1560,7 @@ el("musicPlayBtn").addEventListener("click", () => {
 // Stop musik
 el("musicStopBtn").addEventListener("click", () => stopMusic(true));
 
-function stopMusic(mine = true) {
+function stopYouTubeMusic() {
   stopMusicSyncLoop();
   stopMusicProgressLoop();
   try { if (ytMusic) { ytMusic.stopVideo(); ytMusic.destroy(); ytMusic = null; } } catch (e) {}
@@ -1568,6 +1568,11 @@ function stopMusic(mine = true) {
   musicNowPlay.classList.add("hidden");
   musicProgressW.classList.add("hidden");
   el("musicProgressBar").style.width = "0%";
+}
+
+function stopMusic(mine = true) {
+  stopYouTubeMusic();
+  stopSpotifyMusic();
   el("musicUrl").value = "";
   el("musicTitle").textContent = "🎵 Memuat...";
   el("musicStopBtn").classList.add("hidden");
