@@ -354,17 +354,22 @@ function showPlayer(which) {
 function applySource(url, type, mine) {
   stopSyncLoop();
   currentType = type;
+  el("videoUnmuteBtn").classList.add("hidden");
   if (type === "youtube") {
     const id = detectSource(url).id;
     showPlayer("youtube");
-    loadYouTube(id);
+    loadYouTube(id, mine);
   } else {
     showPlayer("html");
+    htmlPlayer.muted = !mine;   // partner mulai muted agar browser izinkan autoplay
     htmlPlayer.src = url;
     htmlPlayer.load();
+    const p = htmlPlayer.play();
+    if (p && p.catch) p.catch(() => {});
     bindHtmlPlayer();
+    if (!mine) el("videoUnmuteBtn").classList.remove("hidden");
   }
-  el("stopWatchBtn").classList.remove("hidden"); // tampilkan tombol stop
+  el("stopWatchBtn").classList.remove("hidden");
   if (mine) toast("Video dimuat — nikmati nonton bareng! 🍿");
 }
 
@@ -372,17 +377,25 @@ function applySource(url, type, mine) {
 function onYouTubeIframeAPIReady() { ytReady = true; }
 window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
-function loadYouTube(videoId) {
+function loadYouTube(videoId, mine) {
   const create = () => {
     if (ytPlayer) {
+      if (!mine) ytPlayer.mute();
       ytPlayer.loadVideoById(videoId);
+      if (!mine) el("videoUnmuteBtn").classList.remove("hidden");
       return;
     }
+    const playerVars = { rel: 0, modestbranding: 1, playsinline: 1, autoplay: 1 };
+    if (!mine) playerVars.mute = 1;
     ytPlayer = new YT.Player("ytPlayer", {
       videoId,
-      playerVars: { rel: 0, modestbranding: 1, playsinline: 1 },
+      playerVars,
       events: {
-        onReady: () => startSyncLoop(),
+        onReady: (e) => {
+          e.target.playVideo();
+          startSyncLoop();
+          if (!mine) el("videoUnmuteBtn").classList.remove("hidden");
+        },
         onStateChange: onYtState,
       },
     });
