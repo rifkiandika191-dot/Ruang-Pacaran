@@ -18,6 +18,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" },
+  maxHttpBufferSize: 5e6, // 5MB — cukup untuk gambar terkompresi
 });
 
 const PORT = process.env.PORT || 3000;
