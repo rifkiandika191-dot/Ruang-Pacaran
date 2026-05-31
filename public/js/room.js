@@ -69,7 +69,7 @@ socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, stre
     if (_mid) {
       setTimeout(() => {
         switchToMusicTab();
-        startMusicPlayer(_mid, false);
+        startMusicPlayer(extractYtInfo(musicState.url), false);
       }, 800);
     }
   }
