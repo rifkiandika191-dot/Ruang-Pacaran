@@ -1541,6 +1541,12 @@ function stopMusic(mine = true) {
   el("musicProgressBar").style.width = "0%";
   el("musicUrl").value = "";
   el("musicTitle").textContent = "🎵 Memuat...";
+  // Kembali ke tab "Dari Link" setelah stop
+  document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+  document.querySelector('.tab[data-mode="link"]').classList.add("active");
+  el("panel-link").classList.remove("hidden");
+  el("panel-screen").classList.add("hidden");
+  el("panel-music").classList.add("hidden");
   if (mine) { socket.emit("music-stop"); toast("Musik dihentikan ⏹️"); }
 }
 
