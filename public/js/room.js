@@ -1438,43 +1438,15 @@ el("musicUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") loadM
 function loadMusicFromInput() {
   const url = el("musicUrl").value.trim();
   if (!url) return;
-  const ytId = extractYtId(url);
-  if (ytId) { socket.emit("music-source", { url }); startMusicPlayer(ytId, true); return; }
-  const sp = extractSpotifyInfo(url);
-  if (sp) { socket.emit("music-source", { url }); startSpotifyMusic(sp.type, sp.id, true); return; }
-  toast("Tempel link YouTube atau Spotify yang valid 🎵");
+  const id = extractYtId(url);
+  if (!id) { toast("Hanya link YouTube yang didukung untuk musik 🎵"); return; }
+  socket.emit("music-source", { url });
+  startMusicPlayer(id, true);
 }
 
 function extractYtId(url) {
   const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
   return m ? m[1] : null;
-}
-
-function extractSpotifyInfo(url) {
-  const m = url.match(/spotify\.com\/(track|playlist|album|artist|episode)\/([A-Za-z0-9]+)/);
-  return m ? { type: m[1], id: m[2] } : null;
-}
-
-function startSpotifyMusic(type, id, mine) {
-  stopYouTubeMusic();
-  musicPlatform = "spotify";
-  const height  = (type === "track" || type === "episode") ? 80 : 152;
-  const src     = `https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`;
-  const iframe  = el("spotifyEmbed");
-  iframe.src    = src;
-  iframe.height = height;
-  el("spotifyEmbedWrap").classList.remove("hidden");
-  musicNowPlay.classList.add("hidden");
-  musicProgressW.classList.add("hidden");
-  el("musicStopBtn").classList.remove("hidden");
-  if (mine) toast("Spotify dimuat — tekan play bareng ya! 🎵");
-}
-
-function stopSpotifyMusic() {
-  const iframe = el("spotifyEmbed");
-  iframe.src   = "";
-  el("spotifyEmbedWrap").classList.add("hidden");
-  musicPlatform = null;
 }
 
 function startMusicPlayer(videoId, mine) {
