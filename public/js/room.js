@@ -1599,20 +1599,36 @@ socket.on("music-control", ({ action, time, by }) => {
   if (!ytMusic) return;
   musicSuppres = true;
   try {
-    if (typeof time === "number") ytMusic.seekTo(time, true);
-    if (action === "play") { ytMusic.playVideo(); musicPlaying = true; el("musicPlayBtn").textContent = "⏸"; }
-    if (action === "pause") { ytMusic.pauseVideo(); musicPlaying = false; el("musicPlayBtn").textContent = "▶"; }
+    if (action === "play") {
+      // Seek dulu baru play — seekTo saat pause bisa picu PLAYING spurious, jadi suppress harus panjang
+      if (typeof time === "number") ytMusic.seekTo(time, true);
+      ytMusic.playVideo();
+      musicPlaying = true;
+      el("musicPlayBtn").textContent = "⏸";
+      startMusicProgressLoop();
+    }
+    if (action === "pause") {
+      // Jangan seekTo saat pause — seekTo memicu state PLAYING sementara yg bisa buat loop
+      ytMusic.pauseVideo();
+      musicPlaying = false;
+      el("musicPlayBtn").textContent = "▶";
+      stopMusicProgressLoop();
+    }
   } catch (e) {}
-  setTimeout(() => { musicSuppres = false; }, 350);
+  // Suppress lebih lama (1000ms) agar state change spurious dari seekTo tidak lolos
+  setTimeout(() => { musicSuppres = false; }, 1000);
 });
 
 socket.on("music-sync", ({ time, playing }) => {
   if (!ytMusic || !ytMusic.getCurrentTime) return;
-  musicSuppres = true;
-  if (Math.abs(ytMusic.getCurrentTime() - time) > 1) ytMusic.seekTo(time, true);
-  if (playing && musicPlaying === false) { ytMusic.playVideo(); musicPlaying = true; el("musicPlayBtn").textContent = "⏸"; startMusicProgressLoop(); }
-  if (!playing && musicPlaying === true) { ytMusic.pauseVideo(); musicPlaying = false; el("musicPlayBtn").textContent = "▶"; }
-  setTimeout(() => { musicSuppres = false; }, 400);
+  // Sync HANYA koreksi drift waktu saat kedua sisi sedang playing
+  // Jangan ubah play/pause dari sini — itu tugas music-control
+  if (!playing || !musicPlaying) return;
+  if (Math.abs(ytMusic.getCurrentTime() - time) > 1.5) {
+    musicSuppres = true;
+    ytMusic.seekTo(time, true);
+    setTimeout(() => { musicSuppres = false; }, 800);
+  }
 });
 
 socket.on("music-stop", ({ by }) => {
