@@ -218,6 +218,17 @@ input::placeholder { color: #c9a9b4; }
 .stop-watch-btn:hover { opacity: 1; background: #d63333; }
 @media (max-width: 600px) { .stop-watch-btn { padding: 7px 11px; font-size: 12px; } }
 
+.video-unmute-btn {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 10; border: none; border-radius: 999px;
+  padding: 11px 22px;
+  background: rgba(0,0,0,.72); color: #fff;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: inherit; backdrop-filter: blur(6px);
+  animation: pulse 1.5s ease-in-out infinite;
+  white-space: nowrap;
+}
+
 /* Saat fullscreen, pemutar mengisi penuh layar */
 .player-wrap:fullscreen, .player-wrap:-webkit-full-screen {
   width: 100vw; height: 100vh; border-radius: 0; background: #000;
