@@ -69,9 +69,7 @@ socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, stre
     if (_mid) {
       setTimeout(() => {
         switchToMusicTab();
-        const _sp = extractSpotifyInfo(musicState.url);
-        if (_sp) { startSpotifyMusic(_sp.type, _sp.id, false); }
-        else { startMusicPlayer(_mid, false); }
+        startMusicPlayer(_mid, false);
       }, 800);
     }
   }
