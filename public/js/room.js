@@ -1436,10 +1436,10 @@ el("musicUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") loadM
 function loadMusicFromInput() {
   const url = el("musicUrl").value.trim();
   if (!url) return;
-  const id = extractYtId(url);
-  if (!id) { toast("Hanya link YouTube yang didukung untuk musik 🎵"); return; }
+  const info = extractYtInfo(url);
+  if (!info.id && !info.list) { toast("Hanya link YouTube yang didukung untuk musik 🎵"); return; }
   socket.emit("music-source", { url });
-  startMusicPlayer(id, true);
+  startMusicPlayer(info, true);
 }
 
 function extractYtId(url) {
@@ -1447,28 +1447,38 @@ function extractYtId(url) {
   return m ? m[1] : null;
 }
 
-function startMusicPlayer(videoId, mine) {
+function extractYtInfo(url) {
+  const idMatch   = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+  const listMatch = url.match(/[?&]list=([\w-]+)/);
+  return { id: idMatch ? idMatch[1] : null, list: listMatch ? listMatch[1] : null };
+}
+
+function startMusicPlayer(infoOrId, mine) {
+  // Terima string ID lama atau objek {id, list}
+  const info = typeof infoOrId === "string" ? { id: infoOrId, list: null } : infoOrId;
+  const { id: videoId, list } = info;
+
   musicNowPlay.classList.remove("hidden");
-  musicProgressW.classList.remove("hidden");
   el("musicTitle").textContent = "🎵 Memuat...";
   el("musicSub").textContent   = "";
-  el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${videoId}/default.jpg)`;
+  if (videoId) el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${videoId}/default.jpg)`;
+
+  const playerVars = { rel: 0, playsinline: 1, controls: 1, autoplay: 1 };
+  if (list) { playerVars.list = list; playerVars.listType = "playlist"; }
 
   const create = () => {
     if (ytMusic) {
-      ytMusic.loadVideoById(videoId);
+      if (list) ytMusic.loadPlaylist({ list, listType: "playlist" });
+      else ytMusic.loadVideoById(videoId);
       return;
     }
     ytMusic = new YT.Player("musicYtDiv", {
-      videoId,
-      playerVars: { rel: 0, playsinline: 1, controls: 0, autoplay: 1 },
+      videoId: videoId || undefined,
+      playerVars,
       events: {
         onReady: (e) => {
           musicDuration = e.target.getDuration();
-          try {
-            const info = e.target.getVideoData();
-            el("musicTitle").textContent = "🎵 " + (info && info.title ? info.title : "Memutar musik...");
-          } catch (_) { el("musicTitle").textContent = "🎵 Memutar musik..."; }
+          updateMusicMeta();
           startMusicSyncLoop();
           startMusicProgressLoop();
         },
@@ -1490,20 +1500,24 @@ function startMusicPlayer(videoId, mine) {
   if (mine) toast("Musik dimuat — dengarkan bareng! 🎵");
 }
 
+function updateMusicMeta() {
+  try {
+    const info = ytMusic.getVideoData();
+    if (info && info.title) el("musicTitle").textContent = "🎵 " + info.title;
+    if (info && info.video_id) el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${info.video_id}/default.jpg)`;
+    musicDuration = ytMusic.getDuration() || musicDuration;
+  } catch (_) {}
+}
+
 function onMusicStateChange(e) {
   if (musicSuppres) return;
   if (e.data === YT.PlayerState.PLAYING) {
     musicPlaying = true;
     el("musicPlayBtn").textContent = "⏸";
+    updateMusicMeta();
     socket.emit("music-control", { action: "play", time: ytMusic.getCurrentTime() });
     startMusicSyncLoop();
     startMusicProgressLoop();
-    // Update judul & thumbnail saat lagu ganti (playlist)
-    try {
-      const info = ytMusic.getVideoData();
-      if (info && info.title) el("musicTitle").textContent = "🎵 " + info.title;
-      if (info && info.video_id) el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${info.video_id}/default.jpg)`;
-    } catch (_) {}
   } else if (e.data === YT.PlayerState.PAUSED) {
     musicPlaying = false;
     el("musicPlayBtn").textContent = "▶";
