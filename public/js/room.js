@@ -65,11 +65,11 @@ socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, stre
     applySource(videoState.url, videoState.type, false);
   }
   if (musicState && musicState.url) {
-    const _mid = extractYtId(musicState.url);
-    if (_mid) {
+    const _minfo = extractYtInfo(musicState.url);
+    if (_minfo.id || _minfo.list) {
       setTimeout(() => {
         switchToMusicTab();
-        startMusicPlayer(extractYtInfo(musicState.url), false);
+        startMusicPlayer(_minfo, false);
       }, 800);
     }
   }
