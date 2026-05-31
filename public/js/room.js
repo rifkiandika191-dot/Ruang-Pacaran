@@ -1487,6 +1487,7 @@ function startMusicPlayer(videoId, mine) {
 
   musicPlaying = true;
   el("musicPlayBtn").textContent = "⏸";
+  el("musicStopBtn").classList.remove("hidden");
   if (mine) toast("Musik dimuat — dengarkan bareng! 🎵");
 }
 
