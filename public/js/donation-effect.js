@@ -375,6 +375,8 @@
 
     spawnConfetti();
     playTing();
+    // TTS diberi jeda kecil agar suara ting selesai dulu
+    setTimeout(() => speakDonation(donation.name, donation.amount || 0), 900);
 
     clearTimeout(closeTimer);
     closeTimer = setTimeout(hide, DURATION * 1000);
