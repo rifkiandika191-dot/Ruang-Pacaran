@@ -131,7 +131,7 @@
         </div>
       </div>
 
-      <!-- Now Playing bar musik (muncul saat musik aktif) -->
+      <!-- Now Playing — YouTube -->
       <div class="music-now-playing hidden" id="musicNowPlaying">
         <div class="music-thumbnail" id="musicThumb"></div>
         <div class="music-info">
@@ -144,6 +144,13 @@
       </div>
       <div class="music-progress-wrap hidden" id="musicProgressWrap">
         <div class="music-progress-bar" id="musicProgressBar" style="width:0%"></div>
+      </div>
+
+      <!-- Now Playing — Spotify embed -->
+      <div class="spotify-embed-wrap hidden" id="spotifyEmbedWrap">
+        <iframe id="spotifyEmbed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy" style="border-radius:12px;border:none;width:100%;"></iframe>
+        <p class="spotify-hint">🎵 Spotify tidak bisa auto-sinkron — tekan play bareng ya! 💕</p>
       </div>
 
       <!-- Bar fitur seru -->
