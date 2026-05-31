@@ -67,10 +67,11 @@ socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, stre
   if (musicState && musicState.url) {
     const _mid = extractYtId(musicState.url);
     if (_mid) {
-      // Tunda sedikit agar YT API sempat siap
       setTimeout(() => {
         switchToMusicTab();
-        startMusicPlayer(_mid, false);
+        const _sp = extractSpotifyInfo(musicState.url);
+        if (_sp) { startSpotifyMusic(_sp.type, _sp.id, false); }
+        else { startMusicPlayer(_mid, false); }
       }, 800);
     }
   }
