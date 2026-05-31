@@ -1549,7 +1549,6 @@ function stopMusic(mine = true) {
   try { if (ytMusic) { ytMusic.stopVideo(); ytMusic.destroy(); ytMusic = null; } } catch (e) {}
   musicPlaying = false;
   musicNowPlay.classList.add("hidden");
-  musicProgressW.classList.add("hidden");
   el("musicProgressBar").style.width = "0%";
   el("musicUrl").value = "";
   el("musicTitle").textContent = "🎵 Memuat...";
