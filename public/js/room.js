@@ -1564,16 +1564,13 @@ function stopMusic(mine = true) {
   if (mine) { socket.emit("music-stop"); toast("Musik dihentikan ⏹️"); }
 }
 
-// Loop sync waktu ke pasangan
+// Loop sync waktu ke pasangan (setiap 2 detik)
 function startMusicSyncLoop() {
   stopMusicSyncLoop();
   musicSyncTmr = setInterval(() => {
     if (!ytMusic || !ytMusic.getCurrentTime) return;
-    socket.emit("music-sync", {
-      time: ytMusic.getCurrentTime(),
-      playing: musicPlaying,
-    });
-  }, 5000);
+    socket.emit("music-sync", { time: ytMusic.getCurrentTime(), playing: musicPlaying });
+  }, 2000);
 }
 function stopMusicSyncLoop() { if (musicSyncTmr) clearInterval(musicSyncTmr); musicSyncTmr = null; }
 
@@ -1585,7 +1582,7 @@ function startMusicProgressLoop() {
     const cur = ytMusic.getCurrentTime();
     const dur = ytMusic.getDuration() || musicDuration || 1;
     el("musicProgressBar").style.width = Math.min(100, (cur / dur) * 100) + "%";
-    const fmt = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+    const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
     el("musicSub").textContent = `${fmt(cur)} / ${fmt(dur)}`;
   }, 1000);
 }
