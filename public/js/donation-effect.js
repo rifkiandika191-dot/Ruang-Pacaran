@@ -204,10 +204,14 @@
     const toast = document.createElement("div");
     toast.id = "donToast";
     toast.innerHTML = `
+      <div class="dt-emoji" id="dtEmoji">🎆</div>
       <div class="dt-body">
-        <div class="dt-who" id="dtWho"></div>
-        <div class="dt-amt" id="dtAmt"></div>
+        <div class="dt-who"  id="dtWho"></div>
+        <div class="dt-amt"  id="dtAmt"></div>
+        <div class="dt-msg"  id="dtMsg" style="display:none"></div>
+        <div class="dt-hint" id="dtHint">🎆 min. Rp 3rb = efek untuk semua!</div>
       </div>
+      <a href="${SAWERIA}" target="_blank" rel="noopener" class="dt-btn">☕ Donasi</a>
       <button class="dt-close" id="dtClose">✕</button>
       <div id="donProgress"></div>
     `;
