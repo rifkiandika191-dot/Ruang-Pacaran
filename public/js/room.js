@@ -1541,6 +1541,7 @@ function stopMusic(mine = true) {
   el("musicProgressBar").style.width = "0%";
   el("musicUrl").value = "";
   el("musicTitle").textContent = "🎵 Memuat...";
+  el("musicStopBtn").classList.add("hidden");
   // Kembali ke tab "Dari Link" setelah stop
   document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
   document.querySelector('.tab[data-mode="link"]').classList.add("active");
