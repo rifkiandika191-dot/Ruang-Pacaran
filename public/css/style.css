@@ -1308,7 +1308,7 @@ body.dark .gc-input-bar input { background: var(--card); }
    MUSIK BARENG — mini player panel
    ============================================================ */
 
-/* Now playing bar */
+/* Now playing bar — tampil di bawah source-bar */
 .music-now-playing {
   display: flex;
   align-items: center;
