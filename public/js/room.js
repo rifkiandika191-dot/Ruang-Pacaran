@@ -1466,7 +1466,10 @@ function startMusicPlayer(videoId, mine) {
       events: {
         onReady: (e) => {
           musicDuration = e.target.getDuration();
-          el("musicTitle").textContent = "🎵 " + (e.target.videoTitle || "Memutar musik...");
+          try {
+            const info = e.target.getVideoData();
+            el("musicTitle").textContent = "🎵 " + (info && info.title ? info.title : "Memutar musik...");
+          } catch (_) { el("musicTitle").textContent = "🎵 Memutar musik..."; }
           startMusicSyncLoop();
           startMusicProgressLoop();
         },
