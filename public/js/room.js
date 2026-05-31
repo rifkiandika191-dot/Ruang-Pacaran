@@ -299,6 +299,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
     const mode = tab.dataset.mode;
     el("panel-link").classList.toggle("hidden", mode !== "link");
     el("panel-screen").classList.toggle("hidden", mode !== "screen");
+    el("panel-music").classList.toggle("hidden", mode !== "music");
   });
 });
 
