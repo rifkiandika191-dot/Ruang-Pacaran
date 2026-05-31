@@ -1303,3 +1303,125 @@ body.dark .gc-input-bar input { background: var(--card); }
   .fun-bar { grid-template-columns: repeat(2, 1fr); }
   .rh-meta { font-size: 12px; }
 }
+
+/* ============================================================
+   MUSIK BARENG — mini player panel
+   ============================================================ */
+.music-panel {
+  background: var(--card);
+  border: 1.5px solid var(--peach);
+  border-radius: 14px;
+  margin: 0 0 8px 0;
+  padding: 12px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  animation: slideDown .25s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.music-input-row {
+  display: flex;
+  gap: 8px;
+}
+.music-input-row input {
+  flex: 1;
+  border: 1.5px solid var(--peach);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  background: var(--cream);
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.music-input-row input:focus { border-color: var(--pink); }
+.music-load-btn { padding: 8px 16px; font-size: 13px; white-space: nowrap; }
+
+/* Now playing bar */
+.music-now-playing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--peach) 0%, var(--cream) 100%);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.music-thumbnail {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: var(--peach) center/cover no-repeat;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(226,62,111,.2);
+}
+
+.music-info {
+  flex: 1;
+  min-width: 0;
+}
+.music-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pink-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.music-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.music-controls {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.music-ctrl-btn {
+  background: var(--pink);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s, transform .12s;
+}
+.music-ctrl-btn:hover { background: var(--pink-dark); transform: scale(1.1); }
+
+/* Progress bar */
+.music-progress-wrap {
+  height: 4px;
+  background: var(--peach);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.music-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pink), var(--pink-dark));
+  border-radius: 999px;
+  transition: width .9s linear;
+}
+
+/* Dark mode */
+body.dark .music-panel { background: var(--card); border-color: #3a2531; }
+body.dark .music-input-row input { background: var(--bg2); border-color: #3a2531; }
+body.dark .music-now-playing { background: linear-gradient(135deg, #3a2531 0%, #2a1922 100%); }
+body.dark .music-progress-wrap { background: #3a2531; }
+
+@media (max-width: 600px) {
+  .music-thumbnail { width: 36px; height: 36px; }
+  .music-title { font-size: 12px; }
+  .music-ctrl-btn { width: 28px; height: 28px; font-size: 12px; }
+}
