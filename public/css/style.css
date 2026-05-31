@@ -1308,6 +1308,25 @@ body.dark .gc-input-bar input { background: var(--card); }
    MUSIK BARENG — mini player panel
    ============================================================ */
 
+/* Row info (thumbnail + judul + tombol play) */
+.music-np-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Wrapper player YT kecil */
+.music-yt-wrap {
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  width: 100%;
+  background: #000;
+}
+.music-yt-wrap iframe,
+.music-yt-wrap > div { width: 100% !important; height: 100% !important; }
+
 /* Now playing bar — tampil di bawah source-bar */
 .music-now-playing {
   display: flex;
