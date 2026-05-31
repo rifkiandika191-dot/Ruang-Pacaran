@@ -1463,10 +1463,12 @@ function startMusicPlayer(infoOrId, mine) {
   if (videoId) el("musicThumb").style.backgroundImage = `url(https://img.youtube.com/vi/${videoId}/default.jpg)`;
 
   const playerVars = { rel: 0, playsinline: 1, controls: 1, autoplay: 1 };
+  if (!mine) playerVars.mute = 1;           // partner mulai muted agar browser tidak blokir audio
   if (list) { playerVars.list = list; playerVars.listType = "playlist"; }
 
   const create = () => {
     if (ytMusic) {
+      if (!mine) ytMusic.mute();
       if (list) ytMusic.loadPlaylist({ list, listType: "playlist" });
       else ytMusic.loadVideoById(videoId);
       return;
@@ -1496,6 +1498,10 @@ function startMusicPlayer(infoOrId, mine) {
   musicPlaying = true;
   el("musicPlayBtn").textContent = "⏸";
   el("musicStopBtn").classList.remove("hidden");
+
+  // Tampilkan tombol unmute untuk partner
+  el("musicUnmuteBtn").classList.toggle("hidden", mine);
+
   if (mine) toast("Musik dimuat — dengarkan bareng! 🎵");
 }
 
