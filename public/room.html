@@ -33,6 +33,7 @@
         <div class="tabs">
           <button class="tab active" data-mode="link">📺 Dari Link</button>
           <button class="tab" data-mode="screen">🖥️ Share Screen</button>
+          <button class="tab" data-mode="music">🎵 Musik</button>
         </div>
 
         <div class="source-panel" id="panel-link">
@@ -44,6 +45,12 @@
           <button class="btn btn-primary" id="shareScreenBtn">🖥️ Mulai Bagikan Layar</button>
           <button class="btn btn-secondary hidden" id="stopScreenBtn">⏹️ Stop Berbagi</button>
           <span class="hint">Pasanganmu akan langsung melihat layarmu.</span>
+        </div>
+
+        <div class="source-panel hidden" id="panel-music">
+          <input type="text" id="musicUrl" placeholder="Tempel link YouTube musik / playlist..." />
+          <button class="btn btn-primary" id="musicLoadBtn">▶ Putar</button>
+          <button class="btn btn-secondary hidden" id="musicStopBtn">⏹ Stop</button>
         </div>
       </div>
 
