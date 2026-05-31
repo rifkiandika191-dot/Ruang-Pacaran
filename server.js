@@ -651,6 +651,42 @@ io.on("connection", (socket) => {
   });
 
   // ----------------------------------------------------------
+  //  MUSIK BARENG — event terpisah dari video, bisa jalan bersamaan
+  // ----------------------------------------------------------
+  socket.on("music-source", ({ url }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.musicState = { url, time: 0, playing: true, updatedAt: Date.now() };
+    socket.to(currentRoom).emit("music-source", { url, by: myName });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} memutar musik bareng 🎵`, ts: Date.now() });
+  });
+
+  socket.on("music-control", ({ action, time }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    if (typeof time === "number") room.musicState.time = time;
+    room.musicState.playing = action === "play";
+    room.musicState.updatedAt = Date.now();
+    socket.to(currentRoom).emit("music-control", { action, time, by: myName });
+  });
+
+  socket.on("music-sync", ({ time, playing }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.musicState.time = time;
+    room.musicState.playing = playing;
+    socket.to(currentRoom).emit("music-sync", { time, playing });
+  });
+
+  socket.on("music-stop", () => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.musicState = { url: null, time: 0, playing: false, updatedAt: Date.now() };
+    socket.to(currentRoom).emit("music-stop", { by: myName });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} menghentikan musik ⏹️`, ts: Date.now() });
+  });
+
+  // ----------------------------------------------------------
   //  REAKSI CINTA (hati melayang) & info pasangan
   // ----------------------------------------------------------
   socket.on("reaction", ({ emoji }) => {
