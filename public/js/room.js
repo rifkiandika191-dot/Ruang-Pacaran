@@ -1528,7 +1528,7 @@ el("musicPlayBtn").addEventListener("click", () => {
 });
 
 // Stop musik
-el("musicStopBtn").addEventListener("click", stopMusic);
+el("musicStopBtn").addEventListener("click", () => stopMusic(true));
 
 function stopMusic(mine = true) {
   stopMusicSyncLoop();
