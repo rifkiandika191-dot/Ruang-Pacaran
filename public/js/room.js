@@ -343,7 +343,10 @@ function showVideoControls(active) {
 // --- Stop nonton bareng (bersihkan video, kembali ke placeholder) ---
 function stopWatching(mine) {
   stopSyncLoop();
-  try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (e) {}
+  // Destroy player sepenuhnya lalu recreate div inner agar player baru bisa dibuat
+  try { if (ytPlayer) { ytPlayer.destroy(); ytPlayer = null; } } catch (e) {}
+  ytDiv.innerHTML = '<div id="ytPlayer"></div>';
+  ytReady = !!(window.YT && YT.Player); // flag tetap valid
   try { htmlPlayer.pause(); htmlPlayer.removeAttribute("src"); htmlPlayer.load(); } catch (e) {}
   currentType = null;
   ytDiv.classList.add("hidden");
