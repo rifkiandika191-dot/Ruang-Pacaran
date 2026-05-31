@@ -561,6 +561,7 @@ io.on("connection", (socket) => {
       you: { id: socket.id, name: myName },
       users: Array.from(room.users, ([id, n]) => ({ id, name: n })),
       videoState: room.videoState,
+      musicState: room.musicState,
       durationSeconds: currentRoomSeconds(roomId),
       streak: roomStreaks[roomId] || { streak: 0, longest: 0, lastDate: null },
       chatHistory: roomChats[roomId] || [],
