@@ -1582,8 +1582,7 @@ socket.on("music-source", ({ url, by }) => {
   const id = extractYtId(url);
   if (!id) return;
   toast(`${by} memutar musik bareng 🎵`);
-  musicPanel.classList.remove("hidden");
-  el("musicBtn").classList.add("active");
+  switchToMusicTab();
   startMusicPlayer(id, false);
 });
 
