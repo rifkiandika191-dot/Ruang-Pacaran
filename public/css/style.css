@@ -1436,15 +1436,61 @@ body.dark .music-now-playing { background: linear-gradient(135deg, #3a2531 0%, #
 body.dark .music-progress-wrap { background: #3a2531; }
 
 /* ============================================================
-   PLAYLIST BARENG
+   PLAYLIST BARENG — inline di panel musik
    ============================================================ */
-.playlist-modal {
-  max-width: 520px;
-  width: 95vw;
-  max-height: 80vh;
+
+/* Baris input musik + tombol Antri */
+.music-url-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.music-url-row input { flex: 1; min-width: 0; }
+.pl-queue-btn {
+  padding: 10px 14px;
+  font-size: 13px;
+  background: var(--card);
+  color: var(--pink-dark);
+  border: 2px solid var(--peach);
+  box-shadow: none;
+}
+.pl-queue-btn:hover { background: var(--peach); filter: none; }
+.pl-queue-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Inline playlist section */
+.pl-inline {
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+.pl-inline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pl-inline-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pink-dark);
+}
+.pl-count-wrap {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pl-count-wrap strong {
+  background: var(--pink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+.pl-footer-btns {
+  display: flex;
+  gap: 6px;
 }
 
 .pl-turn-badge {
