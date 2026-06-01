@@ -1233,10 +1233,14 @@ body.dark .gc-input-bar input { background: var(--card); }
   /* Cegah auto-zoom iOS saat fokus input */
   input[type="text"], input[type="date"], textarea, .modal input { font-size: 16px; }
 
+  /* Semua elemen tidak boleh lebih lebar dari layar */
+  *, *::before, *::after { max-width: 100%; box-sizing: border-box; }
+  img, video, iframe, canvas, svg { max-width: 100%; height: auto; }
+
   /* ── Topbar ── */
-  .topbar { padding: 8px 12px; gap: 6px 10px; }
-  .brand { font-size: 15px; }
-  .room-meta { width: 100%; gap: 6px; flex-wrap: wrap; }
+  .topbar { padding: 8px 12px; gap: 6px 10px; overflow: hidden; }
+  .brand { font-size: 15px; min-width: 0; }
+  .room-meta { width: 100%; gap: 6px; flex-wrap: wrap; overflow: hidden; }
   .room-code { font-size: 11px; padding: 5px 10px; }
   .btn-mini { padding: 5px 9px; font-size: 11px; }
   .countdown { font-size: 10px; padding: 4px 8px; max-width: 130px;
