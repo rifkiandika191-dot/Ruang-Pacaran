@@ -381,6 +381,27 @@ Kebab</textarea>
     </div>
   </div>
 
+  <!-- Modal PLAYLIST BARENG -->
+  <div class="modal-overlay hidden" id="playlistModal">
+    <div class="modal playlist-modal">
+      <h3>🎶 Playlist Bareng</h3>
+      <div class="pl-turn-badge" id="plTurnBadge">✨ Giliran kamu menambah lagu!</div>
+      <div class="pl-add-row">
+        <input type="text" id="plUrlInput" placeholder="Tempel link YouTube di sini..." />
+        <button class="btn btn-primary" id="plAddBtn">+ Tambah</button>
+      </div>
+      <div class="pl-queue-label">Antrian Lagu <span class="pl-count" id="plCount">0</span></div>
+      <div class="pl-queue" id="plQueue">
+        <div class="pl-empty">Belum ada lagu. Tambahkan sekarang 🎵</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="plClose">Tutup</button>
+        <button class="btn btn-secondary" id="plNextBtn">⏭ Lagu Berikutnya</button>
+        <button class="btn btn-secondary" id="plClearBtn">🗑 Kosongkan</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
