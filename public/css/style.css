@@ -1633,8 +1633,6 @@ body.dark .music-progress-wrap { background: #3a2531; }
 /* Dark mode playlist */
 body.dark .pl-item { background: var(--bg3); border-color: #3a2531; }
 body.dark .pl-item:hover { background: #3a2531; }
-body.dark .pl-turn-badge.my-turn { background: #3a2531; border-color: var(--pink); }
-body.dark .pl-turn-badge.partner-turn { background: var(--bg3); border-color: #3a2531; }
 body.dark .pl-del-btn { background: #3a2531; border-color: #4a3040; }
 body.dark .pl-thumb-empty { background: #3a2531; }
 
