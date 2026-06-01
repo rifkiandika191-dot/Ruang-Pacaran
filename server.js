@@ -689,6 +689,55 @@ io.on("connection", (socket) => {
   });
 
   // ----------------------------------------------------------
+  //  PLAYLIST BARENG — antrian lagu bergantian
+  // ----------------------------------------------------------
+  socket.on("playlist-add", ({ url, title, ytId }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    const item = {
+      url: String(url).slice(0, 300),
+      title: String(title || "Lagu").slice(0, 100),
+      ytId: ytId ? String(ytId).slice(0, 20) : null,
+      addedBy: myName,
+      addedById: socket.id,
+      addedAt: Date.now(),
+    };
+    room.playlist.queue.push(item);
+    room.playlist.lastAddedBy = socket.id;
+    io.to(currentRoom).emit("playlist-update", { queue: room.playlist.queue, lastAddedBy: socket.id });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} menambahkan "${item.title}" ke playlist 🎶`, ts: Date.now() });
+  });
+
+  socket.on("playlist-remove", ({ index }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    if (index < 0 || index >= room.playlist.queue.length) return;
+    room.playlist.queue.splice(index, 1);
+    io.to(currentRoom).emit("playlist-update", { queue: room.playlist.queue, lastAddedBy: room.playlist.lastAddedBy });
+  });
+
+  socket.on("playlist-play-index", ({ index }) => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    if (index < 0 || index >= room.playlist.queue.length) return;
+    const song = room.playlist.queue[index];
+    room.playlist.queue.splice(0, index + 1);
+    room.musicState = { url: song.url, time: 0, playing: true, updatedAt: Date.now() };
+    io.to(currentRoom).emit("playlist-update", { queue: room.playlist.queue, lastAddedBy: room.playlist.lastAddedBy });
+    socket.emit("playlist-play-song", { url: song.url, title: song.title, ytId: song.ytId, mine: true });
+    socket.to(currentRoom).emit("playlist-play-song", { url: song.url, title: song.title, ytId: song.ytId, mine: false });
+    emitRoomChat(currentRoom, { system: true, text: `${myName} memutar "${song.title}" dari playlist 🎶`, ts: Date.now() });
+  });
+
+  socket.on("playlist-clear", () => {
+    if (!currentRoom) return;
+    const room = getRoom(currentRoom);
+    room.playlist.queue = [];
+    room.playlist.lastAddedBy = null;
+    io.to(currentRoom).emit("playlist-update", { queue: [], lastAddedBy: null });
+  });
+
+  // ----------------------------------------------------------
   //  REAKSI CINTA (hati melayang) & info pasangan
   // ----------------------------------------------------------
   socket.on("reaction", ({ emoji }) => {
