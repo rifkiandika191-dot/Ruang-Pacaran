@@ -1771,11 +1771,9 @@ function renderPlaylist() {
   });
 }
 
-socket.on("playlist-update", ({ queue, lastAddedBy }) => {
+socket.on("playlist-update", ({ queue }) => {
   playlistQueue = queue;
-  playlistLastAddedBy = lastAddedBy;
   renderPlaylist();
-  updateTurnBadge();
 });
 
 socket.on("playlist-play-song", ({ url, title, ytId, mine }) => {
