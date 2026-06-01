@@ -1493,23 +1493,6 @@ body.dark .music-progress-wrap { background: #3a2531; }
   gap: 6px;
 }
 
-.pl-turn-badge {
-  text-align: center;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.pl-turn-badge.my-turn {
-  background: linear-gradient(135deg, #ffe0ec, #ffd6e0);
-  color: var(--pink-dark);
-  border: 1.5px solid var(--pink);
-}
-.pl-turn-badge.partner-turn {
-  background: var(--bg2);
-  color: var(--muted);
-  border: 1.5px solid var(--peach);
-}
 
 .pl-add-row {
   display: flex;
