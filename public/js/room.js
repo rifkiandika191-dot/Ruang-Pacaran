@@ -1708,26 +1708,9 @@ el("plClearBtn").addEventListener("click", () => {
   socket.emit("playlist-clear");
 });
 
-function isMyTurn() {
-  return !playlistLastAddedBy || playlistLastAddedBy !== myId;
-}
-
-function updateTurnBadge() {
-  const badge = el("plTurnBadge");
-  const addBtn = el("plAddBtn");
-  if (isMyTurn()) {
-    badge.textContent = "✨ Giliran kamu menambah lagu!";
-    badge.className = "pl-turn-badge my-turn";
-    addBtn.disabled = false;
-  } else {
-    badge.textContent = "⏳ Tunggu pasangan menambah lagu dulu...";
-    badge.className = "pl-turn-badge partner-turn";
-    addBtn.disabled = true;
-  }
-}
+function updateTurnBadge() {}
 
 async function addToPlaylist() {
-  if (!isMyTurn()) { toast("Bukan giliranmu dulu 🎵 Tunggu pasangan tambah lagu!"); return; }
   const url = el("musicUrl").value.trim();
   if (!url) { toast("Tempel link YouTube dulu 🎵"); return; }
   const info = extractYtInfo(url);
