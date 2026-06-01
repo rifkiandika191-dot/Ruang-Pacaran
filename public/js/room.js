@@ -1715,7 +1715,6 @@ async function addToPlaylist() {
   if (!info.id && !info.list) { toast("Hanya link YouTube yang didukung 🎵"); return; }
 
   const addBtn = el("plAddBtn");
-  addBtn.disabled = true;
   addBtn.textContent = "⏳";
 
   let title = "Lagu";
