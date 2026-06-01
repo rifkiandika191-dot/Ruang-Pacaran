@@ -563,6 +563,7 @@ io.on("connection", (socket) => {
       users: Array.from(room.users, ([id, n]) => ({ id, name: n })),
       videoState: room.videoState,
       musicState: room.musicState,
+      playlist: { queue: room.playlist.queue, lastAddedBy: room.playlist.lastAddedBy },
       durationSeconds: currentRoomSeconds(roomId),
       streak: roomStreaks[roomId] || { streak: 0, longest: 0, lastDate: null },
       chatHistory: roomChats[roomId] || [],
