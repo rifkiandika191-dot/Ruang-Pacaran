@@ -1782,7 +1782,6 @@ function renderPlaylist() {
   container.querySelectorAll(".pl-play-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       socket.emit("playlist-play-index", { index: parseInt(btn.dataset.index) });
-      playlistModal.classList.add("hidden");
     });
   });
   container.querySelectorAll(".pl-del-btn").forEach((btn) => {
