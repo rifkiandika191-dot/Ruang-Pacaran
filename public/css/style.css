@@ -1549,10 +1549,10 @@ body.dark .music-progress-wrap { background: #3a2531; }
 
 .pl-queue {
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 200px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .pl-empty {
