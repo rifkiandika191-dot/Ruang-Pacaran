@@ -1706,8 +1706,6 @@ el("plClearBtn").addEventListener("click", () => {
   socket.emit("playlist-clear");
 });
 
-function updateTurnBadge() {}
-
 async function addToPlaylist() {
   const url = el("musicUrl").value.trim();
   if (!url) { toast("Tempel link YouTube dulu 🎵"); return; }
