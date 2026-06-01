@@ -51,9 +51,28 @@
         </div>
 
         <div class="source-panel hidden" id="panel-music">
-          <input type="text" id="musicUrl" placeholder="Tempel link YouTube musik / playlist..." />
-          <button class="btn btn-primary" id="musicLoadBtn">▶ Putar</button>
-          <button class="btn btn-secondary hidden" id="musicStopBtn">⏹ Stop</button>
+          <div class="music-url-row">
+            <input type="text" id="musicUrl" placeholder="Tempel link YouTube musik / playlist..." />
+            <button class="btn btn-primary" id="musicLoadBtn">▶ Putar</button>
+            <button class="btn btn-primary pl-queue-btn" id="plAddBtn" title="Tambah ke antrian playlist">➕ Antri</button>
+            <button class="btn btn-secondary hidden" id="musicStopBtn">⏹ Stop</button>
+          </div>
+
+          <!-- Playlist Bareng — inline di bawah input musik -->
+          <div class="pl-inline">
+            <div class="pl-inline-header">
+              <span class="pl-inline-title">🎶 Playlist Bareng</span>
+              <span class="pl-count-wrap">Antrian: <strong id="plCount">0</strong></span>
+            </div>
+            <div class="pl-turn-badge" id="plTurnBadge">✨ Giliran kamu menambah lagu!</div>
+            <div class="pl-queue" id="plQueue">
+              <div class="pl-empty">Belum ada lagu di antrian 🎵</div>
+            </div>
+            <div class="pl-footer-btns">
+              <button class="btn btn-mini" id="plNextBtn">⏭ Lagu Berikutnya</button>
+              <button class="btn btn-mini" id="plClearBtn">🗑 Kosongkan</button>
+            </div>
+          </div>
         </div>
       </div>
 
