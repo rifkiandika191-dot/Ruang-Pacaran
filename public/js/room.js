@@ -1570,6 +1570,10 @@ function onMusicStateChange(e) {
     el("musicPlayBtn").textContent = "▶";
     stopMusicSyncLoop();
     stopMusicProgressLoop();
+    // Auto-play lagu berikutnya dari playlist
+    if (playlistQueue.length > 0) {
+      setTimeout(() => socket.emit("playlist-play-index", { index: 0 }), 800);
+    }
   }
 }
 
