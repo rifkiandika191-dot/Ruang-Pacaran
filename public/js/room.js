@@ -1796,9 +1796,6 @@ socket.on("playlist-update", ({ queue, lastAddedBy }) => {
   playlistLastAddedBy = lastAddedBy;
   renderPlaylist();
   updateTurnBadge();
-  // Update badge playlist di tombol fun-bar
-  const btn = el("playlistBtn");
-  btn.textContent = queue.length > 0 ? `🎶 Playlist (${queue.length})` : "🎶 Playlist";
 });
 
 socket.on("playlist-play-song", ({ url, title, ytId, mine }) => {
