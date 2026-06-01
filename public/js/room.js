@@ -1691,22 +1691,12 @@ socket.on("music-stop", ({ by }) => {
 });
 
 // ============================================================
-//  PLAYLIST BARENG
+//  PLAYLIST BARENG — inline di panel musik
 // ============================================================
 let playlistQueue = [];
 let playlistLastAddedBy = null;
 
-const playlistModal = el("playlistModal");
-el("playlistBtn").addEventListener("click", () => {
-  playlistModal.classList.remove("hidden");
-  renderPlaylist();
-  updateTurnBadge();
-});
-el("plClose").addEventListener("click", () => playlistModal.classList.add("hidden"));
-playlistModal.addEventListener("click", (e) => { if (e.target === playlistModal) playlistModal.classList.add("hidden"); });
-
 el("plAddBtn").addEventListener("click", addToPlaylist);
-el("plUrlInput").addEventListener("keydown", (e) => { if (e.key === "Enter") addToPlaylist(); });
 
 el("plNextBtn").addEventListener("click", () => {
   if (playlistQueue.length === 0) { toast("Playlist kosong 🎵 — tambahkan lagu dulu!"); return; }
@@ -1724,25 +1714,22 @@ function isMyTurn() {
 
 function updateTurnBadge() {
   const badge = el("plTurnBadge");
-  const urlInput = el("plUrlInput");
   const addBtn = el("plAddBtn");
   if (isMyTurn()) {
     badge.textContent = "✨ Giliran kamu menambah lagu!";
     badge.className = "pl-turn-badge my-turn";
-    urlInput.disabled = false;
     addBtn.disabled = false;
   } else {
     badge.textContent = "⏳ Tunggu pasangan menambah lagu dulu...";
     badge.className = "pl-turn-badge partner-turn";
-    urlInput.disabled = true;
     addBtn.disabled = true;
   }
 }
 
 async function addToPlaylist() {
   if (!isMyTurn()) { toast("Bukan giliranmu dulu 🎵 Tunggu pasangan tambah lagu!"); return; }
-  const url = el("plUrlInput").value.trim();
-  if (!url) return;
+  const url = el("musicUrl").value.trim();
+  if (!url) { toast("Tempel link YouTube dulu 🎵"); return; }
   const info = extractYtInfo(url);
   if (!info.id && !info.list) { toast("Hanya link YouTube yang didukung 🎵"); return; }
 
@@ -1758,9 +1745,8 @@ async function addToPlaylist() {
   } catch (_) {}
 
   socket.emit("playlist-add", { url, title, ytId: info.id });
-  el("plUrlInput").value = "";
-  addBtn.textContent = "+ Tambah";
-  // addBtn.disabled dikontrol oleh updateTurnBadge setelah playlist-update
+  el("musicUrl").value = "";
+  addBtn.textContent = "➕ Antri";
 }
 
 function renderPlaylist() {
