@@ -1,6 +1,6 @@
 {
   "name": "website-pacaran",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "description": "Website pacaran dengan fitur nonton bareng via link video & share screen online",
   "main": "server.js",
   "type": "commonjs",
