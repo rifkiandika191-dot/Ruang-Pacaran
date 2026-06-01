@@ -1694,7 +1694,6 @@ socket.on("music-stop", ({ by }) => {
 //  PLAYLIST BARENG — inline di panel musik
 // ============================================================
 let playlistQueue = [];
-let playlistLastAddedBy = null;
 
 el("plAddBtn").addEventListener("click", addToPlaylist);
 
