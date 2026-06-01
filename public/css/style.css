@@ -1435,6 +1435,187 @@ body.dark .music-input-row input { background: var(--bg2); border-color: #3a2531
 body.dark .music-now-playing { background: linear-gradient(135deg, #3a2531 0%, #2a1922 100%); }
 body.dark .music-progress-wrap { background: #3a2531; }
 
+/* ============================================================
+   PLAYLIST BARENG
+   ============================================================ */
+.playlist-modal {
+  max-width: 520px;
+  width: 95vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pl-turn-badge {
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.pl-turn-badge.my-turn {
+  background: linear-gradient(135deg, #ffe0ec, #ffd6e0);
+  color: var(--pink-dark);
+  border: 1.5px solid var(--pink);
+}
+.pl-turn-badge.partner-turn {
+  background: var(--bg2);
+  color: var(--muted);
+  border: 1.5px solid var(--peach);
+}
+
+.pl-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pl-add-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid var(--peach);
+  border-radius: 12px;
+  font-size: 14px;
+  background: var(--card);
+  color: var(--ink);
+}
+.pl-add-row input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pl-add-row .btn { white-space: nowrap; padding: 10px 16px; font-size: 14px; }
+
+.pl-queue-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pl-count {
+  background: var(--pink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+}
+
+.pl-queue {
+  overflow-y: auto;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pl-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+  font-size: 14px;
+}
+
+.pl-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg2);
+  border-radius: 12px;
+  border: 1.5px solid var(--peach);
+  transition: background .15s;
+}
+.pl-item:hover { background: var(--bg3); }
+
+.pl-num {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pl-thumb {
+  width: 48px;
+  height: 36px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.pl-thumb-empty {
+  background: var(--peach);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.pl-info {
+  flex: 1;
+  min-width: 0;
+}
+.pl-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pl-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.pl-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.pl-play-btn, .pl-del-btn {
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .1s, background .15s;
+}
+.pl-play-btn:active, .pl-del-btn:active { transform: scale(.92); }
+.pl-play-btn {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255,92,138,.3);
+}
+.pl-del-btn {
+  background: var(--bg3);
+  color: var(--pink-dark);
+  border: 1px solid var(--peach);
+}
+.pl-del-btn:hover { background: #ffe0ec; }
+
+/* Dark mode playlist */
+body.dark .pl-add-row input { background: var(--bg2); border-color: #3a2531; }
+body.dark .pl-item { background: var(--bg3); border-color: #3a2531; }
+body.dark .pl-item:hover { background: #3a2531; }
+body.dark .pl-turn-badge.my-turn { background: #3a2531; border-color: var(--pink); }
+body.dark .pl-turn-badge.partner-turn { background: var(--bg3); border-color: #3a2531; }
+body.dark .pl-del-btn { background: #3a2531; border-color: #4a3040; }
+body.dark .pl-thumb-empty { background: #3a2531; }
+
+@media (max-width: 600px) {
+  .playlist-modal { max-height: 90vh; }
+  .pl-thumb { width: 40px; height: 30px; }
+  .pl-title { font-size: 12px; }
+}
+
 @media (max-width: 600px) {
   .music-thumbnail { width: 36px; height: 36px; }
   .music-title { font-size: 12px; }
