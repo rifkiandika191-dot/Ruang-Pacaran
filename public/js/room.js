@@ -57,7 +57,7 @@ setInterval(updateRoomDuration, 1000);
 // ------------------------------------------------------------
 socket.emit("join", { roomId: ROOM, name: NAME });
 
-socket.on("joined", ({ you, users, videoState, musicState, durationSeconds, streak, chatHistory }) => {
+socket.on("joined", ({ you, users, videoState, musicState, playlist, durationSeconds, streak, chatHistory }) => {
   myId = you.id;
   updateUsers(users);
   if (typeof durationSeconds === "number") { durBase = durationSeconds; durFrom = Date.now(); }
