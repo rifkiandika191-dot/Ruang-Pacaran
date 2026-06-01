@@ -525,6 +525,7 @@ function getRoom(roomId) {
       users: new Map(),
       videoState: { url: null, type: null, time: 0, playing: false, updatedAt: Date.now() },
       musicState: { url: null, time: 0, playing: false, updatedAt: Date.now() },
+      playlist: { queue: [], lastAddedBy: null },
     });
   }
   return rooms.get(roomId);
