@@ -1690,3 +1690,140 @@ socket.on("music-stop", ({ by }) => {
   stopMusic(false);
 });
 
+// ============================================================
+//  PLAYLIST BARENG
+// ============================================================
+let playlistQueue = [];
+let playlistLastAddedBy = null;
+
+const playlistModal = el("playlistModal");
+el("playlistBtn").addEventListener("click", () => {
+  playlistModal.classList.remove("hidden");
+  renderPlaylist();
+  updateTurnBadge();
+});
+el("plClose").addEventListener("click", () => playlistModal.classList.add("hidden"));
+playlistModal.addEventListener("click", (e) => { if (e.target === playlistModal) playlistModal.classList.add("hidden"); });
+
+el("plAddBtn").addEventListener("click", addToPlaylist);
+el("plUrlInput").addEventListener("keydown", (e) => { if (e.key === "Enter") addToPlaylist(); });
+
+el("plNextBtn").addEventListener("click", () => {
+  if (playlistQueue.length === 0) { toast("Playlist kosong 🎵 — tambahkan lagu dulu!"); return; }
+  socket.emit("playlist-play-index", { index: 0 });
+});
+
+el("plClearBtn").addEventListener("click", () => {
+  if (playlistQueue.length === 0) { toast("Playlist sudah kosong"); return; }
+  socket.emit("playlist-clear");
+});
+
+function isMyTurn() {
+  return !playlistLastAddedBy || playlistLastAddedBy !== myId;
+}
+
+function updateTurnBadge() {
+  const badge = el("plTurnBadge");
+  const urlInput = el("plUrlInput");
+  const addBtn = el("plAddBtn");
+  if (isMyTurn()) {
+    badge.textContent = "✨ Giliran kamu menambah lagu!";
+    badge.className = "pl-turn-badge my-turn";
+    urlInput.disabled = false;
+    addBtn.disabled = false;
+  } else {
+    badge.textContent = "⏳ Tunggu pasangan menambah lagu dulu...";
+    badge.className = "pl-turn-badge partner-turn";
+    urlInput.disabled = true;
+    addBtn.disabled = true;
+  }
+}
+
+async function addToPlaylist() {
+  if (!isMyTurn()) { toast("Bukan giliranmu dulu 🎵 Tunggu pasangan tambah lagu!"); return; }
+  const url = el("plUrlInput").value.trim();
+  if (!url) return;
+  const info = extractYtInfo(url);
+  if (!info.id && !info.list) { toast("Hanya link YouTube yang didukung 🎵"); return; }
+
+  const addBtn = el("plAddBtn");
+  addBtn.disabled = true;
+  addBtn.textContent = "⏳";
+
+  let title = "Lagu";
+  try {
+    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+    const data = await res.json();
+    if (data.title) title = data.title;
+  } catch (_) {}
+
+  socket.emit("playlist-add", { url, title, ytId: info.id });
+  el("plUrlInput").value = "";
+  addBtn.textContent = "+ Tambah";
+  // addBtn.disabled dikontrol oleh updateTurnBadge setelah playlist-update
+}
+
+function renderPlaylist() {
+  const container = el("plQueue");
+  el("plCount").textContent = playlistQueue.length;
+  if (playlistQueue.length === 0) {
+    container.innerHTML = '<div class="pl-empty">Belum ada lagu di antrian. Tambahkan sekarang 🎵</div>';
+    return;
+  }
+  container.innerHTML = "";
+  playlistQueue.forEach((song, i) => {
+    const div = document.createElement("div");
+    div.className = "pl-item";
+    const thumbSrc = song.ytId
+      ? `https://img.youtube.com/vi/${song.ytId}/default.jpg`
+      : "";
+    const isMine = song.addedBy === NAME;
+    div.innerHTML = `
+      <div class="pl-num">${i + 1}</div>
+      ${thumbSrc ? `<div class="pl-thumb" style="background-image:url('${thumbSrc}')"></div>` : `<div class="pl-thumb pl-thumb-empty">🎵</div>`}
+      <div class="pl-info">
+        <div class="pl-title">${escapeHtml(song.title)}</div>
+        <div class="pl-meta">oleh <strong>${escapeHtml(song.addedBy)}</strong></div>
+      </div>
+      <div class="pl-actions">
+        <button class="pl-play-btn" data-index="${i}" title="Putar sekarang">▶</button>
+        ${isMine ? `<button class="pl-del-btn" data-index="${i}" title="Hapus dari antrian">🗑</button>` : ""}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  container.querySelectorAll(".pl-play-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      socket.emit("playlist-play-index", { index: parseInt(btn.dataset.index) });
+      playlistModal.classList.add("hidden");
+    });
+  });
+  container.querySelectorAll(".pl-del-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      socket.emit("playlist-remove", { index: parseInt(btn.dataset.index) });
+    });
+  });
+}
+
+socket.on("playlist-update", ({ queue, lastAddedBy }) => {
+  playlistQueue = queue;
+  playlistLastAddedBy = lastAddedBy;
+  renderPlaylist();
+  updateTurnBadge();
+  // Update badge playlist di tombol fun-bar
+  const btn = el("playlistBtn");
+  btn.textContent = queue.length > 0 ? `🎶 Playlist (${queue.length})` : "🎶 Playlist";
+});
+
+socket.on("playlist-play-song", ({ url, title, ytId, mine }) => {
+  const info = extractYtInfo(url);
+  if (!info.id && !info.list) return;
+  switchToMusicTab();
+  startMusicPlayer(info, mine);
+  if (!mine) {
+    toast(`🎶 "${title}" dari playlist`);
+    popupNotif("🎶", "Lagu berikutnya!", `"${title}" sedang diputar dari playlist`);
+  }
+});
+
