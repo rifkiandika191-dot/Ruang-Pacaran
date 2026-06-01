@@ -73,6 +73,10 @@ socket.on("joined", ({ you, users, videoState, musicState, playlist, durationSec
       }, 800);
     }
   }
+  if (playlist) {
+    playlistQueue = playlist.queue || [];
+    playlistLastAddedBy = playlist.lastAddedBy || null;
+  }
   if (streak) applyStreak(streak);
   saveRoomHistory(); // simpan entry awal
   // Muat riwayat chat dari sesi sebelumnya
